@@ -12,27 +12,27 @@ class Director:
         return self.__director_full_name
 
     def __repr__(self):
-        pass
+        return f"<Director {self.__director_full_name}>"
 
     def __eq__(self, other):
+        # TODO
         pass
 
     def __lt__(self, other):
+        # TODO
         pass
 
     def __hash__(self):
+        # TODO
         pass
 
 
-
-import unittest
-
-class TestDirectorMethods(unittest.TestCase):
+class TestDirectorMethods:
 
     def test_init(self):
         director1 = Director("Taika Waititi")
-        self.assertEqual(repr(director1), "<Director Taika Waititi>")
+        assert repr(director1) == "<Director Taika Waititi>"
         director2 = Director("")
-        self.assertIsNone(director2.director_full_name)
+        assert director2.director_full_name is None
         director3 = Director(42)
-        self.assertIsNone(director3.director_full_name)
+        assert director3.director_full_name is None

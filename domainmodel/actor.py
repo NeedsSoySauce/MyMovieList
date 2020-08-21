@@ -17,13 +17,7 @@ class Actor(Person):
 
     @actor_full_name.setter
     def actor_full_name(self, actor_full_name: str) -> None:
-        if actor_full_name == "" or type(actor_full_name) is not str:
-            self._full_name = None
-        else:
-            self._full_name = actor_full_name.strip()
-
-    def __repr__(self) -> str:
-        return f"<Actor {self._full_name}>"
+        self._full_name = actor_full_name
 
     def add_actor_colleague(self, colleague: 'Actor') -> None:
         if not isinstance(colleague, Actor):

@@ -1,9 +1,6 @@
 class Genre:
     def __init__(self, genre_name: str) -> None:
-        if genre_name == "" or type(genre_name) is not str:
-            self._genre_name = None
-        else:
-            self._genre_name = genre_name.strip()
+        self.genre_name = genre_name
 
     @property
     def genre_name(self) -> str:
@@ -17,7 +14,7 @@ class Genre:
             self._genre_name = genre_name.strip()
 
     def __repr__(self) -> str:
-        return f"<Genre {self._genre_name}>"
+        return f"<{type(self).__name__} {self._genre_name}>"
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Genre):

@@ -4,22 +4,22 @@ from domainmodel.person import Person
 
 def test_constructor():
     person = Person("123")
-    assert person.full_name == "123"
+    assert person._full_name == "123"
 
 
 def test_constructor_with_empty_string_full_name():
     person = Person("")
-    assert person.full_name is None
+    assert person._full_name is None
 
 
 def test_constructor_with_non_string_full_name():
     person = Person(42)
-    assert person.full_name is None
+    assert person._full_name is None
 
 
 def test_constructor_strips_whitespace():
     person = Person("        Firstname Lastname      ")
-    assert person.full_name == "Firstname Lastname"
+    assert person._full_name == "Firstname Lastname"
 
 
 def test_repr(person):

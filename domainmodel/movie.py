@@ -107,7 +107,7 @@ class Movie:
         self._runtime_minutes = runtime_minutes
 
     def __repr__(self) -> str:
-        return f'<Movie {self._title}, {self._release_date}>'
+        return f'<{type(self).__name__} {self._title}, {self._release_date}>'
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Movie):

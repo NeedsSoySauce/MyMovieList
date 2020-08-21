@@ -2,11 +2,6 @@ import pytest
 from domainmodel.director import Director
 
 
-@pytest.fixture
-def director():
-    return Director("Firstname Lastname")
-
-
 def test_constructor():
     director = Director("123")
     assert director.director_full_name == "123"

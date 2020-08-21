@@ -2,11 +2,6 @@ import pytest
 from domainmodel.person import Person
 
 
-@pytest.fixture
-def person():
-    return Person("Firstname Lastname")
-
-
 def test_constructor():
     person = Person("123")
     assert person.full_name == "123"

@@ -2,11 +2,6 @@ import pytest
 from domainmodel.genre import Genre
 
 
-@pytest.fixture
-def genre():
-    return Genre("Action")
-
-
 def test_constructor():
     genre = Genre("123")
     assert genre.genre_name == "123"

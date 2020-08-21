@@ -2,11 +2,6 @@ import pytest
 from domainmodel.actor import Actor
 
 
-@pytest.fixture
-def actor():
-    return Actor("Firstname Lastname")
-
-
 def test_constructor():
     actor = Actor("123")
     assert actor.actor_full_name == "123"

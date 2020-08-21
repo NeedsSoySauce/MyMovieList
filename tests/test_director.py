@@ -74,13 +74,3 @@ def test_hash(director):
 def test_hash_changes(director):
     other = Director("123")
     assert hash(director) != hash(other)
-
-
-## These tests
-# def test_hash_is_different_between_directors_with_same_name(director):
-#     other = Director("Firstname Lastname")
-#     assert hash(director) != hash(other)
-#
-#
-# def test_hash_is_different_to_string_with_same_value(director):
-#     assert hash(director) != hash("Firstname Lastname")

@@ -17,19 +17,19 @@ class Director:
         else:
             self.__director_full_name = director_full_name.strip()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Director {self.__director_full_name}>"
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         if not isinstance(other, Director):
             return False
         return other.__director_full_name == self.__director_full_name
 
-    def __lt__(self, other):
+    def __lt__(self, other) -> bool:
         if not isinstance(other, Director):
             raise TypeError(
                 f"'<' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'")
         return self.__director_full_name < other.__director_full_name
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.__director_full_name)

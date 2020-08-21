@@ -1,5 +1,6 @@
 import pytest
 
+from datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from domainmodel.actor import Actor
 from domainmodel.director import Director
 from domainmodel.genre import Genre
@@ -40,3 +41,8 @@ def genres():
 @pytest.fixture
 def actors():
     return [Actor(f'Actor{i}') for i in range(10)]
+
+
+@pytest.fixture
+def reader():
+    return MovieFileCSVReader('../datafiles/Data1000Movies.csv')

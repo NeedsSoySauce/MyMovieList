@@ -1,6 +1,6 @@
 class Director:
 
-    def __init__(self, director_full_name: str):
+    def __init__(self, director_full_name: str) -> None:
         if director_full_name == "" or type(director_full_name) is not str:
             self.__director_full_name = None
         else:

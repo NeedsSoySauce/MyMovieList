@@ -1,5 +1,5 @@
 class Genre:
-    def __init__(self, genre_name: str):
+    def __init__(self, genre_name: str) -> None:
         if genre_name == "" or type(genre_name) is not str:
             self._genre_name = None
         else:

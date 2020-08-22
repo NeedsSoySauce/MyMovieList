@@ -7,6 +7,7 @@ from domainmodel.genre import Genre
 from domainmodel.movie import Movie
 from domainmodel.person import Person
 from domainmodel.review import Review
+from domainmodel.user import User
 
 
 @pytest.fixture
@@ -45,6 +46,11 @@ def actors():
 
 
 @pytest.fixture
+def movies():
+    return [Movie(f'Movie{i}', 2020) for i in range(10)]
+
+
+@pytest.fixture
 def reader():
     return MovieFileCSVReader('./datafiles/Data1000Movies.csv')
 
@@ -52,3 +58,13 @@ def reader():
 @pytest.fixture
 def review(movie):
     return Review(movie, "Text  with  some  spaces", 1)
+
+
+@pytest.fixture
+def reviews(movies):
+    return [Review(movie, f'Review{i}', 1) for i, movie in enumerate(movies)]
+
+
+@pytest.fixture
+def user():
+    return User("username", "correcthorsebatterystaple")

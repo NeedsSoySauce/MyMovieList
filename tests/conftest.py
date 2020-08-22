@@ -8,6 +8,7 @@ from domainmodel.movie import Movie
 from domainmodel.person import Person
 from domainmodel.review import Review
 from domainmodel.user import User
+from domainmodel.watchlist import WatchList
 
 
 @pytest.fixture
@@ -68,3 +69,8 @@ def reviews(movies):
 @pytest.fixture
 def user():
     return User("username", "correcthorsebatterystaple")
+
+
+@pytest.fixture
+def watchlist():
+    return WatchList()

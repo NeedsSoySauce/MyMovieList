@@ -119,6 +119,84 @@ def test_runtime_minutes_invalid_type(movie):
         movie.runtime_minutes = 1.2
 
 
+def test_rating(movie):
+    movie.rating = 0.0
+    assert movie.rating == pytest.approx(0.0)
+
+    movie.rating = 10.0
+    assert movie.rating == pytest.approx(10.0)
+
+
+def test_rating_invalid_value(movie):
+    with pytest.raises(ValueError):
+        movie.rating = -1.0
+
+    with pytest.raises(ValueError):
+        movie.rating = 11.0
+
+
+def test_rating_invalid_type(movie):
+    with pytest.raises(TypeError):
+        movie.rating = "12"
+
+
+def test_votes(movie):
+    movie.votes = 0
+    assert movie.votes == 0
+
+    movie.votes = 1
+    assert movie.votes == 1
+
+
+def test_votes_invalid_value(movie):
+    with pytest.raises(ValueError):
+        movie.votes = -1
+
+
+def test_votes_invalid_type(movie):
+    with pytest.raises(TypeError):
+        movie.votes = 12.5
+
+
+def test_revenue_millions(movie):
+    movie.revenue_millions = 0.0
+    assert movie.revenue_millions == pytest.approx(0.0)
+
+    movie.revenue_millions = 0.01
+    assert movie.revenue_millions == pytest.approx(0.01)
+
+
+def test_revenue_millions_invalid_value(movie):
+    with pytest.raises(ValueError):
+        movie.revenue_millions = -1.0
+
+
+def test_revenue_millions_invalid_type(movie):
+    with pytest.raises(TypeError):
+        movie.revenue_millions = "400"
+
+
+def test_metascore(movie):
+    movie.metascore = 0
+    assert movie.metascore == 0
+
+    movie.metascore = 100
+    assert movie.metascore == 100
+
+
+def test_metascore_invalid_value(movie):
+    with pytest.raises(ValueError):
+        movie.metascore = -1
+
+    with pytest.raises(ValueError):
+        movie.metascore = 101
+
+
+def test_metascore_invalid_type(movie):
+    with pytest.raises(TypeError):
+        movie.metascore = 50.5
+
+
 def test_repr(movie):
     assert repr(movie) == "<Movie TestMovie, 2020>"
 

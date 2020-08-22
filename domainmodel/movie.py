@@ -14,6 +14,10 @@ class Movie:
         self._actors: List[Actor] = None
         self._genres: List[Genre] = None
         self._runtime_minutes: int = None
+        self._rating: float = None
+        self._votes: int = None
+        self._revenue_millions: float = None
+        self._metascore: float = None
 
     @property
     def _title(self):
@@ -117,6 +121,62 @@ class Movie:
             raise ValueError("'runtime_minutes' must be greater than or equal to 1")
 
         self._runtime_minutes = runtime_minutes
+
+    @property
+    def rating(self):
+        return self._rating
+
+    @rating.setter
+    def rating(self, rating: float):
+        if not isinstance(rating, float):
+            raise TypeError(f"'rating' must be of type 'float' but was '{type(rating).__name__}'")
+
+        if rating < 0 or rating > 10:
+            raise ValueError("'rating' must be greater than or equal to 0 and less than or equal to 10")
+
+        self._rating = rating
+
+    @property
+    def votes(self):
+        return self._votes
+
+    @votes.setter
+    def votes(self, votes: int):
+        if not isinstance(votes, int):
+            raise TypeError(f"'votes' must be of type 'int' but was '{type(votes).__name__}'")
+
+        if votes < 0:
+            raise ValueError("'votes' must be greater than or equal to 0")
+
+        self._votes = votes
+
+    @property
+    def revenue_millions(self):
+        return self._revenue_millions
+
+    @revenue_millions.setter
+    def revenue_millions(self, revenue_millions: float):
+        if not isinstance(revenue_millions, float):
+            raise TypeError(f"'revenue_millions' must be of type 'float' but was '{type(revenue_millions).__name__}'")
+
+        if revenue_millions < 0:
+            raise ValueError("'revenue_millions' must be greater than or equal to 0")
+
+        self._revenue_millions = revenue_millions
+
+    @property
+    def metascore(self):
+        return self._metascore
+
+    @metascore.setter
+    def metascore(self, metascore: int):
+        if not isinstance(metascore, int):
+            raise TypeError(f"'metascore' must be of type 'int' but was '{type(metascore).__name__}'")
+
+        if metascore < 0 or metascore > 100:
+            raise ValueError("'metascore' must be greater than or equal to 0 and less than or equal to 100")
+
+        self._metascore = metascore
 
     def __repr__(self) -> str:
         return f'<{type(self).__name__} {self._title}, {self._release_date}>'

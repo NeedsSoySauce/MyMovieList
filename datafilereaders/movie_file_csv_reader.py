@@ -44,6 +44,14 @@ class MovieFileCSVReader:
                 movie.director = director
                 movie.actors = actors
                 movie.runtime_minutes = runtime_minutes
+                movie.rating = rating
+                movie.votes = votes
+
+                if revenue_millions:
+                    movie.revenue_millions = revenue_millions
+
+                if metascore:
+                    movie.metascore = metascore
 
                 unique_movies.add(movie)
 

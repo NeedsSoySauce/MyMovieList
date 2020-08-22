@@ -6,6 +6,7 @@ from domainmodel.director import Director
 from domainmodel.genre import Genre
 from domainmodel.movie import Movie
 from domainmodel.person import Person
+from domainmodel.review import Review
 
 
 @pytest.fixture
@@ -46,3 +47,8 @@ def actors():
 @pytest.fixture
 def reader():
     return MovieFileCSVReader('./datafiles/Data1000Movies.csv')
+
+
+@pytest.fixture
+def review(movie):
+    return Review(movie, "Text  with  some  spaces", 1)

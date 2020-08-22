@@ -7,8 +7,8 @@ from domainmodel.director import Director
 
 class Movie:
     def __init__(self, title: str, release_date: int) -> None:
-        self.title = title
-        self.release_date = release_date
+        self._title = title
+        self._release_date = release_date
         self._description: str = None
         self._director: Director = None
         self._actors: List[Actor] = None
@@ -16,29 +16,41 @@ class Movie:
         self._runtime_minutes: int = None
 
     @property
-    def title(self):
-        return self._title
+    def _title(self):
+        return self.__title
 
-    @title.setter
-    def title(self, title: str):
+    @_title.setter
+    def _title(self, title: str):
         if title == "" or not isinstance(title, str):
-            self._title = None
+            self.__title = None
         else:
-            self._title = title.strip()
+            self.__title = title.strip()
 
     @property
-    def release_date(self):
-        return self._release_date
+    def _release_date(self):
+        return self.__release_date
 
-    @release_date.setter
-    def release_date(self, release_date: int):
+    @_release_date.setter
+    def _release_date(self, release_date: int):
         if not isinstance(release_date, int):
             raise TypeError(f"'release_date' must be of type 'int' but was '{type(release_date).__name__}'")
 
         if release_date < 1900:
             raise ValueError("'release_date' must be greater than or equal to 1900")
 
-        self._release_date = release_date
+        self.__release_date = release_date
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, title: str):
+        self._title = title
+
+    @property
+    def release_date(self):
+        return self._release_date
 
     @property
     def description(self):

@@ -1,0 +1,15 @@
+# Editor and IDE specific files
+.vscode
+.idea
+
+# virtualenv files
+.virtualenv
+
+# Coderunner submission files
+/domainmodel/merged.py
+
+# pytest
+**/.pytest_cache
+
+# python
+**/__pycache__

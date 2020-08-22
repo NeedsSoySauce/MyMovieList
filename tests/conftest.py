@@ -45,4 +45,4 @@ def actors():
 
 @pytest.fixture
 def reader():
-    return MovieFileCSVReader('../datafiles/Data1000Movies.csv')
+    return MovieFileCSVReader('./datafiles/Data1000Movies.csv')

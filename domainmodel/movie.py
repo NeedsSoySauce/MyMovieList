@@ -17,7 +17,6 @@ class Movie:
         self._rating: float = None
         self._votes: int = None
         self._revenue_millions: float = None
-        self._metascore: float = None
 
     @property
     def _title(self):
@@ -99,7 +98,7 @@ class Movie:
         return self._genres
 
     @genres.setter
-    def genres(self, genres: List[Actor]):
+    def genres(self, genres: List[Genre]):
         if not isinstance(genres, list):
             raise TypeError(f"'genres' must be of type 'List[Genre]' but was '{type(genres).__name__}'")
 
@@ -220,7 +219,7 @@ class Movie:
     def add_genre(self, genre: Genre) -> None:
         """ Adds the given Genre to this movie. """
         if not isinstance(genre, Genre):
-            raise TypeError(f"'genre' must be of type 'Actor' but was '{type(genre).__name__}'")
+            raise TypeError(f"'genre' must be of type 'Genre' but was '{type(genre).__name__}'")
 
         if self._genres is None:
             self._genres = []
@@ -232,7 +231,7 @@ class Movie:
     def remove_genre(self, genre: Genre) -> None:
         """ Removes the given Genre from this movie. Does nothing if the given Genre isn't in this movie. """
         if not isinstance(genre, Genre):
-            raise TypeError(f"'genre' must be of type 'Actor' but was '{type(genre).__name__}'")
+            raise TypeError(f"'genre' must be of type 'Genre' but was '{type(genre).__name__}'")
 
         if self._genres is None or genre not in self._genres:
             return

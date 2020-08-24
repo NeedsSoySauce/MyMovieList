@@ -245,11 +245,47 @@ def test_add_review_invalid_type(user):
         user.add_review(123)
 
 
-def test_example():
-    user1 = User('Martin', 'pw12345')
-    user2 = User('Ian', 'pw67890')
-    user3 = User('Daniel', 'pw87465')
+def test_add_to_watchlist(user, movie):
+    user.add_to_watchlist(movie)
+    assert user.watchlist_size() == 1
 
-    assert repr(user1) == '<User martin>'
-    assert repr(user2) == '<User ian>'
-    assert repr(user3) == '<User daniel>'
+
+def test_add_to_watchlist_duplicate(user, movie):
+    user.add_to_watchlist(movie)
+    user.add_to_watchlist(movie)
+    assert user.watchlist_size() == 1
+
+
+def test_add_to_watchlist_invalid_type(user):
+    with pytest.raises(TypeError):
+        user.add_to_watchlist(123)
+
+
+def test_remove_from_empty_watchlist(user, movie):
+    user.remove_from_watchlist(movie)
+    assert user.watchlist_size() == 0
+
+
+def test_remove_from_non_empty_watchlist(user, movie):
+    user.add_to_watchlist(movie)
+    user.remove_from_watchlist(movie)
+    assert user.watchlist_size() == 0
+
+
+def test_remove_from_watchlist_duplicate(user, movie):
+    user.add_to_watchlist(movie)
+    user.remove_from_watchlist(movie)
+    user.remove_from_watchlist(movie)
+    assert user.watchlist_size() == 0
+
+
+def test_remove_from_watchlist_invalid_type(user):
+    with pytest.raises(TypeError):
+        user.remove_from_watchlist(123)
+
+
+def test_watch_movie_updates_watchlist(user, movie):
+    user.add_to_watchlist(movie)
+    user.watch_movie(movie)
+
+    assert user.watchlist_size() == 0

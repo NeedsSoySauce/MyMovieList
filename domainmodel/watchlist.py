@@ -48,3 +48,6 @@ class WatchList:
 
     def __iter__(self) -> Iterator[Movie]:
         return iter(self._movies)
+
+    def __contains__(self, item):
+        return item in self._movies

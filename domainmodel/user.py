@@ -55,6 +55,10 @@ class User:
     def time_spent_watching_movies_minutes(self):
         return self._time_spent_watching_movies_minutes
 
+    @property
+    def watchlist(self):
+        return self._watchlist
+
     def __repr__(self) -> str:
         return f'<{type(self).__name__} {self._user_name}>'
 

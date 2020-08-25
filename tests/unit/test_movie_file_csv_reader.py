@@ -97,3 +97,10 @@ def test_dataset_of_directors_is_valid(reader: MovieFileCSVReader):
     directors = reader.dataset_of_directors
 
     assert all(director.director_full_name is not None for director in directors)
+
+
+def test_dataset_of_genres_is_valid(reader: MovieFileCSVReader):
+    reader.read_csv_file()
+    genres = reader.dataset_of_genres
+
+    assert all(genre.genre_name is not None for genre in genres)

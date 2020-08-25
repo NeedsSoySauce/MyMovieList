@@ -32,6 +32,10 @@ class MovieFileCSVReader:
         self._dataset_of_directors: List[Director] = []
         self._dataset_of_genres: List[Genre] = []
 
+        self._actors: Dict[Actor, Actor] = {}
+        self._directors: Dict[Director, Director] = {}
+        self._genres: Dict[Genre, Genre] = {}
+
     @property
     def _file_name(self):
         return self.__file_name
@@ -62,8 +66,23 @@ class MovieFileCSVReader:
     def dataset_of_genres(self):
         return self._dataset_of_genres
 
-    @staticmethod
-    def _read_row(row: _ROW) -> Movie:
+    def _get_dict_value(self, key, dictionary: Dict):
+        try:
+            return dictionary[key]
+        except KeyError:
+            dictionary[key] = key
+            return key
+
+    def _get_actor(self, actor: Actor) -> Actor:
+        return self._get_dict_value(actor, self._actors)
+
+    def _get_director(self, director: Director) -> Director:
+        return self._get_dict_value(director, self._directors)
+
+    def _get_genre(self, genre: Genre) -> Genre:
+        return self._get_dict_value(genre, self._genres)
+
+    def _read_row(self, row: _ROW) -> Movie:
         """
         Helper method to construct a Movie from a row.
 
@@ -74,10 +93,10 @@ class MovieFileCSVReader:
 
         try:
             title = row['Title']
-            genres = [Genre(name) for name in row['Genre'].split(',')]
+            genres = [self._get_genre(Genre(name)) for name in row['Genre'].split(',')]
             description = row['Description']
-            director = Director(row['Director'])
-            actors = [Actor(name) for name in row['Actors'].split(',')]
+            director = self._get_director(Director(row['Director']))
+            actors = [self._get_actor(Actor(name)) for name in row['Actors'].split(',')]
             release_year = int(row['Year'])
             runtime_minutes = int(row['Runtime (Minutes)'])
             rating = float(row['Rating'])
@@ -115,6 +134,10 @@ class MovieFileCSVReader:
         unique_directors: Set[Director] = set()
         unique_genres: Set[Genre] = set()
 
+        self._actors = {}
+        self._directors = {}
+        self._genres = {}
+
         with open(self._file_name, mode='r', encoding='utf-8-sig') as file:
             movie_file_reader = DictReader(file)
 
@@ -132,8 +155,12 @@ class MovieFileCSVReader:
 
                 unique_movies.add(movie)
 
+                # Add colleagues to each actor
                 for actor in movie.actors:
                     unique_actors.add(actor)
+
+                    for colleague in movie.actors:
+                        actor.add_actor_colleague(colleague)
 
                 unique_directors.add(movie.director)
 

@@ -98,3 +98,14 @@ def test_iterator(watchlist, movies):
 
     for i, movie in enumerate(movies):
         assert movie == movies[i]
+
+
+def test_contains(watchlist, movie, movies):
+    for movie in movies:
+        watchlist.add_movie(movie)
+
+    for i, movie in enumerate(movies):
+        assert movie in watchlist
+
+    assert not (Movie("test", 2020) in watchlist)
+    assert not (123 in watchlist)

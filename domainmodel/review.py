@@ -4,11 +4,11 @@ from domainmodel.movie import Movie
 
 
 class Review:
-    def __init__(self, movie: Movie, review_text: str, rating: int) -> None:
+    def __init__(self, movie: Movie, review_text: str, rating: int, timestamp: datetime = None) -> None:
         self._movie = movie
         self._review_text = review_text
         self._rating = rating
-        self._timestamp = datetime.utcnow()
+        self._timestamp = timestamp or datetime.utcnow()
 
     @property
     def _movie(self):
@@ -41,6 +41,17 @@ class Review:
             self.__rating = None
         else:
             self.__rating = rating
+
+    @property
+    def _timestamp(self):
+        return self.__timestamp
+
+    @_timestamp.setter
+    def _timestamp(self, timestamp):
+        if not isinstance(timestamp, datetime):
+            raise TypeError(f"'timestamp' must be of type 'datetime' but was '{type(timestamp).__name__}'")
+        else:
+            self.__timestamp = timestamp
 
     @property
     def movie(self):

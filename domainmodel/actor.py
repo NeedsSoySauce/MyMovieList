@@ -22,7 +22,9 @@ class Actor(Person):
     def add_actor_colleague(self, colleague: 'Actor') -> None:
         if not isinstance(colleague, Actor):
             raise TypeError(f"'colleague' must be of type '{type(self).__name__}' but was '{type(colleague).__name__}'")
-        self._colleagues.add(colleague)
+
+        if colleague != self:
+            self._colleagues.add(colleague)
 
     def check_if_this_actor_worked_with(self, colleague: 'Actor') -> bool:
         if not isinstance(colleague, Actor):

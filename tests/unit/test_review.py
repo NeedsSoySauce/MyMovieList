@@ -30,6 +30,17 @@ def test_constructor(movie):
     assert review.rating == rating
     assert review.timestamp.timestamp() == pytest.approx(datetime.utcnow().timestamp(), abs=_TIMESTAMP_TOLERANCE)
 
+    review_text = "   Text    with   spaces  \n"
+    review_text_expected = "Text    with   spaces"
+    rating = 10
+    timestamp = datetime(2020, 1, 1)
+    review = Review(movie, review_text, rating, timestamp)
+
+    assert review.movie == movie
+    assert review.review_text == review_text_expected
+    assert review.rating == rating
+    assert review.timestamp == timestamp
+
 
 def test_constructor_invalid_movie_type():
     movie = 42
@@ -94,6 +105,15 @@ def test_constructor_invalid_rating_type(movie):
     assert review.review_text == review_text_expected
     assert review.rating is None
     assert review.timestamp.timestamp() == pytest.approx(datetime.utcnow().timestamp(), abs=_TIMESTAMP_TOLERANCE)
+
+
+def test_construction_invalid_timestamp_type(movie):
+    review_text = "   Text    with   spaces  \n"
+    rating = 10
+    timestamp = 123
+
+    with pytest.raises(TypeError):
+        _ = Review(movie, review_text, rating, timestamp)
 
 
 def test_repr(review):

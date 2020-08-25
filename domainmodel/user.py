@@ -2,6 +2,7 @@ from typing import List
 
 from domainmodel.movie import Movie
 from domainmodel.review import Review
+from domainmodel.watchlist import WatchList
 
 
 class User:
@@ -11,6 +12,7 @@ class User:
         self._watched_movies: List[Movie] = []
         self._reviews: List[Review] = []
         self._time_spent_watching_movies_minutes: int = 0
+        self._watchlist = WatchList()
 
     @property
     def _user_name(self):
@@ -53,6 +55,10 @@ class User:
     def time_spent_watching_movies_minutes(self):
         return self._time_spent_watching_movies_minutes
 
+    @property
+    def watchlist(self):
+        return self._watchlist
+
     def __repr__(self) -> str:
         return f'<{type(self).__name__} {self._user_name}>'
 
@@ -71,7 +77,9 @@ class User:
         return hash(self._user_name)
 
     def watch_movie(self, movie: Movie) -> None:
-        """ Adds the given movie to this user's list of watched movies and updates time_spent_watching_movies_minutes.
+        """
+        Adds the given movie to this user's list of watched movies, updates time_spent_watching_movies_minutes, and
+        removes the movie from this user's WatchList (if it's in their WatchList).
         """
         if not isinstance(movie, Movie):
             raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
@@ -80,6 +88,7 @@ class User:
             return
 
         self._watched_movies.append(movie)
+        self._watchlist.remove_movie(movie)
 
         if isinstance(movie.runtime_minutes, int) and movie.runtime_minutes > 0:
             self._time_spent_watching_movies_minutes += movie.runtime_minutes
@@ -93,3 +102,25 @@ class User:
             return
 
         self._reviews.append(review)
+
+    def add_to_watchlist(self, movie: Movie) -> None:
+        """ Adds the given movie to this user's WatchList. Does nothing if the user has already watched the given movie.
+        """
+        if not isinstance(movie, Movie):
+            raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
+
+        if movie in self._watched_movies:
+            return
+
+        self._watchlist.add_movie(movie)
+
+    def remove_from_watchlist(self, movie: Movie) -> None:
+        """ Removes the given movie from this user's WatchList. """
+        if not isinstance(movie, Movie):
+            raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
+
+        self._watchlist.remove_movie(movie)
+
+    def watchlist_size(self) -> int:
+        """ Returns the number of movies in this user's WatchList. """
+        return self._watchlist.size()

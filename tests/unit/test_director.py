@@ -1,5 +1,5 @@
 import pytest
-from domainmodel.director import Director
+from movie.domain.director import Director
 
 
 def test_constructor():

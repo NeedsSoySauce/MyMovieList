@@ -1,5 +1,5 @@
 import pytest
-from domainmodel.person import Person
+from movie.domain.person import Person
 
 
 def test_constructor():

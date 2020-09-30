@@ -1,9 +1,9 @@
 import pytest
 
-from domainmodel.actor import Actor
-from domainmodel.director import Director
-from domainmodel.genre import Genre
-from domainmodel.movie import Movie
+from movie.domain.actor import Actor
+from movie.domain.director import Director
+from movie.domain.genre import Genre
+from movie.domain.movie import Movie
 
 
 def test_constructor():

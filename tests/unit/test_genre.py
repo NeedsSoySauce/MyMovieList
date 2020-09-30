@@ -1,5 +1,5 @@
 import pytest
-from domainmodel.genre import Genre
+from movie.domain.genre import Genre
 
 
 def test_constructor():

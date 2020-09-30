@@ -1,15 +1,15 @@
 import pytest
 
-from activitysimulations.movie_watching_simulation import MovieWatchingSimulation
-from datafilereaders.movie_file_csv_reader import MovieFileCSVReader
-from domainmodel.actor import Actor
-from domainmodel.director import Director
-from domainmodel.genre import Genre
-from domainmodel.movie import Movie
-from domainmodel.person import Person
-from domainmodel.review import Review
-from domainmodel.user import User
-from domainmodel.watchlist import WatchList
+from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
+from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
+from movie.domain.actor import Actor
+from movie.domain.director import Director
+from movie.domain.genre import Genre
+from movie.domain.movie import Movie
+from movie.domain.person import Person
+from movie.domain.review import Review
+from movie.domain.user import User
+from movie.domain.watchlist import WatchList
 
 
 @pytest.fixture
@@ -59,7 +59,7 @@ def movies():
 
 @pytest.fixture
 def reader():
-    return MovieFileCSVReader('./datafiles/Data1000Movies.csv')
+    return MovieFileCSVReader('./movie/adapters/data/Data1000Movies.csv')
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 import pytest
 
-from domainmodel.user import User
+from movie.domain.user import User
 
 
 def test_constructor():

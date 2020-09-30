@@ -1,8 +1,8 @@
 from typing import List
 
-from domainmodel.movie import Movie
-from domainmodel.review import Review
-from domainmodel.watchlist import WatchList
+from .movie import Movie
+from .review import Review
+from .watchlist import WatchList
 
 
 class User:

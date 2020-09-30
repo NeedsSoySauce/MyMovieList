@@ -1,8 +1,8 @@
 import pytest
 from datetime import datetime
 
-from domainmodel.movie import Movie
-from domainmodel.review import Review
+from movie.domain.movie import Movie
+from movie.domain.review import Review
 
 # How many seconds review.timestamp should be within of the current POSIX timestamp when it's created
 _TIMESTAMP_TOLERANCE = 0.05

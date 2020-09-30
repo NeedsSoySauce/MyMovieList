@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from domainmodel.movie import Movie
+from .movie import Movie
 
 
 class Review:

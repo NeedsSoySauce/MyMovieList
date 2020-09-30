@@ -4,9 +4,9 @@ from random import randint, sample, choice, random
 
 from .abstract_movie_watching_simulation import AbstractMovingWatchingSimulation
 
-from domainmodel.movie import Movie
-from domainmodel.user import User
-from domainmodel.review import Review
+from movie.domain.movie import Movie
+from movie.domain.user import User
+from movie.domain.review import Review
 
 
 def _rand_string(min_length: int = 8, max_length: int = 32):

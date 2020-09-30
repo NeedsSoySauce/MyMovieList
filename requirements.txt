@@ -1,1 +1,7 @@
 pytest
+Flask
+flask-wtf
+Jinja2
+python-dotenv
+better-profanity
+password-validator

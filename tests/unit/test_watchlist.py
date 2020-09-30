@@ -1,7 +1,7 @@
 import pytest
 
-from domainmodel.movie import Movie
-from domainmodel.watchlist import WatchList
+from movie.domain.movie import Movie
+from movie.domain.watchlist import WatchList
 
 
 def test_add_movie(watchlist, movie):

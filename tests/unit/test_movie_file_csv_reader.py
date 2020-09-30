@@ -1,6 +1,6 @@
 import pytest
 
-from datafilereaders.movie_file_csv_reader import MovieFileCSVReader
+from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 
 
 def test_constructor_invalid_file_extension():

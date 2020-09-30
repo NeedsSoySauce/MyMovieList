@@ -1,10 +1,10 @@
 from typing import List, Set, Union, Dict, OrderedDict
 from csv import DictReader
 
-from domainmodel.movie import Movie
-from domainmodel.actor import Actor
-from domainmodel.genre import Genre
-from domainmodel.director import Director
+from movie.domain.movie import Movie
+from movie.domain.actor import Actor
+from movie.domain.genre import Genre
+from movie.domain.director import Director
 
 
 class MovieFileCSVReader:

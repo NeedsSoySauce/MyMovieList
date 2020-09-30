@@ -1,5 +1,5 @@
 import pytest
-from domainmodel.actor import Actor
+from movie.domain.actor import Actor
 
 
 def test_constructor():

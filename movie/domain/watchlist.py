@@ -1,6 +1,6 @@
 from typing import Union, List, Iterator
 
-from domainmodel.movie import Movie
+from .movie import Movie
 
 
 class WatchList:

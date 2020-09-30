@@ -1,9 +1,9 @@
 from typing import List, NamedTuple
 from abc import ABC, abstractmethod
 
-from domainmodel.movie import Movie
-from domainmodel.user import User
-from domainmodel.review import Review
+from movie.domain.movie import Movie
+from movie.domain.user import User
+from movie.domain.review import Review
 
 
 class AbstractMovingWatchingSimulation(ABC):

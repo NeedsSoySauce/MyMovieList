@@ -1,7 +1,7 @@
 import pytest
 
-from activitysimulations.movie_watching_simulation import MovieWatchingSimulation
-from domainmodel.movie import Movie
+from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
+from movie.domain.movie import Movie
 
 
 def test_constructor(populated_movies):

@@ -1,240 +1,58 @@
-import csv
-import os
-from datetime import date, datetime
 from typing import List
 
-from bisect import bisect, bisect_left, insort_left
+from movie.adapters.repository import AbstractRepository
+from movie.domain.movie import Movie
 
-from werkzeug.security import generate_password_hash
-
-from movie.adapters.repository import AbstractRepository, RepositoryException
-from movie.domain.model import Article, Tag, User, Comment, make_tag_association, make_comment
+from bisect import insort
+from math import ceil
 
 
 class MemoryRepository(AbstractRepository):
-    # Articles ordered by date, not id. id is assumed unique.
+    DEFAULT_PAGE_SIZE = 25
 
     def __init__(self):
-        self._articles = list()
-        self._articles_index = dict()
-        self._tags = list()
-        self._users = list()
-        self._comments = list()
+        self._movies: List[Movie] = []
+        self._number_of_movies: int = 0
 
-    def add_user(self, user: User):
-        self._users.append(user)
+    def add_movie(self, movie: Movie) -> None:
+        if not isinstance(movie, Movie):
+            raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
 
-    def get_user(self, username) -> User:
-        return next((user for user in self._users if user.username == username), None)
+        if movie in self._movies:
+            return
 
-    def add_article(self, article: Article):
-        insort_left(self._articles, article)
-        self._articles_index[article.id] = article
+        insort(self._movies, movie)
+        self._number_of_movies += 1
 
-    def get_article(self, id: int) -> Article:
-        article = None
+    def add_movies(self, movies: List[Movie]) -> None:
+        if not isinstance(movies, list):
+            raise TypeError(f"'movies' must be of type 'List[Movie]' but was '{type(movies).__name__}'")
 
-        try:
-            article = self._articles_index[id]
-        except KeyError:
-            pass  # Ignore exception and return None.
+        for movie in movies:
+            self.add_movie(movie)
 
-        return article
+    def get_movies(self) -> List[Movie]:
+        return self._movies
 
-    def get_articles_by_date(self, target_date: date) -> List[Article]:
-        target_article = Article(
-            date=target_date,
-            title=None,
-            first_para=None,
-            hyperlink=None,
-            image_hyperlink=None
-        )
-        matching_articles = list()
+    def get_number_of_movies(self) -> int:
+        return self._number_of_movies
 
-        try:
-            index = self.article_index(target_article)
-            for article in self._articles[index:None]:
-                if article.date == target_date:
-                    matching_articles.append(article)
-                else:
-                    break
-        except ValueError:
-            # No articles for specified date. Simply return an empty list.
-            pass
+    def get_movies_page(self, page_number: int, page_size: int = DEFAULT_PAGE_SIZE) -> List[Movie]:
+        if not isinstance(page_number, int):
+            raise TypeError(f"'page_number' must be of type 'int' but was '{type(page_number).__name__}'")
 
-        return matching_articles
+        if not isinstance(page_size, int):
+            raise TypeError(f"'page_size' must be of type 'int' but was '{type(page_size).__name__}'")
 
-    def get_number_of_articles(self):
-        return len(self._articles)
+        if page_number < 0:
+            raise ValueError(f"'page_number' must be at least zero but was {page_number}")
 
-    def get_first_article(self):
-        article = None
+        if page_size < 1:
+            raise ValueError(f"'page_size' must be at least 1 but was {page_size}")
 
-        if len(self._articles) > 0:
-            article = self._articles[0]
-        return article
+        # If there arent enough movies to create an nth page of the given size
+        if ceil(self._number_of_movies / page_size) <= page_number:
+            raise ValueError("insufficient data to create page")
 
-    def get_last_article(self):
-        article = None
-
-        if len(self._articles) > 0:
-            article = self._articles[-1]
-        return article
-
-    def get_articles_by_id(self, id_list):
-        # Strip out any ids in id_list that don't represent Article ids in the repository.
-        existing_ids = [id for id in id_list if id in self._articles_index]
-
-        # Fetch the Articles.
-        articles = [self._articles_index[id] for id in existing_ids]
-        return articles
-
-    def get_article_ids_for_tag(self, tag_name: str):
-        # Linear search, to find the first occurrence of a Tag with the name tag_name.
-        tag = next((tag for tag in self._tags if tag.tag_name == tag_name), None)
-
-        # Retrieve the ids of articles associated with the Tag.
-        if tag is not None:
-            article_ids = [article.id for article in tag.tagged_articles]
-        else:
-            # No Tag with name tag_name, so return an empty list.
-            article_ids = list()
-
-        return article_ids
-
-    def get_date_of_previous_article(self, article: Article):
-        previous_date = None
-
-        try:
-            index = self.article_index(article)
-            for stored_article in reversed(self._articles[0:index]):
-                if stored_article.date < article.date:
-                    previous_date = stored_article.date
-                    break
-        except ValueError:
-            # No earlier articles, so return None.
-            pass
-
-        return previous_date
-
-    def get_date_of_next_article(self, article: Article):
-        next_date = None
-
-        try:
-            index = self.article_index(article)
-            for stored_article in self._articles[index + 1:len(self._articles)]:
-                if stored_article.date > article.date:
-                    next_date = stored_article.date
-                    break
-        except ValueError:
-            # No subsequent articles, so return None.
-            pass
-
-        return next_date
-
-    def add_tag(self, tag: Tag):
-        self._tags.append(tag)
-
-    def get_tags(self) -> List[Tag]:
-        return self._tags
-
-    def add_comment(self, comment: Comment):
-        super().add_comment(comment)
-        self._comments.append(comment)
-
-    def get_comments(self):
-        return self._comments
-
-    # Helper method to return article index.
-    def article_index(self, article: Article):
-        index = bisect_left(self._articles, article)
-        if index != len(self._articles) and self._articles[index].date == article.date:
-            return index
-        raise ValueError
-
-
-def read_csv_file(filename: str):
-    with open(filename, encoding='utf-8-sig') as infile:
-        reader = csv.reader(infile)
-
-        # Read first line of the the CSV file.
-        headers = next(reader)
-
-        # Read remaining rows from the CSV file.
-        for row in reader:
-            # Strip any leading/trailing white space from data read.
-            row = [item.strip() for item in row]
-            yield row
-
-
-def load_articles_and_tags(data_path: str, repo: MemoryRepository):
-    tags = dict()
-
-    for data_row in read_csv_file(os.path.join(data_path, 'news_articles.csv')):
-
-        article_key = int(data_row[0])
-        number_of_tags = len(data_row) - 6
-        article_tags = data_row[-number_of_tags:]
-
-        # Add any new tags; associate the current article with tags.
-        for tag in article_tags:
-            if tag not in tags.keys():
-                tags[tag] = list()
-            tags[tag].append(article_key)
-        del data_row[-number_of_tags:]
-
-        # Create Article object.
-        article = Article(
-            date=date.fromisoformat(data_row[1]),
-            title=data_row[2],
-            first_para=data_row[3],
-            hyperlink=data_row[4],
-            image_hyperlink=data_row[5],
-            id=article_key
-        )
-
-        # Add the Article to the repository.
-        repo.add_article(article)
-
-    # Create Tag objects, associate them with Articles and add them to the repository.
-    for tag_name in tags.keys():
-        tag = Tag(tag_name)
-        for article_id in tags[tag_name]:
-            article = repo.get_article(article_id)
-            make_tag_association(article, tag)
-        repo.add_tag(tag)
-
-
-def load_users(data_path: str, repo: MemoryRepository):
-    users = dict()
-
-    for data_row in read_csv_file(os.path.join(data_path, 'users.csv')):
-        user = User(
-            username=data_row[1],
-            password=generate_password_hash(data_row[2])
-        )
-        repo.add_user(user)
-        users[data_row[0]] = user
-    return users
-
-
-def load_comments(data_path: str, repo: MemoryRepository, users):
-    for data_row in read_csv_file(os.path.join(data_path, 'comments.csv')):
-        comment = make_comment(
-            comment_text=data_row[3],
-            user=users[data_row[1]],
-            article=repo.get_article(int(data_row[2])),
-            timestamp=datetime.fromisoformat(data_row[4])
-        )
-        repo.add_comment(comment)
-
-
-def populate(data_path: str, repo: MemoryRepository):
-    # Load articles and tags into the repository.
-    load_articles_and_tags(data_path, repo)
-
-    # Load users into the repository.
-    users = load_users(data_path, repo)
-
-    # Load comments into the repository.
-    load_comments(data_path, repo, users)
+        offset = page_number * page_size
+        return self._movies[offset:min(offset + page_size, self._number_of_movies)]

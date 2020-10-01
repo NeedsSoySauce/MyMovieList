@@ -10,6 +10,7 @@ from movie.domain.person import Person
 from movie.domain.review import Review
 from movie.domain.user import User
 from movie.domain.watchlist import WatchList
+from movie.adapters.memory_repository import MemoryRepository
 
 
 @pytest.fixture
@@ -110,3 +111,15 @@ def populated_movies(genres, directors, actors):
 @pytest.fixture
 def movie_watching_simulation(populated_movies):
     return MovieWatchingSimulation(populated_movies)
+
+
+@pytest.fixture
+def memory_repository():
+    return MemoryRepository()
+
+
+@pytest.fixture
+def populated_memory_repository(populated_movies):
+    repository = MemoryRepository()
+    repository.add_movies(populated_movies)
+    return repository

@@ -50,20 +50,6 @@ def test_add_movies_invalid_type(movie, memory_repository: MemoryRepository):
         memory_repository.add_movies([movie, 123])
 
 
-def test_get_movies(movies, memory_repository):
-    memory_repository.add_movies(movies)
-
-    repo_movies = memory_repository.get_movies()
-    assert len(repo_movies) == len(movies)
-    assert all(movie in repo_movies for movie in movies)
-    assert sorted(repo_movies) == repo_movies
-
-
-def test_get_movies_empty(memory_repository):
-    movies = memory_repository.get_movies()
-    assert len(movies) == 0
-
-
 def test_get_number_of_movies(movies, memory_repository):
     memory_repository.add_movies(movies)
 

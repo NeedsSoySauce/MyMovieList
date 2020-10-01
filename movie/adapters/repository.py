@@ -18,11 +18,6 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_movies(self) -> List[Movie]:
-        """ Returns a list of all Movies in this repository ordered by title and then release date. """
-        raise NotImplementedError
-
-    @abc.abstractmethod
     def get_number_of_movies(self) -> int:
         """ Returns the number of movies in this repository. """
         raise NotImplementedError

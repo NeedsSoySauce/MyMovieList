@@ -31,9 +31,6 @@ class MemoryRepository(AbstractRepository):
         for movie in movies:
             self.add_movie(movie)
 
-    def get_movies(self) -> List[Movie]:
-        return self._movies
-
     def get_number_of_movies(self) -> int:
         return self._number_of_movies
 

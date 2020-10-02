@@ -1,47 +1,28 @@
 <!DOCTYPE html>
 
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>The COVID Pandemic of 2020</title>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/main.css') }}"
-    />
-	
-	<link
-      rel="bookmark"
-	  type="image/x-icon"
-      href="favicon.ico"
-    />
-	
-	<link
-      rel="icon"
-      href="favicon.ico"
-    />
-  </head>
+    <link rel="stylesheet" href="/static/css/main.css"/>
 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <!-- Favicons and accompanying code generating using https://favicon.io/emoji-favicons/film-frames -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon-16x16.png">
+    <link rel="manifest" href="/static/site.webmanifest">
 
-  <body>
-    <div id="body">
-      <!-- Include navigation partial. -->
-      {% include 'navigation.html' %}
+    <title>MyMovieList</title>
+</head>
 
-      <div id="content-2">
-        <!-- Include header partial. -->
-        {% include 'header.html' %}
+<body>
+<div id="body">
+    <!-- Navigation bar. -->
+    {% include 'navigation.html' %}
 
-        <div id="container">
-          <!-- Main content block to be supplied by page. -->
-          {% block content %} {% endblock %}
-
-          <!-- Include sidebar partial. -->
-          {% include 'sidebar.html' %}
-        </div>
-        
-      </div>
-    </div>
-  </body>
+    <!-- Content. -->
+    {% block content %} {% endblock %}
+</div>
+</body>
 </html>

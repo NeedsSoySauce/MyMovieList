@@ -119,7 +119,8 @@ def memory_repository():
 
 
 @pytest.fixture
-def populated_memory_repository(populated_movies):
+def populated_memory_repository(populated_movies, genres):
     repository = MemoryRepository()
     repository.add_movies(populated_movies)
+    repository.add_genres(genres)
     return repository

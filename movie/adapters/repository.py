@@ -1,12 +1,15 @@
 import abc
 from typing import List
-from datetime import date
 
 from movie.domain.movie import Movie
+from movie.domain.genre import Genre
 
-repo = None
+instance = None
+""" Application wide repository instance. """
+
 
 class AbstractRepository(abc.ABC):
+    DEFAULT_PAGE_SIZE = 25
 
     @abc.abstractmethod
     def add_movie(self, movie: Movie) -> None:
@@ -18,29 +21,60 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def add_genre(self, genre: Genre) -> None:
+        """ Adds the given Genre to this repository. Does nothing if the given genre has already been added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_genres(self, genre: List[Genre]) -> None:
+        """ Adds the given Genres to this repository. If a genre is already in this repository it won't be added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_number_of_movies(self) -> int:
         """ Returns the number of movies in this repository. """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_movies_page(self, page_number: int, page_size: int) -> List[Movie]:
+    def get_movies(self, page_number: int, page_size: int = DEFAULT_PAGE_SIZE, genres: List[Genre] = []) -> List[Movie]:
         """ Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
 
         Args:
             page_number (int): page number of the the page to return, starting from zero.
-            page_size (int): number of results per page. The last page may have less results than this.
+            page_size (int, optional): number of results per page. The last page may have less results than this.
+            genres (List[Genre], optional): genres to filter movies by. A movie must have all of the specified genres
+                                            for it to be included in the results.
         """
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_movies_page(self, page_number: int, page_size: int) -> List[Movie]:
-        """ Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
-
-        Args:
-            page_number (int): page number of the the page to return, starting from zero.
-            page_size (int): number of results per page. The last page may have less results than this.
-        """
+    def get_genres(self) -> List[Genre]:
+        """ Returns a list containing all genres in this repository ordered by each genres name. """
         raise NotImplementedError
 
     def __repr__(self):
         return f'<{type(self).__name__}>'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

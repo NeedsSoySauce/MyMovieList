@@ -5,7 +5,7 @@ import os
 from flask import Flask
 
 import movie.adapters.repository as repo
-# from movie.adapters.memory_repository import MemoryRepository, populate
+from movie.adapters.memory_repository import MemoryRepository
 
 
 def create_app(test_config=None):
@@ -25,10 +25,8 @@ def create_app(test_config=None):
 
     # Create the MemoryRepository implementation for a memory-based repository.
 
-    # TBD - integrate modified repository into project
-    # repo.repo_instance = MemoryRepository()
-    # populate(data_path, repo.repo_instance)
-    #
+    repo.instance = MemoryRepository()
+
     # # Build the application - these steps require an application context.
     # with app.app_context():
     #     # Register blueprints.

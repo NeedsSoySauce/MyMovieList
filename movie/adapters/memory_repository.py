@@ -61,6 +61,9 @@ class MemoryRepository(AbstractRepository):
         if not isinstance(page_size, int):
             raise TypeError(f"'page_size' must be of type 'int' but was '{type(page_size).__name__}'")
 
+        if not isinstance(genres, list) or any(not isinstance(genre, Genre) for genre in genres):
+            raise TypeError(f"'genres' must be of type 'List[Genre]' but was '{type(genres).__name__}'")
+
         if page_number < 0:
             raise ValueError(f"'page_number' must be at least zero but was {page_number}")
 

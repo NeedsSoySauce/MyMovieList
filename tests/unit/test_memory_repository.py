@@ -104,6 +104,14 @@ def test_get_movies_genres_filter(genres, populated_memory_repository):
         assert genres[i] in repo_movies[0].genres
 
 
+def test_get_movies_invalid_genres(genre, populated_memory_repository):
+    with pytest.raises(TypeError):
+        populated_memory_repository.get_movies(0, genres=123)
+
+    with pytest.raises(TypeError):
+        populated_memory_repository.get_movies(0, genres=[genre, 123])
+
+
 def test_add_genre(genre, memory_repository: MemoryRepository):
     memory_repository.add_genre(genre)
 

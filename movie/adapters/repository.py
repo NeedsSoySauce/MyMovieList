@@ -1,5 +1,5 @@
 import abc
-from typing import List
+from typing import List, Union
 
 from movie.domain.movie import Movie
 from movie.domain.genre import Genre
@@ -36,14 +36,19 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_movies(self, page_number: int, page_size: int = DEFAULT_PAGE_SIZE, genres: List[Genre] = []) -> List[Movie]:
+    def get_movies(self,
+                   page_number: int,
+                   page_size: int = DEFAULT_PAGE_SIZE,
+                   query: str = "",
+                   genres: List[Genre] = []) -> List[Movie]:
         """ Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
 
         Args:
             page_number (int): page number of the the page to return, starting from zero.
             page_size (int, optional): number of results per page. The last page may have less results than this.
+            query (str, optional): string to search for in a movie's title.
             genres (List[Genre], optional): genres to filter movies by. A movie must have all of the specified genres
-                                            for it to be included in the results.
+                for it to be included in the results.
         """
         raise NotImplementedError
 
@@ -54,27 +59,3 @@ class AbstractRepository(abc.ABC):
 
     def __repr__(self):
         return f'<{type(self).__name__}>'
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

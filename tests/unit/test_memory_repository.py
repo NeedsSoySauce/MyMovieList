@@ -112,6 +112,19 @@ def test_get_movies_invalid_genres(genre, populated_memory_repository):
         populated_memory_repository.get_movies(0, genres=[genre, 123])
 
 
+def test_get_movies_query(movie, memory_repository: MemoryRepository):
+    memory_repository.add_movie(movie)
+    query = movie.title.lower()
+    results = memory_repository.get_movies(0, query=query)
+    assert len(results) == 1
+    assert movie == results[0]
+
+
+def test_get_movies_invalid_query(populated_memory_repository):
+    with pytest.raises(TypeError):
+        populated_memory_repository.get_movies(0, query=123)
+
+
 def test_add_genre(genre, memory_repository: MemoryRepository):
     memory_repository.add_genre(genre)
 
@@ -159,24 +172,3 @@ def test_get_genres(genres, memory_repository: MemoryRepository):
 
     assert all(genre in repo_genres for genre in repo_genres)
     assert sorted(repo_genres) == repo_genres
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

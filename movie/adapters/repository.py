@@ -32,8 +32,26 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def get_number_of_movies(self) -> int:
-        """ Returns the number of movies in this repository. """
+    def get_number_of_movies(self,
+                             query: str = "",
+                             genres: List[Genre] = []) -> int:
+        """
+        Returns the number of movies in this repository.
+
+        If any filtering options are specified returns the number of movies that meet the specified filters. Check
+        'get_movies' for documentation on filtering options.
+        """
+        raise NotImplementedError
+
+    def get_number_of_pages(self,
+                            page_size: int = DEFAULT_PAGE_SIZE,
+                            query: str = "",
+                            genres: List[Genre] = []) -> int:
+        """
+        Returns the number of pages that can be created from the given filtering options.
+
+        Check 'get_movies' for documentation on filtering options.
+        """
         raise NotImplementedError
 
     @abc.abstractmethod

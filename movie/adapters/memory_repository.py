@@ -51,6 +51,32 @@ class MemoryRepository(AbstractRepository):
     def get_number_of_movies(self) -> int:
         return self._number_of_movies
 
+    def _get_filtered_movies(self,
+                             query: str = "",
+                             genres: List[Genre] = []) -> List[Movie]:
+
+        filtered = self._movies
+
+        _query = query.strip().lower()
+        if _query:
+            filtered = list(filter(lambda x: _query in x.title.lower(), filtered))
+
+        if genres:
+            filtered = list(filter(lambda x: all(genre in x.genres for genre in genres), filtered))
+
+        return filtered
+
+    def get_number_of_movies(self,
+                             query: str = "",
+                             genres: List[Genre] = []) -> int:
+        return len(self._get_filtered_movies(query, genres))
+
+    def get_number_of_pages(self,
+                            page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
+                            query: str = "",
+                            genres: List[Genre] = []) -> int:
+        return ceil(self.get_number_of_movies(query, genres) / page_size)
+
     def get_movies(self,
                    page_number: int,
                    page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
@@ -75,14 +101,7 @@ class MemoryRepository(AbstractRepository):
         if page_size < 1:
             raise ValueError(f"'page_size' must be at least 1 but was {page_size}")
 
-        filtered = self._movies
-
-        _query = query.strip().lower()
-        if _query:
-            filtered = list(filter(lambda x: _query in x.title.lower(), filtered))
-
-        if genres:
-            filtered = list(filter(lambda x: all(genre in x.genres for genre in genres), filtered))
+        filtered = self._get_filtered_movies(query, genres)
 
         # If there arent enough movies to create an nth page of the given size
         if ceil(len(filtered) / page_size) <= page_number:

@@ -172,3 +172,13 @@ def test_get_genres(genres, memory_repository: MemoryRepository):
 
     assert all(genre in repo_genres for genre in repo_genres)
     assert sorted(repo_genres) == repo_genres
+
+
+def test_get_number_of_pages(populated_memory_repository: MemoryRepository):
+    pages = populated_memory_repository.get_number_of_pages()
+    assert pages == 1
+
+
+def test_get_number_of_pages_empty(memory_repository: MemoryRepository):
+    pages = memory_repository.get_number_of_pages()
+    assert pages == 0

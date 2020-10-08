@@ -32,6 +32,16 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_genre(self, genre_name: str) -> Genre:
+        """
+        Returns the Genre with the given name in this repository. Note: this is case insensitive.
+
+        Raises:
+            ValueError: if there is no Genre in this repository with the given name
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_number_of_movies(self,
                              query: str = "",
                              genres: List[Genre] = []) -> int:

@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 
 from movie.adapters.repository import AbstractRepository
 from movie.domain.movie import Movie
@@ -14,6 +14,7 @@ class MemoryRepository(AbstractRepository):
         self._movies: List[Movie] = []
         self._number_of_movies: int = 0
         self._genres: List[Genre] = []
+        self._genre_map: Dict[str, Genre] = {}
 
     def add_movie(self, movie: Movie) -> None:
         if not isinstance(movie, Movie):
@@ -40,6 +41,13 @@ class MemoryRepository(AbstractRepository):
             return
 
         insort(self._genres, genre)
+        self._genre_map[genre.genre_name.lower()] = genre
+
+    def get_genre(self, genre_name: str) -> Genre:
+        try:
+            return self._genre_map[genre_name.lower()]
+        except KeyError:
+            raise ValueError(f"No genre with the name '{genre_name}' exists")
 
     def add_genres(self, genres: List[Genre]) -> None:
         if not isinstance(genres, list):
@@ -104,7 +112,8 @@ class MemoryRepository(AbstractRepository):
         filtered = self._get_filtered_movies(query, genres)
 
         # If there arent enough movies to create an nth page of the given size
-        if ceil(len(filtered) / page_size) <= page_number:
+        # The only exception is if this is the first page - that page can be empty.
+        if page_number and ceil(len(filtered) / page_size) <= page_number:
             raise ValueError("insufficient data to create page")
 
         offset = page_number * page_size

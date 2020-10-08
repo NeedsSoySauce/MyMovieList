@@ -21,8 +21,11 @@ def search_movies(page_number: int, page_size: int = _DEFAULT_PAGE_SIZE, query: 
 
     Check the get_movies method in AbstractRepository for info on filtering options.
     """
+    try:
+        genres = [repo.get_genre(name) for name in genres]
+    except ValueError:
+        return SearchResults([], 0, page_number, 0)
 
-    genres = [repo.get_genre(name) for name in genres]
     movies = repo.get_movies(page_number, page_size, query, genres)
     hits = repo.get_number_of_movies(query, genres)
     pages = repo.get_number_of_pages(page_size, query, genres)

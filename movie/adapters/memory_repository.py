@@ -47,7 +47,7 @@ class MemoryRepository(AbstractRepository):
         try:
             return self._genre_map[genre_name.lower()]
         except KeyError:
-            raise ValueError(f"No genre with the name '{genre_name}' exists")
+            raise ValueError(f"No genre with the name '{genre_name}'")
 
     def add_genres(self, genres: List[Genre]) -> None:
         if not isinstance(genres, list):

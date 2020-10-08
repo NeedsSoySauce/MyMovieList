@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template
 
-from movie.adapters.repository import instance as repo
+from movie.home.services import *
 
 home_blueprint = Blueprint(
     'home_bp', __name__)
@@ -10,6 +10,6 @@ home_blueprint = Blueprint(
 def home():
     return render_template(
         'home/home.html',
-        num_movies=repo.get_number_of_movies(),
-        genres=repo.get_genres()
+        num_movies=get_number_of_movies(),
+        genres=get_genres()
     )

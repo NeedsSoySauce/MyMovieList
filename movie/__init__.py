@@ -6,6 +6,7 @@ from flask import Flask
 
 import movie.adapters.repository as repo
 from movie.adapters.memory_repository import MemoryRepository
+from movie.adapters.repository import populate
 
 
 def create_app(test_config=None):
@@ -25,6 +26,7 @@ def create_app(test_config=None):
 
     # Create the MemoryRepository implementation for a memory-based repository.
     repo.instance = MemoryRepository()
+    populate(repo.instance, "./movie/adapters/data/Data1000Movies.csv")
 
     # Build the application - these steps require an application context.
     with app.app_context():

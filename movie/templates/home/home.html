@@ -1,5 +1,12 @@
 {% extends 'layout.html' %} {% block content %}
-<main id="main">
+<main>
   placeholder
+  <h1>{{ num_movies }} movies indexed covering {{ genres|length }} genres</h1>
+  <ul>
+
+  {% for genre in genres %}
+    <li>{{ genre.genre_name }}</li>
+  {% endfor %}
+  </ul>
 </main>
 {% endblock %}

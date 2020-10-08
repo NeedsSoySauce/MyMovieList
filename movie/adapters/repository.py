@@ -3,8 +3,9 @@ from typing import List, Union
 
 from movie.domain.movie import Movie
 from movie.domain.genre import Genre
+from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 
-instance = None
+instance: Union[None, 'AbstractRepository'] = None
 """ Application wide repository instance. """
 
 
@@ -59,3 +60,11 @@ class AbstractRepository(abc.ABC):
 
     def __repr__(self):
         return f'<{type(self).__name__}>'
+
+
+def populate(repo: AbstractRepository, data_path: str):
+    """ Populates the given repository with the data at the given path. """
+    reader = MovieFileCSVReader(data_path)
+    reader.read_csv_file()
+    repo.add_movies(reader.dataset_of_movies)
+    repo.add_genres(reader.dataset_of_genres)

@@ -111,11 +111,6 @@ class MemoryRepository(AbstractRepository):
 
         filtered = self._get_filtered_movies(query, genres)
 
-        # If there arent enough movies to create an nth page of the given size
-        # The only exception is if this is the first page - that page can be empty.
-        if page_number and ceil(len(filtered) / page_size) <= page_number:
-            raise ValueError("insufficient data to create page")
-
         offset = page_number * page_size
         return filtered[offset:min(offset + page_size, self._number_of_movies)]
 

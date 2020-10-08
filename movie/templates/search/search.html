@@ -1,6 +1,8 @@
 {% extends 'layout.html' %} {% block content %}
 <main>
-    placeholder
+
+
+    {% if movies %}
     <h1>Showing {{ page * page_size + 1}} to {{ page * page_size + [page_size, movies|length]|min }} of {{ hits }}
         results </h1>
 
@@ -17,5 +19,8 @@
         <li><a href="{{ url_for('search_bp.search', page=i+1, **args) }}">{{ i + 1 }}</a></li>
         {% endfor %}
     </ul>
+    {% else %}
+    <h1>No results</h1>
+    {% endif %}
 </main>
 {% endblock %}

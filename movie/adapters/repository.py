@@ -1,5 +1,5 @@
 import abc
-from typing import List, Union
+from typing import List, Union, Optional
 
 from movie.domain.actor import Actor
 from movie.domain.director import Director
@@ -86,7 +86,9 @@ class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def get_number_of_movies(self,
                              query: str = "",
-                             genres: List[Genre] = []) -> int:
+                             genres: List[Genre] = [],
+                             director: Optional[Director] = None,
+                             actors: List[Actor] = []) -> int:
         """
         Returns the number of movies in this repository.
 
@@ -98,7 +100,9 @@ class AbstractRepository(abc.ABC):
     def get_number_of_pages(self,
                             page_size: int = DEFAULT_PAGE_SIZE,
                             query: str = "",
-                            genres: List[Genre] = []) -> int:
+                            genres: List[Genre] = [],
+                            director: Optional[Director] = None,
+                            actors: List[Actor] = []) -> int:
         """
         Returns the number of pages that can be created from the given filtering options.
 
@@ -111,7 +115,9 @@ class AbstractRepository(abc.ABC):
                    page_number: int,
                    page_size: int = DEFAULT_PAGE_SIZE,
                    query: str = "",
-                   genres: List[Genre] = []) -> List[Movie]:
+                   genres: List[Genre] = [],
+                   director: Optional[Director] = None,
+                   actors: List[Actor] = []) -> List[Movie]:
         """ Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
 
         Args:
@@ -120,6 +126,9 @@ class AbstractRepository(abc.ABC):
             query (str, optional): string to search for in a movie's fields.
             genres (List[Genre], optional): genres to filter movies by. A movie must have all of the specified genres
                 for it to be included in the results.
+            director (Director, optional): director that a movie must be directed by.
+            actors (List[Actor], optional): actors to filter movies by. A move must have all of the specified actors for
+                it to be included in the results.
         """
         raise NotImplementedError
 

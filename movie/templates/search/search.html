@@ -1,24 +1,22 @@
 {% extends 'layout.html' %} {% block content %}
-<main>
-    {% if movies %}
-    <h1>Showing {{ page * page_size + 1}} to {{ page * page_size + [page_size, movies|length]|min }} of {{ hits }}
-        results </h1>
+{% if movies %}
+<h1>Showing {{ page * page_size + 1}} to {{ page * page_size + [page_size, movies|length]|min }} of {{ hits }}
+    results </h1>
 
-    <h2>Results</h2>
-    <ul>
-        {% for movie in movies %}
-        <li>{{ movie.title }}</li>
-        {% endfor %}
-    </ul>
+<h2>Results</h2>
+<ul>
+    {% for movie in movies %}
+    <li>{{ movie.title }}</li>
+    {% endfor %}
+</ul>
 
-    <h2>Pages</h2>
-    <ul>
-        {% for i in range(page + 1, pages) %}
-        <li><a href="{{ url_for('search_bp.search', page=i+1, **args) }}">{{ i + 1 }}</a></li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <h1>No results</h1>
-    {% endif %}
-</main>
+<h2>Pages</h2>
+<ul>
+    {% for i in range(page + 1, pages) %}
+    <li><a href="{{ url_for('search_bp.search', page=i+1, **args) }}">{{ i + 1 }}</a></li>
+    {% endfor %}
+</ul>
+{% else %}
+<h1>No results</h1>
+{% endif %}
 {% endblock %}

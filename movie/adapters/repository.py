@@ -1,6 +1,8 @@
 import abc
 from typing import List, Union
 
+from movie.domain.actor import Actor
+from movie.domain.director import Director
 from movie.domain.movie import Movie
 from movie.domain.genre import Genre
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
@@ -42,6 +44,46 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def add_director(self, director: Director) -> None:
+        """ Adds the given Director to this repository. Does nothing if the given director has already been added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_directors(self, directors: List[Director]) -> None:
+        """ Adds the given Directors to this repository. If a director is already in this repository it won't be added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_director(self, director_name: str) -> Director:
+        """
+        Returns the Director with the given name in this repository. Note: this is case insensitive.
+
+        Raises:
+            ValueError: if there is no Director in this repository with the given name
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_actor(self, actor: Actor) -> None:
+        """ Adds the given Actor to this repository. Does nothing if the given actor has already been added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_actors(self, actors: List[Actor]) -> None:
+        """ Adds the given Actors to this repository. If a actor is already in this repository it won't be added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_actor(self, actor_name: str) -> Actor:
+        """
+        Returns the Actor with the given name in this repository. Note: this is case insensitive.
+
+        Raises:
+            ValueError: if there is no Actor in this repository with the given name
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_number_of_movies(self,
                              query: str = "",
                              genres: List[Genre] = []) -> int:
@@ -75,7 +117,7 @@ class AbstractRepository(abc.ABC):
         Args:
             page_number (int): page number of the the page to return, starting from zero.
             page_size (int, optional): number of results per page. The last page may have less results than this.
-            query (str, optional): string to search for in a movie's title.
+            query (str, optional): string to search for in a movie's fields.
             genres (List[Genre], optional): genres to filter movies by. A movie must have all of the specified genres
                 for it to be included in the results.
         """

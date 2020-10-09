@@ -8,10 +8,10 @@
             </div>
         </h1>
 
-        <form class="ui form">
+        <form class="ui form" action=" {{ url_for('search_bp.search') }} ">
             <div class="field">
                 <div class="ui icon input">
-                    <input type="text" placeholder="Search...">
+                    <input name="query" type="text" placeholder="Search...">
                     <i class="search icon"></i>
                 </div>
             </div>

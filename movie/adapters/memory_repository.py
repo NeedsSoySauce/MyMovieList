@@ -1,6 +1,8 @@
 from typing import List, Dict
 
 from movie.adapters.repository import AbstractRepository
+from movie.domain.actor import Actor
+from movie.domain.director import Director
 from movie.domain.movie import Movie
 from movie.domain.movie import Genre
 
@@ -12,9 +14,12 @@ class MemoryRepository(AbstractRepository):
 
     def __init__(self):
         self._movies: List[Movie] = []
-        self._number_of_movies: int = 0
         self._genres: List[Genre] = []
         self._genre_map: Dict[str, Genre] = {}
+        self._directors: List[Director] = []
+        self._director_map: Dict[str, Director] = {}
+        self._actors: List[Actor] = []
+        self._actor_map: Dict[str, Actor] = {}
 
     def add_movie(self, movie: Movie) -> None:
         if not isinstance(movie, Movie):
@@ -24,7 +29,15 @@ class MemoryRepository(AbstractRepository):
             return
 
         insort(self._movies, movie)
-        self._number_of_movies += 1
+
+        if movie.genres:
+            self.add_genres(movie.genres)
+
+        if movie.actors:
+            self.add_actors(movie.actors)
+
+        if movie.director:
+            self.add_director(movie.director)
 
     def add_movies(self, movies: List[Movie]) -> None:
         if not isinstance(movies, list):
@@ -43,12 +56,6 @@ class MemoryRepository(AbstractRepository):
         insort(self._genres, genre)
         self._genre_map[genre.genre_name.lower()] = genre
 
-    def get_genre(self, genre_name: str) -> Genre:
-        try:
-            return self._genre_map[genre_name.lower()]
-        except KeyError:
-            raise ValueError(f"No genre with the name '{genre_name}'")
-
     def add_genres(self, genres: List[Genre]) -> None:
         if not isinstance(genres, list):
             raise TypeError(f"'genres' must be of type 'List[Genre]' but was '{type(genres).__name__}'")
@@ -56,8 +63,57 @@ class MemoryRepository(AbstractRepository):
         for genre in genres:
             self.add_genre(genre)
 
-    def get_number_of_movies(self) -> int:
-        return self._number_of_movies
+    def get_genre(self, genre_name: str) -> Genre:
+        try:
+            return self._genre_map[genre_name.lower()]
+        except KeyError:
+            raise ValueError(f"No genre with the name '{genre_name}'")
+
+    def add_director(self, director: Director) -> None:
+        if not isinstance(director, Director):
+            raise TypeError(f"'director' must be of type 'Director' but was '{type(director).__name__}'")
+
+        if director in self._directors:
+            return
+
+        insort(self._directors, director)
+        self._director_map[director.director_full_name.lower()] = director
+
+    def add_directors(self, directors: List[Director]) -> None:
+        if not isinstance(directors, list):
+            raise TypeError(f"'directors' must be of type 'List[Director]' but was '{type(directors).__name__}'")
+
+        for director in directors:
+            self.add_director(director)
+
+    def get_director(self, director_name: str) -> Director:
+        try:
+            return self._director_map[director_name.lower()]
+        except KeyError:
+            raise ValueError(f"No director with the name '{director_name}'")
+
+    def add_actor(self, actor: Actor) -> None:
+        if not isinstance(actor, Actor):
+            raise TypeError(f"'actor' must be of type 'Actor' but was '{type(actor).__name__}'")
+
+        if actor in self._actors:
+            return
+
+        insort(self._actors, actor)
+        self._actor_map[actor.actor_full_name.lower()] = actor
+
+    def add_actors(self, actors: List[Actor]) -> None:
+        if not isinstance(actors, list):
+            raise TypeError(f"'actors' must be of type 'List[Actor]' but was '{type(actors).__name__}'")
+
+        for actor in actors:
+            self.add_actor(actor)
+
+    def get_actor(self, actor_name: str) -> Actor:
+        try:
+            return self._actor_map[actor_name.lower()]
+        except KeyError:
+            raise ValueError(f"No actor with the name '{actor_name}'")
 
     def _get_filtered_movies(self,
                              query: str = "",
@@ -112,7 +168,7 @@ class MemoryRepository(AbstractRepository):
         filtered = self._get_filtered_movies(query, genres)
 
         offset = page_number * page_size
-        return filtered[offset:min(offset + page_size, self._number_of_movies)]
+        return filtered[offset:min(offset + page_size, len(self._movies))]
 
     def get_genres(self) -> List[Genre]:
         return self._genres

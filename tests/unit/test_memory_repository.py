@@ -78,9 +78,6 @@ def test_get_movies_invalid_page_number(populated_memory_repository):
     with pytest.raises(ValueError):
         populated_memory_repository.get_movies(-1)
 
-    with pytest.raises(ValueError):
-        populated_memory_repository.get_movies(1)
-
     with pytest.raises(TypeError):
         populated_memory_repository.get_movies(0.5)
 

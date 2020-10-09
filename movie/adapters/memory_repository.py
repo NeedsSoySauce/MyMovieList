@@ -172,3 +172,9 @@ class MemoryRepository(AbstractRepository):
 
     def get_genres(self) -> List[Genre]:
         return self._genres
+
+    def get_directors(self) -> List[Director]:
+        return self._directors
+
+    def get_actors(self) -> List[Actor]:
+        return self._actors

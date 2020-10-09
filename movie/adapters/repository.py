@@ -128,6 +128,16 @@ class AbstractRepository(abc.ABC):
         """ Returns a list containing all genres in this repository ordered by each genres name. """
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def get_directors(self) -> List[Director]:
+        """ Returns a list containing all directors in this repository ordered by each directors name. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_actors(self) -> List[Actor]:
+        """ Returns a list containing all actors in this repository ordered by each actors name. """
+        raise NotImplementedError
+
     def __repr__(self):
         return f'<{type(self).__name__}>'
 

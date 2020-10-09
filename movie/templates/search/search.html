@@ -12,7 +12,11 @@
             <div class="content">
                 <a class="header" href="">{{ movie.title }}</a>
                 <div class="meta">
-                    <span>{{ movie.director.director_full_name }}</span>
+                    <span>
+                        <a href="{{ url_for('search_bp.search', director=movie.director.director_full_name) }}">
+                            {{ movie.director.director_full_name }}
+                        </a>
+                    </span>
                     <span>|</span>
                     <span>{{ movie.runtime_minutes }} minutes</span>
                     <span>|</span>

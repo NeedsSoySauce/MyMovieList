@@ -8,6 +8,7 @@ from movie.domain.movie import Genre
 
 from bisect import insort
 from math import ceil
+from fuzzywuzzy import fuzz
 
 
 class MemoryRepository(AbstractRepository):
@@ -115,6 +116,19 @@ class MemoryRepository(AbstractRepository):
         except KeyError:
             raise ValueError(f"No actor with the name '{actor_name}'")
 
+    @staticmethod
+    def _query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:
+
+        title = movie.title.lower()
+        director = movie.director.director_full_name.lower()
+        description = movie.description.lower()
+        genres = [genre.genre_name.lower() for genre in movie.genres]
+        actors = [actor.actor_full_name.lower() for actor in movie.actors]
+
+        movie_str = " ".join([title, director, description] + genres + actors)
+
+        return fuzz.token_set_ratio(query, movie_str) >= min_ratio
+
     def _get_filtered_movies(self,
                              query: str = "",
                              genres: List[Genre] = [],
@@ -125,7 +139,7 @@ class MemoryRepository(AbstractRepository):
 
         _query = query.strip().lower()
         if _query:
-            filtered = filter(lambda x: _query in x.title.lower(), filtered)
+            filtered = filter(lambda x: self._query_filter(x, _query), filtered)
 
         if genres:
             filtered = filter(lambda x: all(genre in x.genres for genre in genres), filtered)

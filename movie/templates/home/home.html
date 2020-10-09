@@ -1,12 +1,47 @@
 {% extends 'layout.html' %} {% block content %}
-<main>
-    placeholder
-    <h1>{{ num_movies }} movies indexed covering {{ genres|length }} genres</h1>
-    <ul>
+<div class="ui center aligned segment padded">
+    <div class="ui text container">
+        <h1 class="ui icon header huge">
+            <i class="film icon"></i>
+            <div class="content">
+                MyMovieList
+            </div>
+        </h1>
 
+        <form class="ui form">
+            <div class="field">
+                <div class="ui icon input">
+                    <input type="text" placeholder="Search...">
+                    <i class="search icon"></i>
+                </div>
+            </div>
+            <button class="ui button" type="submit">Submit</button>
+        </form>
+    </div>
+</div>
+<div class="ui center aligned segment basic">
+    <h2 class="ui header">
+        <div class="content">
+            Browse by Genre
+            <div class="sub header">{{ num_movies }} movies available covering {{ genres|length }} genres</div>
+        </div>
+    </h2>
+
+    <div class="ui grid">
         {% for genre in genres %}
-        <li><a href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">{{ genre.genre_name }}</a></li>
+        <div class="two wide column centered">
+            <div class="ui horizontal list big">
+                <div class="item">
+                    <div class="content">
+                        <a class="header" href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
+                            {{ genre.genre_name}}
+                        </a>
+                        {{ genre_movies[genre] }} movies
+                    </div>
+                </div>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
-</main>
+    </div>
+</div>
 {% endblock %}

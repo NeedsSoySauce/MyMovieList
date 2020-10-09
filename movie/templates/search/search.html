@@ -1,7 +1,5 @@
 {% extends 'layout.html' %} {% block content %}
 <main>
-
-
     {% if movies %}
     <h1>Showing {{ page * page_size + 1}} to {{ page * page_size + [page_size, movies|length]|min }} of {{ hits }}
         results </h1>

@@ -1,3 +1,13 @@
-<nav id="nav">
-  <a class="btn-nav" href="{{ url_for('home_bp.home') }}">Home</a>
+<nav>
+    <div class="ui inverted vertical masthead center aligned segment">
+        <div class="ui container">
+            <div class="ui large secondary inverted pointing menu">
+                <a class="active item" href="{{ url_for('home_bp.home') }}">Home</a>
+                <div class="right item">
+                    <a class="ui inverted button basic" id="sign-in">Sign in</a>
+                    <a class="ui inverted button basic">Register</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </nav>

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+
     <link rel="stylesheet" href="/static/css/main.css"/>
 
     <!-- Favicons and accompanying code generating using https://favicon.io/emoji-favicons/film-frames -->
@@ -17,9 +20,10 @@
 </head>
 
 <body>
-<div class="container">
-    <!-- Navigation bar. -->
-    {% include 'navigation.html' %}
+<!-- Navigation bar. -->
+{% include 'navigation.html' %}
+
+<div class="ui container">
 
     <!-- Content. -->
     {% block content %} {% endblock %}

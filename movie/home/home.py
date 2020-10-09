@@ -8,8 +8,12 @@ home_blueprint = Blueprint(
 
 @home_blueprint.route('/', methods=['GET'])
 def home():
+
+    genres = get_genres()
+
     return render_template(
         'home/home.html',
         num_movies=get_number_of_movies(),
-        genres=get_genres()
+        genres=genres,
+        genre_movies=get_movies_per_genre(genres)
     )

@@ -13,10 +13,10 @@ def search():
     page_size = int(request.args.get('size') or 25)
     query = request.args.get('query') or ''
     genres = request.args.getlist('genre')
+    director = request.args.get('director') or None
+    actors = request.args.getlist('actor')
 
-    results = search_movies(page, page_size=page_size, query=query, genres=genres)
-
-    current_app.logger.info(f"page = {page}, page_size = {page_size}, query = {query}, genres = {genres}")
+    results = search_movies(page, page_size=page_size, query=query, genres=genres, director=director, actors=actors)
 
     return render_template(
         'search/search.html',

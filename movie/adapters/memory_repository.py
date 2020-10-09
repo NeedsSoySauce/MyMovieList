@@ -143,7 +143,7 @@ class MemoryRepository(AbstractRepository):
                              genres: List[Genre] = [],
                              director: Optional[Director] = None,
                              actors: List[Actor] = []) -> int:
-        return len(self._get_filtered_movies(query, genres))
+        return len(self._get_filtered_movies(query, genres, director, actors))
 
     def get_number_of_pages(self,
                             page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
@@ -151,7 +151,7 @@ class MemoryRepository(AbstractRepository):
                             genres: List[Genre] = [],
                             director: Optional[Director] = None,
                             actors: List[Actor] = []) -> int:
-        return ceil(self.get_number_of_movies(query, genres) / page_size)
+        return ceil(self.get_number_of_movies(query, genres, director, actors) / page_size)
 
     def get_movies(self,
                    page_number: int,
@@ -185,7 +185,7 @@ class MemoryRepository(AbstractRepository):
         if page_size < 1:
             raise ValueError(f"'page_size' must be at least 1 but was {page_size}")
 
-        filtered = self._get_filtered_movies(query, genres)
+        filtered = self._get_filtered_movies(query, genres, director, actors)
 
         offset = page_number * page_size
         return filtered[offset:min(offset + page_size, len(self._movies))]

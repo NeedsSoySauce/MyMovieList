@@ -2,6 +2,15 @@ nav {
     margin-bottom: 24px;
 }
 
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex-grow: 1
+}
+
 #sign-in {
     margin-right: 8px;
 }

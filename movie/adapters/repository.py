@@ -1,5 +1,5 @@
 import abc
-from typing import List, Union, Optional
+from typing import List, Union, Optional, Dict
 
 from movie.domain.actor import Actor
 from movie.domain.director import Director
@@ -198,6 +198,11 @@ class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def get_actors(self) -> List[Actor]:
         """ Returns a list containing all actors in this repository ordered by each actors name. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_movies_per_genre(self) -> Dict[Genre, int]:
+        """ Returns the number of movies tagged with each genre in this repository. """
         raise NotImplementedError
 
     def __repr__(self):

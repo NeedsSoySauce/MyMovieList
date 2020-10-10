@@ -277,3 +277,13 @@ class MemoryRepository(AbstractRepository):
 
     def get_actors(self) -> List[Actor]:
         return self._actors
+
+    def get_movies_per_genre(self) -> Dict[Genre, int]:
+        movies_per_genre: Dict[Genre, int] = defaultdict(int)
+
+        for movie in self._movies:
+            if movie.genres:
+                for genre in movie.genres:
+                    movies_per_genre[genre] += 1
+
+        return movies_per_genre

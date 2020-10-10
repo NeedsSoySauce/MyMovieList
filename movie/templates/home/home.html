@@ -24,12 +24,12 @@
     <h2 class="ui header">
         <div class="content">
             Browse by Genre
-            <div class="sub header">{{ num_movies }} movies available covering {{ genres|length }} genres</div>
+            <div class="sub header">{{ num_movies }} movies available covering {{ genre_movies|length }} genres</div>
         </div>
     </h2>
 
     <div class="ui grid stackable">
-        {% for genre in genres %}
+        {% for genre in genre_movies|sort %}
         <div class="two wide column centered">
             <div class="ui horizontal list big">
                 <div class="item">

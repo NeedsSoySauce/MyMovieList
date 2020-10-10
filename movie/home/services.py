@@ -14,13 +14,8 @@ def get_genres(repo: AbstractRepository) -> List[Genre]:
     return repo.get_genres()
 
 
-def get_movies_per_genre(repo: AbstractRepository, genres: List[Genre]) -> Dict[Genre, int]:
-    movies: Dict[Genre, int] = {}
-
-    for genre in genres:
-        movies[genre] = repo.get_number_of_movies(genres=[genre])
-
-    return movies
+def get_movies_per_genre(repo: AbstractRepository) -> Dict[Genre, int]:
+    return repo.get_movies_per_genre()
 
 
 def get_directors(repo: AbstractRepository) -> List[Director]:

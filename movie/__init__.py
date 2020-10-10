@@ -47,6 +47,9 @@ def create_app(test_config=None):
         from .auth import auth
         app.register_blueprint(auth.auth_blueprint)
 
+        from .utilities import utilities
+        app.register_blueprint(utilities.utilities_blueprint)
+
         app.register_error_handler(404, page_not_found)
 
     return app

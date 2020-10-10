@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 
 from movie.adapters.repository import AbstractRepository
 from movie.domain.actor import Actor
@@ -30,7 +30,8 @@ class MemoryRepository(AbstractRepository):
         self._users: List[User] = []
         self._user_map: Dict[str, User] = {}
         self._reviews: List[Review] = []
-        self._reviews_map: Dict[Movie, List[Review]] = defaultdict(list)
+        self._reviews_movie_map: Dict[Movie, List[Review]] = defaultdict(list)
+        self._reviews_user_map: Dict[Review, Union[User, None]] = {}
 
     def add_movie(self, movie: Movie) -> None:
         if not isinstance(movie, Movie):
@@ -137,6 +138,10 @@ class MemoryRepository(AbstractRepository):
         insort(self._users, user)
         self._user_map[user.user_name] = user
 
+        if user.reviews:
+            for review in user.reviews:
+                self._reviews_user_map[review] = user
+
     def add_users(self, users: List[User]) -> None:
         if not isinstance(users, list):
             raise TypeError(f"'users' must be of type 'List[User]' but was '{type(users).__name__}'")
@@ -150,18 +155,25 @@ class MemoryRepository(AbstractRepository):
         except KeyError:
             raise ValueError(f"No user with the name '{user_name}'")
 
-    def add_review(self, review: Review) -> None:
+    def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         if review in self._reviews:
             return
-        self._reviews.append(review)
-        self._reviews_map[review.movie].append(review)
+        insort(self._reviews, review)
+        self._reviews_movie_map[review.movie].append(review)
+        self._reviews_user_map[review] = user
 
     def add_reviews(self, reviews: List[Review]) -> None:
         for review in reviews:
             self.add_review(review)
 
     def get_movie_reviews(self, movie: Movie) -> List[Review]:
-        return self._reviews_map[movie]
+        return self._reviews_movie_map[movie]
+
+    def get_review_user(self, review: Review) -> Union[User, None]:
+        try:
+            return self._reviews_user_map[review]
+        except KeyError:
+            return None
 
     @staticmethod
     def _query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:

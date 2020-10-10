@@ -107,8 +107,11 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def add_review(self, review: Review) -> None:
-        """ Adds a review to this repository. """
+    def add_review(self, review: Review, user: Union[User, None] = None) -> None:
+        """
+        Adds a review to this repository. If a user is specified it is treated as being the review's creator, otherwise
+        the review is considered to be posted anonymously.
+        """
         raise NotImplementedError
 
     def add_reviews(self, reviews: List[Review]) -> None:
@@ -118,6 +121,10 @@ class AbstractRepository(abc.ABC):
     @abc.abstractmethod
     def get_movie_reviews(self, movie: Movie) -> List[Review]:
         """ Returns the reviews for the given movie """
+        raise NotImplementedError
+
+    def get_review_user(self, review: Review) -> Union[User, None]:
+        """ Returns the User who created the given Review or None if the review was anonymous. """
         raise NotImplementedError
 
     @abc.abstractmethod

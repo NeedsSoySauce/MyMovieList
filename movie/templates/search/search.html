@@ -42,13 +42,19 @@
         {% endfor %}
     </div>
 
-    <section class="ui segment basic padded center aligned">
-        <div class="ui pagination menu">
+    <section class="ui segment basic center aligned">
+        <div class="ui pagination menu" id="pagination-large">
+            <a
+                    class="item {{ 'disabled' if page <= 0 }}"
+                    href="{{ url_for('search_bp.search', page=1, **args) }}"
+            >
+                <<
+            </a>
             <a
                     class="item {{ 'disabled' if page <= 0 }}"
                     href="{{ url_for('search_bp.search', page=page, **args) }}"
             >
-                Previous
+                <
             </a>
             {% for i in range([0, page-3]|max, [pages, page + 4]|min) %}
             <a
@@ -62,7 +68,35 @@
                     class="item {{ 'disabled' if page >= pages - 1 }}"
                     href="{{ url_for('search_bp.search', page=page+2, **args) }}"
             >
-                Next
+                >
+            </a>
+            <a
+                    class="item {{ 'disabled' if page >= pages - 1 }}"
+                    href="{{ url_for('search_bp.search', page=pages, **args) }}"
+            >
+                >>
+            </a>
+        </div>
+        <div class="ui pagination menu" id="pagination-small">
+            <a
+                    class="item {{ 'disabled' if page <= 0 }}"
+                    href="{{ url_for('search_bp.search', page=page, **args) }}"
+            >
+                <
+            </a>
+            {% for i in range([0, page-2]|max, [pages, page + 3]|min) %}
+            <a
+                    class="item {{ 'active' if i == page }}"
+                    href="{{ url_for('search_bp.search', page=i+1, **args) }}"
+            >
+                {{ i + 1 }}
+            </a>
+            {% endfor %}
+            <a
+                    class="item {{ 'disabled' if page >= pages - 1 }}"
+                    href="{{ url_for('search_bp.search', page=page+2, **args) }}"
+            >
+                >
             </a>
         </div>
     </section>

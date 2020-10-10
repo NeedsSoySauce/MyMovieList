@@ -18,3 +18,21 @@ main {
 td:first-child {
     font-weight: bold;
 }
+
+.disabled {
+    pointer-events: none;
+}
+
+#pagination-large {
+    display: none;
+}
+
+@media only screen and (min-width: 600px) {
+    #pagination-large {
+        display: inline-flex;
+    }
+
+    #pagination-small {
+        display: none;
+    }
+}

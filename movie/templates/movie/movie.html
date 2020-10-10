@@ -131,9 +131,6 @@
         <div class="ui divider"></div>
 
         {% if reviews %}
-        <div>{{ reviews|pprint }}</div>
-        <div>{{ reviews_user_map|pprint }}</div>
-        <div>{{ data|pprint }}</div>
         <section class="ui feed">
             {% for review in reviews %}
             <div class="event">

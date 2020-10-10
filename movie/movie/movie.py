@@ -61,8 +61,7 @@ def movie(movie_id: int):
         review_error_message=review_error_message,
         form=form,
         movie_id=movie_id,
-        tab=tab,
-        data=repo._reviews_user_map
+        tab=tab
     )
 
 

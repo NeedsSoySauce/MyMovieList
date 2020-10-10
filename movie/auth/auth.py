@@ -1,15 +1,12 @@
-from flask import Blueprint, render_template, redirect, url_for, session, request
+from functools import wraps
 
+from flask import Blueprint, render_template, redirect, url_for, session
 from flask_wtf import FlaskForm
+from password_validator import PasswordValidator
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, ValidationError
 
-from password_validator import PasswordValidator
-
-from functools import wraps
-
-import movie.auth.services as services
-import movie.adapters.repository as repo
+from .services import *
 
 # Configure Blueprint.
 auth_blueprint = Blueprint(
@@ -25,11 +22,11 @@ def register():
         # Successful POST, i.e. the username and password have passed validation checking.
         # Use the service layer to attempt to add the new user.
         try:
-            services.add_user(form.username.data, form.password.data, repo.repo_instance)
+            add_user(form.username.data, form.password.data)
 
             # All is well, redirect the user to the login page.
             return redirect(url_for('auth_bp.login'))
-        except services.NameNotUniqueException:
+        except NameNotUniqueException:
             is_username_unique = 'Your username is already taken - please supply another'
 
     # For a GET or a failed POST request, return the Registration Web page.
@@ -52,21 +49,21 @@ def signin():
         # Successful POST, i.e. the username and password have passed validation checking.
         # Use the service layer to lookup the user.
         try:
-            user = services.get_user(form.username.data, repo.repo_instance)
+            user = get_user(form.username.data)
 
             # Authenticate user.
-            services.authenticate_user(user['username'], form.password.data, repo.repo_instance)
+            authenticate_user(user['username'], form.password.data)
 
             # Initialise session and redirect the user to the home page.
             session.clear()
             session['username'] = user['username']
             return redirect(url_for('home_bp.home'))
 
-        except services.UnknownUserException:
+        except UnknownUserException:
             # Username not known to the system, set a suitable error message.
             username_not_recognised = 'Username not recognised - please supply another'
 
-        except services.AuthenticationException:
+        except AuthenticationException:
             # Authentication failed, set a suitable error message.
             password_does_not_match_username = 'Password does not match supplied username - please check and try again'
 
@@ -99,8 +96,8 @@ def login_required(view):
 class PasswordValid:
     def __init__(self, message=None):
         if not message:
-            message = u'Your password must be at least 8 characters, and contain an upper case letter,\
-            a lower case letter and a digit'
+            message = u'Your password must be at least 8 characters, contain an upper case letter,\
+            a lower case letter, and a digit'
         self.message = message
 
     def __call__(self, form, field):
@@ -116,10 +113,10 @@ class PasswordValid:
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [
-        DataRequired(message='Your username is required'),
-        Length(min=3, message='Your username is too short')])
+        DataRequired(message='Username required'),
+        Length(min=3, message='Usernames must be at least 3 characters')])
     password = PasswordField('Password', [
-        DataRequired(message='Your password is required'),
+        DataRequired(message='Password required'),
         PasswordValid()])
     submit = SubmitField('Register')
 

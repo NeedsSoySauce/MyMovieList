@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from movie.adapters.repository import AbstractRepository
+from movie.adapters.repository import instance as repo
 from movie.domain.user import User
 
 
@@ -16,7 +16,7 @@ class AuthenticationException(Exception):
     pass
 
 
-def add_user(username: str, password: str, repo: AbstractRepository):
+def add_user(username: str, password: str):
     # Check that the given username is available.
     user = repo.get_user(username)
     if user is not None:
@@ -30,7 +30,7 @@ def add_user(username: str, password: str, repo: AbstractRepository):
     repo.add_user(user)
 
 
-def get_user(username: str, repo: AbstractRepository):
+def get_user(username: str):
     user = repo.get_user(username)
     if user is None:
         raise UnknownUserException
@@ -38,7 +38,7 @@ def get_user(username: str, repo: AbstractRepository):
     return user_to_dict(user)
 
 
-def authenticate_user(username: str, password: str, repo: AbstractRepository):
+def authenticate_user(username: str, password: str):
     authenticated = False
 
     user = repo.get_user(username)

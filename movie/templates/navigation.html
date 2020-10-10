@@ -2,10 +2,17 @@
     <div class="ui inverted vertical masthead center aligned segment">
         <div class="ui container">
             <div class="ui large secondary inverted pointing menu">
-                <a class="active item" href="{{ url_for('home_bp.home') }}">Home</a>
+                <a class="item" href="{{ url_for('home_bp.home') }}">
+                    <i class="film icon"></i>
+                    MyMovieList
+                </a>
                 <div class="right item">
+                    {% if 'username' in session %}
+                    <a class="ui inverted button basic" id="logout" href="{{ url_for('auth_bp.logout') }}">Log out</a>
+                    {% else %}
                     <a class="ui inverted button basic" id="login" href="{{ url_for('auth_bp.login') }}">Log in</a>
                     <a class="ui inverted button basic" href="{{ url_for('auth_bp.register') }}">Register</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

@@ -179,3 +179,38 @@ def test_get_number_of_pages(populated_memory_repository: MemoryRepository):
 def test_get_number_of_pages_empty(memory_repository: MemoryRepository):
     pages = memory_repository.get_number_of_pages()
     assert pages == 0
+
+
+def test_add_review(review, memory_repository: MemoryRepository):
+    memory_repository.add_review(review)
+
+    assert review in memory_repository._reviews
+
+
+def test_get_review(review, memory_repository: MemoryRepository):
+    memory_repository.add_review(review)
+    result = memory_repository.get_movie_reviews(review.movie)
+
+    assert result[0] == review
+
+
+def test_get_review_user(user, review, memory_repository: MemoryRepository):
+    user.add_review(review)
+    memory_repository.add_user(user)
+    result = memory_repository.get_review_user(review)
+    assert result == user
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

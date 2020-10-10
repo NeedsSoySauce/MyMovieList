@@ -83,3 +83,4 @@ def test_simulation_reviews_are_valid(movie_watching_simulation: MovieWatchingSi
 
         # Check this review's timestamp isn't earlier than the movie's release year
         assert review.timestamp.year >= review.movie.release_date
+        assert 1 <= review.rating <= 10

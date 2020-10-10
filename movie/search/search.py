@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, current_app
 
+from movie.adapters.repository import instance as repo
 from .services import search_movies
 
 search_blueprint = Blueprint(
@@ -16,7 +17,7 @@ def search():
     director = request.args.get('director') or None
     actors = request.args.getlist('actor')
 
-    results = search_movies(page, page_size=page_size, query=query, genres=genres, director=director, actors=actors)
+    results = search_movies(repo, page, page_size=page_size, query=query, genres=genres, director=director, actors=actors)
 
     return render_template(
         'search/search.html',

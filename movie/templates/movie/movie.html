@@ -108,7 +108,7 @@
                 </div>
                 <div class="field {{ 'required' if is_register_form }}  {{ 'error' if password_error_message }}">
                     {{ form.review.label }}
-                    {{ form.review() }}
+                    {{ form.review }}
                 </div>
                 <div class="ui error message">
                     {% if form.errors %}
@@ -131,13 +131,16 @@
         <div class="ui divider"></div>
 
         {% if reviews %}
+        <div>{{ reviews|pprint }}</div>
+        <div>{{ reviews_user_map|pprint }}</div>
+        <div>{{ data|pprint }}</div>
         <section class="ui feed">
             {% for review in reviews %}
             <div class="event">
                 <div class="content">
                     <div class="summary">
                         <span class="user">
-                            {{ reviews_user_map[review].user_name or 'Anonymous'}}
+                            {{ reviews_user_map[review].user_name or 'Anonymous' }}
                         </span>
                         <div class="date">
                             {{ review.timestamp|dateformat }}

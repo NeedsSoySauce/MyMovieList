@@ -214,7 +214,8 @@ def populate(repo: AbstractRepository, data_path: str):
     reader = MovieFileCSVReader(data_path)
     reader.read_csv_file()
 
-    state = MovieWatchingSimulation(reader.dataset_of_movies).simulate()
+    sim = MovieWatchingSimulation(reader.dataset_of_movies)
+    state = sim.simulate(num_users=50, min_num_movies=10, max_num_movies=20)
 
     repo.add_movies(reader.dataset_of_movies)
     repo.add_genres(reader.dataset_of_genres)

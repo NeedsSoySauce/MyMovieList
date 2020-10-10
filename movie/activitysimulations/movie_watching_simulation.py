@@ -1,17 +1,18 @@
 from datetime import datetime
-from typing import List
 from random import randint, sample, choice, random
 
+from random_words.random_words import RandomWords
+
+from movie.domain.review import Review
+from movie.domain.user import User
 from .abstract_movie_watching_simulation import AbstractMovingWatchingSimulation
 
-from movie.domain.movie import Movie
-from movie.domain.user import User
-from movie.domain.review import Review
+_rw = RandomWords()
 
 
-def _rand_string(min_length: int = 8, max_length: int = 32):
-    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890'
-    return "".join(choice(chars) for _ in range(randint(min_length, max_length)))
+def _rand_string(min_length: int = 8, max_length: int = 32, spaces: bool = False):
+    words = _rw.random_words(count=max_length)
+    return (' ' if spaces else '').join(choice(words) for _ in range(randint(min_length, max_length)))
 
 
 class MovieWatchingSimulation(AbstractMovingWatchingSimulation):
@@ -60,8 +61,8 @@ class MovieWatchingSimulation(AbstractMovingWatchingSimulation):
         now = datetime.utcnow().timestamp()
 
         for i in range(num_users):
-            username = _rand_string(4)
-            password = _rand_string()
+            username = _rand_string(1, 4)
+            password = _rand_string(1, 4)
             user = User(username, password)
 
             # Pick n distinct movies
@@ -78,8 +79,8 @@ class MovieWatchingSimulation(AbstractMovingWatchingSimulation):
             # Review a random number of the movies the user watched
             for j in range(randint(0, len(user.watched_movies))):
                 movie = movies[j]
-                review_text = _rand_string()
-                rating = randint(0, 10)
+                review_text = _rand_string(spaces=True)
+                rating = randint(1, 10)
 
                 release_date = datetime(movie.release_date, 1, 1).timestamp()
                 delta = randint(0, int(now - release_date))  # float -> int will be lossy but not a big deal here

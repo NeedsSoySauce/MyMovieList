@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired, Length, NumberRange
 
 from movie.adapters.repository import instance as repo
 from .services import *
+from ..utilities import services as utilities
 
 movie_blueprint = Blueprint(
     'movie_bp', __name__)
@@ -25,7 +26,7 @@ def movie(movie_id: int):
         abort(404)
 
     try:
-        user = get_user(repo, session['username'])
+        user = utilities.get_user(repo, session['username'])
     except ValueError:
         # No user with the given username
         pass
@@ -60,38 +61,9 @@ def movie(movie_id: int):
         review_error_message=review_error_message,
         form=form,
         movie_id=movie_id,
-        tab=tab
+        tab=tab,
+        data=repo._reviews_user_map
     )
-
-
-@movie_blueprint.route('/movie/<movie_id>/review', methods=['POST'])
-def post_review(movie_id: int):
-    user = None
-
-    try:
-        movie = get_movie_by_id(repo, int(movie_id))
-    except ValueError:
-        abort(404)
-
-    try:
-        user = get_user(repo, session['username'])
-    except ValueError:
-        # Assume this review is being posted anonymously
-        pass
-
-    form = ReviewForm()
-
-    if form.validate_on_submit():
-        # Successful POST, i.e. the review has passed data validation.
-
-        # Use the service layer to store the new review.
-        add_review(movie, Review(movie, form.review.data, form.rating.data), user)
-
-        return redirect(url_for('movie_bp.get_movie'))
-
-    # If the submission was invalid render the movie page again (we don't want to redirect here as that'll clear the
-    # form's input
-    return redirect(url_for('movie_bp.get_movie', tab=1))
 
 
 class ProfanityFree:

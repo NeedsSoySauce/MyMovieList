@@ -25,7 +25,3 @@ def get_reviews_user_map(repo: AbstractRepository, reviews: List[Review]) -> Dic
 
 def add_review(repo: AbstractRepository, review: Review, user: Union[User, None]):
     repo.add_review(review, user)
-
-
-def get_user(repo: AbstractRepository, user_name: str) -> User:
-    return repo.get_user(user_name)

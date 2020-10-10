@@ -159,8 +159,9 @@ class MemoryRepository(AbstractRepository):
         if review in self._reviews:
             return
         insort(self._reviews, review)
-        self._reviews_movie_map[review.movie].append(review)
-        self._reviews_user_map[review] = user
+        insort(self._reviews_movie_map[review.movie], review)
+        if user:
+            self._reviews_user_map[review] = user
 
     def add_reviews(self, reviews: List[Review]) -> None:
         for review in reviews:

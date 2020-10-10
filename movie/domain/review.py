@@ -76,7 +76,7 @@ class Review:
         if not isinstance(other, Review):
             raise TypeError(
                 f"'<' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'")
-        return self._timestamp < other._timestamp
+        return other._timestamp < self._timestamp
 
     def __repr__(self) -> str:
         return f'<{type(self).__name__} {self._movie}, {self._review_text}, {self._rating}, {self._timestamp.isoformat()}>'

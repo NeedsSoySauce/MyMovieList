@@ -70,6 +70,8 @@ def test_simulation_users_are_valid(movie_watching_simulation: MovieWatchingSimu
         movies = [review.movie for review in user.reviews]
         assert len(movies) == len(set(movies))
 
+    assert any(user.reviews for user in state.users)
+
 
 def test_simulation_reviews_are_valid(movie_watching_simulation: MovieWatchingSimulation, populated_movies):
     state = movie_watching_simulation.simulate()

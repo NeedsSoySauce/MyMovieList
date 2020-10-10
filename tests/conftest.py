@@ -1,9 +1,8 @@
-import os
-
 import pytest
 
 from movie import create_app
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
+from movie.adapters.memory_repository import MemoryRepository
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from movie.domain.actor import Actor
 from movie.domain.director import Director
@@ -13,7 +12,6 @@ from movie.domain.person import Person
 from movie.domain.review import Review
 from movie.domain.user import User
 from movie.domain.watchlist import WatchList
-from movie.adapters.memory_repository import MemoryRepository
 
 
 @pytest.fixture

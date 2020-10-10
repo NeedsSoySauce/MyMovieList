@@ -30,10 +30,26 @@ def test_get_movie(client: FlaskClient):
     assert response.status_code == 404
 
 
-def test_get_auth(client: FlaskClient):
+def test_register(client: FlaskClient):
     response = client.get('/register')
     assert response.status_code == 200
 
-    response = client.get('/signin')
-    assert response.status_code == 200
+    data = {
+        'username': 'thorke',
+        'password': 'cLQ^C#oFXloS'
+    }
 
+    response = client.post('/register', data=data, follow_redirects=False)
+    assert response.status_code == 303
+    # assert b'You were logged out' in response.data
+    print()
+    print(response.status_code)
+    print(response.headers)
+    print(response.location)
+    print(response.data)
+    pytest.fail()
+
+
+def test_login(client: FlaskClient):
+    response = client.get('/login')
+    assert response.status_code == 200

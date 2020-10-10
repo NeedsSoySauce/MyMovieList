@@ -6,6 +6,7 @@ from movie.domain.director import Director
 from movie.domain.movie import Movie
 from movie.domain.genre import Genre
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
+from movie.domain.user import User
 
 instance: Union[None, 'AbstractRepository'] = None
 """ Application wide repository instance. """
@@ -80,6 +81,26 @@ class AbstractRepository(abc.ABC):
 
         Raises:
             ValueError: if there is no Actor in this repository with the given name
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_user(self, user: User) -> None:
+        """ Adds the given user to this repository. If the user is already in this repository it won't be added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_users(self, user: List[User]) -> None:
+        """ Adds the given users to this repository. If a user is already in this repository it won't be added. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_user(self, user_name: str) -> User:
+        """
+        Returns the User with the given name in this repository.
+
+        Raises:
+            ValueError: if there is no User in this repository with the given name
         """
         raise NotImplementedError
 

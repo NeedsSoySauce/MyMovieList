@@ -10,6 +10,8 @@ from bisect import insort
 from math import ceil
 from fuzzywuzzy import fuzz
 
+from movie.domain.user import User
+
 
 class MemoryRepository(AbstractRepository):
 
@@ -22,6 +24,8 @@ class MemoryRepository(AbstractRepository):
         self._director_map: Dict[str, Director] = {}
         self._actors: List[Actor] = []
         self._actor_map: Dict[str, Actor] = {}
+        self._users: List[User] = []
+        self._user_map: Dict[str, User] = {}
 
     def add_movie(self, movie: Movie) -> None:
         if not isinstance(movie, Movie):
@@ -117,6 +121,30 @@ class MemoryRepository(AbstractRepository):
             return self._actor_map[actor_name.lower()]
         except KeyError:
             raise ValueError(f"No actor with the name '{actor_name}'")
+
+    def add_user(self, user: User) -> None:
+        print('add_user', user)
+        if not isinstance(user, User):
+            raise TypeError(f"'user' must be of type 'User' but was '{type(user).__name__}'")
+
+        if user in self._users:
+            return
+
+        insort(self._users, user)
+        self._user_map[user.user_name] = user
+
+    def add_users(self, users: List[User]) -> None:
+        if not isinstance(users, list):
+            raise TypeError(f"'users' must be of type 'List[User]' but was '{type(users).__name__}'")
+
+        for user in users:
+            self.add_user(user)
+
+    def get_user(self, user_name: str) -> User:
+        try:
+            return self._user_map[user_name]
+        except KeyError:
+            raise ValueError(f"No user with the name '{user_name}'")
 
     @staticmethod
     def _query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:

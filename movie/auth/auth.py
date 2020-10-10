@@ -6,6 +6,7 @@ from password_validator import PasswordValidator
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, ValidationError
 
+from movie.adapters.repository import instance as repo
 from .services import *
 
 # Configure Blueprint.
@@ -16,63 +17,64 @@ auth_blueprint = Blueprint(
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-    is_username_unique = None
+    username_error_message = None
 
     if form.validate_on_submit():
         # Successful POST, i.e. the username and password have passed validation checking.
         # Use the service layer to attempt to add the new user.
         try:
-            add_user(form.username.data, form.password.data)
+            add_user(repo, form.username.data, form.password.data)
 
             # All is well, redirect the user to the login page.
-            return redirect(url_for('auth_bp.login'))
+            return redirect(url_for('auth_bp.login'), 303)
         except NameNotUniqueException:
-            is_username_unique = 'Your username is already taken - please supply another'
+            username_error_message = 'Username taken. Please supply another'
 
     # For a GET or a failed POST request, return the Registration Web page.
     return render_template(
         'auth/credentials.html',
         title='Register',
         form=form,
-        username_error_message=is_username_unique,
-        handler_url=url_for('auth_bp.register')
+        username_error_message=username_error_message,
+        handler_url=url_for('auth_bp.register'),
+        is_register_form=True
     )
 
 
-@auth_blueprint.route('/signin', methods=['GET', 'POST'])
-def signin():
+@auth_blueprint.route('/login', methods=['GET', 'POST'])
+def login():
     form = LoginForm()
-    username_not_recognised = None
-    password_does_not_match_username = None
+    username_error_message = None
+    password_error_message = None
 
     if form.validate_on_submit():
         # Successful POST, i.e. the username and password have passed validation checking.
         # Use the service layer to lookup the user.
         try:
-            user = get_user(form.username.data)
+            user = get_user(repo, form.username.data)
 
             # Authenticate user.
-            authenticate_user(user['username'], form.password.data)
+            authenticate_user(repo, user.user_name, form.password.data)
 
             # Initialise session and redirect the user to the home page.
             session.clear()
-            session['username'] = user['username']
-            return redirect(url_for('home_bp.home'))
+            session['username'] = user.user_name
+            return redirect(url_for('home_bp.home'), 303)
 
         except UnknownUserException:
             # Username not known to the system, set a suitable error message.
-            username_not_recognised = 'Username not recognised - please supply another'
+            username_error_message = 'Username not recognised - please supply another'
 
         except AuthenticationException:
             # Authentication failed, set a suitable error message.
-            password_does_not_match_username = 'Password does not match supplied username - please check and try again'
+            password_error_message = 'Password does not match supplied username - please check and try again'
 
     # For a GET or a failed POST, return the Login Web page.
     return render_template(
         'auth/credentials.html',
-        title='Login',
-        username_error_message=username_not_recognised,
-        password_error_message=password_does_not_match_username,
+        title='Log in',
+        username_error_message=username_error_message,
+        password_error_message=password_error_message,
         form=form
     )
 
@@ -87,7 +89,7 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         if 'username' not in session:
-            return redirect(url_for('auth_bp.login'))
+            return redirect(url_for('auth_bp.login'), 303)
         return view(**kwargs)
 
     return wrapped_view
@@ -126,4 +128,4 @@ class LoginForm(FlaskForm):
         DataRequired()])
     password = PasswordField('Password', [
         DataRequired()])
-    submit = SubmitField('Login')
+    submit = SubmitField('Log in')

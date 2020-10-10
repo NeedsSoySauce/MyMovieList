@@ -27,7 +27,7 @@
         </div>
     </h2>
 
-    <div class="ui grid">
+    <div class="ui grid stackable">
         {% for genre in genres %}
         <div class="two wide column centered">
             <div class="ui horizontal list big">
@@ -43,47 +43,5 @@
         </div>
         {% endfor %}
     </div>
-
-<!--    <h2 class="ui header">-->
-<!--        Directors-->
-<!--    </h2>-->
-
-<!--    <div class="ui grid">-->
-<!--        {% for director in directors %}-->
-<!--        <div class="two wide column centered">-->
-<!--            <div class="ui horizontal list big">-->
-<!--                <div class="item">-->
-<!--                    <div class="content">-->
-<!--                        <a class="header" href="{{ url_for('search_bp.search', director=director.director_full_name) }}">-->
-<!--                            {{ director.director_full_name}}-->
-<!--                        </a>-->
-<!--                        {{ director_movies[director] }} movies-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        {% endfor %}-->
-<!--    </div>-->
-
-<!--    <h2 class="ui header">-->
-<!--        Actors-->
-<!--    </h2>-->
-
-<!--    <div class="ui grid">-->
-<!--        {% for actor in actors %}-->
-<!--        <div class="two wide column centered">-->
-<!--            <div class="ui horizontal list big">-->
-<!--                <div class="item">-->
-<!--                    <div class="content">-->
-<!--                        <a class="header" href="{{ url_for('search_bp.search', actor=actor.actor_full_name) }}">-->
-<!--                            {{ actor.actor_full_name}}-->
-<!--                        </a>-->
-<!--                        {{ actor_movies[actor] }} movies-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        {% endfor %}-->
-<!--    </div>-->
 </section>
 {% endblock %}

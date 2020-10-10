@@ -15,6 +15,7 @@ class MemoryRepository(AbstractRepository):
 
     def __init__(self):
         self._movies: List[Movie] = []
+        self._movie_map: Dict[int, Movie] = {}
         self._genres: List[Genre] = []
         self._genre_map: Dict[str, Genre] = {}
         self._directors: List[Director] = []
@@ -30,6 +31,7 @@ class MemoryRepository(AbstractRepository):
             return
 
         insort(self._movies, movie)
+        self._movie_map[movie.id] = movie
 
         if movie.genres:
             self.add_genres(movie.genres)
@@ -120,10 +122,10 @@ class MemoryRepository(AbstractRepository):
     def _query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:
 
         title = movie.title.lower()
-        director = movie.director.director_full_name.lower()
-        description = movie.description.lower()
-        genres = [genre.genre_name.lower() for genre in movie.genres]
-        actors = [actor.actor_full_name.lower() for actor in movie.actors]
+        director = movie.director.director_full_name.lower() if movie.director else ''
+        description = movie.description.lower() if movie.description else ''
+        genres = [genre.genre_name.lower() for genre in movie.genres] if movie.genres else []
+        actors = [actor.actor_full_name.lower() for actor in movie.actors] if movie.actors else []
 
         movie_str = " ".join([title, director, description] + genres + actors)
 
@@ -203,6 +205,12 @@ class MemoryRepository(AbstractRepository):
 
         offset = page_number * page_size
         return filtered[offset:min(offset + page_size, len(self._movies))]
+
+    def get_movie_by_id(self, movie_id: int) -> Movie:
+        try:
+            return self._movie_map[movie_id]
+        except KeyError:
+            raise ValueError(f"no movie with the id '{movie_id}'")
 
     def get_genres(self) -> List[Genre]:
         return self._genres

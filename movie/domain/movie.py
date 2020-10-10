@@ -6,6 +6,8 @@ from .director import Director
 
 
 class Movie:
+    id_count: int = 0
+
     def __init__(self, title: str, release_date: int) -> None:
         self._title = title
         self._release_date = release_date
@@ -16,7 +18,8 @@ class Movie:
         self._runtime_minutes: int = None
         self._rating: float = None
         self._votes: int = None
-        self._revenue_millions: float = None
+        self._id: int = Movie.id_count
+        Movie.id_count += 1
 
     @property
     def _title(self):
@@ -176,6 +179,10 @@ class Movie:
             raise ValueError("'metascore' must be greater than or equal to 0 and less than or equal to 100")
 
         self._metascore = metascore
+
+    @property
+    def id(self):
+        return self._id
 
     def __repr__(self) -> str:
         return f'<{type(self).__name__} {self._title}, {self._release_date}>'

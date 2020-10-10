@@ -2,11 +2,15 @@
 
 import os
 
-from flask import Flask
+from flask import Flask, render_template
 
 import movie.adapters.repository as repo
 from movie.adapters.memory_repository import MemoryRepository
 from movie.adapters.repository import populate
+
+
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 
 def create_app(test_config=None):
@@ -17,7 +21,7 @@ def create_app(test_config=None):
 
     # Configure the app from configuration-file settings.
     app.config.from_object('config.Config')
-    data_path = os.path.join('movie', 'adapters', 'data')
+    data_path = os.path.join('movie', 'adapters', 'data', 'Data1000Movies.csv')
 
     if test_config is not None:
         # Load test configuration, and override any configuration settings.
@@ -26,7 +30,7 @@ def create_app(test_config=None):
 
     # Create the MemoryRepository implementation for a memory-based repository.
     repo.instance = MemoryRepository()
-    populate(repo.instance, "./movie/adapters/data/Data1000Movies.csv")
+    populate(repo.instance, data_path)
 
     # Build the application - these steps require an application context.
     with app.app_context():
@@ -36,5 +40,10 @@ def create_app(test_config=None):
 
         from .search import search
         app.register_blueprint(search.search_blueprint)
+
+        from .movie import movie
+        app.register_blueprint(movie.movie_blueprint)
+
+        app.register_error_handler(404, page_not_found)
 
     return app

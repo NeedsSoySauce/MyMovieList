@@ -23,5 +23,8 @@ def test_get_search(client: FlaskClient):
 
 
 def test_get_movie(client: FlaskClient):
-    response = client.get('/movie')
+    response = client.get('/movie/7')
     assert response.status_code == 200
+
+    response = client.get('/movie/1234')
+    assert response.status_code == 404

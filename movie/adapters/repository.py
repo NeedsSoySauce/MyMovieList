@@ -133,6 +133,15 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_movie_by_id(self, movie_id: int) -> Movie:
+        """ Returns the movie with the given id in this repository.
+
+         Raises:
+             ValueError: if there is no movie with the given id
+         """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_genres(self) -> List[Genre]:
         """ Returns a list containing all genres in this repository ordered by each genres name. """
         raise NotImplementedError

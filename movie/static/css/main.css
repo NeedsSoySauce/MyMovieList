@@ -14,3 +14,7 @@ main {
 #sign-in {
     margin-right: 8px;
 }
+
+td:first-child {
+    font-weight: bold;
+}

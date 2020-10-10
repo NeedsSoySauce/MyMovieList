@@ -18,6 +18,8 @@ class Movie:
         self._runtime_minutes: int = None
         self._rating: float = None
         self._votes: int = None
+        self._revenue_millions: float = None
+        self._metascore: int = None
         self._id: int = Movie.id_count
         Movie.id_count += 1
 

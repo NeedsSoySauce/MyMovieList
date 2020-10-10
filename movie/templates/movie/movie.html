@@ -1,38 +1,100 @@
 {% extends 'layout.html' %} {% block content %}
 <section class="ui segment basic padded">
-
-    <div class="ui divided items">
-        {% for movie in movies %}
-        <section class="item">
-            <div class="content">
-                <a class="header" href="">{{ movie.title }}</a>
-                <div class="meta">
+    <h1 class="ui top attached block header">
+        {{ movie.title }}
+    </h1>
+    <div class="ui top attached tabular menu">
+        <a class="item active" data-tab="summary">Summary</a>
+        <a class="item" data-tab="reviews">Reviews</a>
+    </div>
+    <div class="ui bottom attached tab segment active" data-tab="summary">
+        <table class="ui very basic table attached padded" data-tab="summary">
+            <tr>
+                <td>Genre(s)</td>
+                <td>
+                    {% if movie.genres %}
+                    <div class="ui labels">
+                        {% for genre in movie.genres %}
+                        <a
+                                class="ui label"
+                                href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
+                            {{genre.genre_name}}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    Unknown
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Director</td>
+                <td>
                     <span>
                         <a href="{{ url_for('search_bp.search', director=movie.director.director_full_name) }}">
                             {{ movie.director.director_full_name }}
                         </a>
                     </span>
-                    <span>|</span>
-                    <span>{{ movie.runtime_minutes }} minutes</span>
-                    <span>|</span>
-                    <span>Rated {{ movie.rating }}</span>
-                </div>
-                <div class="description">
-                    <p>{{ movie.description }}</p>
-                </div>
-
-                <div class="extra">
-                    {% for genre in movie.genres %}
-                    <a
-                            class="ui label"
-                            href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
-                        {{genre.genre_name}}
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
-        </section>
-        {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <td>Actors</td>
+                <td>
+                    {% if movie.actors %}
+                    <div class="ui labels">
+                        {% for actor in movie.actors %}
+                        <a
+                                class="ui label"
+                                href="{{ url_for('search_bp.search', actor=actor.actor_full_name) }}">
+                            {{actor.actor_full_name}}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    Unknown
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td>Release date</td>
+                <td>{{ movie.release_date if movie.release_date is not none else 'Unknown' }}</td>
+            </tr>
+            <tr>
+                <td>Description</td>
+                <td>{{ movie.description if movie.description is not none else 'Unknown' }}</td>
+            </tr>
+            <tr>
+                <td>Runtime</td>
+                <td>{{ "{} minutes".format(movie.runtime_minutes) if movie.runtime_minutes is not none else 'Unknown'
+                    }}
+                </td>
+            </tr>
+            <tr>
+                <td>Rating</td>
+                <td>{{ movie.rating if movie.rating is not none else 'Unknown' }}</td>
+            </tr>
+            <tr>
+                <td>Votes</td>
+                <td>{{ movie.votes if movie.votes is not none else 'Unknown' }}</td>
+            </tr>
+            <tr>
+                <td>Metascore</td>
+                <td>{{ movie.metascore if movie.metascore is not none else 'Unknown' }}</td>
+            </tr>
+            <tr>
+                <td>Revenue</td>
+                <td>
+                    {{
+                    "${} million".format(movie.revenue_millions) if movie.revenue_millions is not none else 'Unknown'
+                    }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="reviews">
+        TBD
     </div>
 </section>
+<script>$('.tabular.menu .item').tab();</script>
 {% endblock %}

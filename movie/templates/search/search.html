@@ -27,13 +27,15 @@
                 </div>
 
                 <div class="extra">
-                    {% for genre in movie.genres %}
-                    <a
-                            class="ui label"
-                            href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
-                        {{genre.genre_name}}
-                    </a>
-                    {% endfor %}
+                    <div class="ui labels">
+                        {% for genre in movie.genres %}
+                        <a
+                                class="ui label"
+                                href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
+                            {{genre.genre_name}}
+                        </a>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </section>

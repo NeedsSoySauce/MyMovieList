@@ -10,7 +10,10 @@ from bisect import insort
 from math import ceil
 from fuzzywuzzy import fuzz
 
+from movie.domain.review import Review
 from movie.domain.user import User
+
+from collections import defaultdict
 
 
 class MemoryRepository(AbstractRepository):
@@ -26,6 +29,8 @@ class MemoryRepository(AbstractRepository):
         self._actor_map: Dict[str, Actor] = {}
         self._users: List[User] = []
         self._user_map: Dict[str, User] = {}
+        self._reviews: List[Review] = []
+        self._reviews_map: Dict[Movie, List[Review]] = defaultdict(list)
 
     def add_movie(self, movie: Movie) -> None:
         if not isinstance(movie, Movie):
@@ -123,7 +128,6 @@ class MemoryRepository(AbstractRepository):
             raise ValueError(f"No actor with the name '{actor_name}'")
 
     def add_user(self, user: User) -> None:
-        print('add_user', user)
         if not isinstance(user, User):
             raise TypeError(f"'user' must be of type 'User' but was '{type(user).__name__}'")
 
@@ -145,6 +149,19 @@ class MemoryRepository(AbstractRepository):
             return self._user_map[user_name]
         except KeyError:
             raise ValueError(f"No user with the name '{user_name}'")
+
+    def add_review(self, review: Review) -> None:
+        if review in self._reviews:
+            return
+        self._reviews.append(review)
+        self._reviews_map[review.movie].append(review)
+
+    def add_reviews(self, reviews: List[Review]) -> None:
+        for review in reviews:
+            self.add_review(review)
+
+    def get_movie_reviews(self, movie: Movie) -> List[Review]:
+        return self._reviews_map[movie]
 
     @staticmethod
     def _query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:

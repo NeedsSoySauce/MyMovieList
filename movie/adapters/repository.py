@@ -6,7 +6,9 @@ from movie.domain.director import Director
 from movie.domain.movie import Movie
 from movie.domain.genre import Genre
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
+from movie.domain.review import Review
 from movie.domain.user import User
+from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
 
 instance: Union[None, 'AbstractRepository'] = None
 """ Application wide repository instance. """
@@ -105,6 +107,20 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def add_review(self, review: Review) -> None:
+        """ Adds a review to this repository. """
+        raise NotImplementedError
+
+    def add_reviews(self, reviews: List[Review]) -> None:
+        """ Adds the given reviews to this repository. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_movie_reviews(self, movie: Movie) -> List[Review]:
+        """ Returns the reviews for the given movie """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_number_of_movies(self,
                              query: str = "",
                              genres: List[Genre] = [],
@@ -182,8 +198,15 @@ class AbstractRepository(abc.ABC):
 
 
 def populate(repo: AbstractRepository, data_path: str):
-    """ Populates the given repository with the data at the given path. """
+    """ Populates the given repository using data at the given path. """
     reader = MovieFileCSVReader(data_path)
     reader.read_csv_file()
+
+    state = MovieWatchingSimulation(reader.dataset_of_movies).simulate()
+
     repo.add_movies(reader.dataset_of_movies)
     repo.add_genres(reader.dataset_of_genres)
+    repo.add_directors(reader.dataset_of_directors)
+    repo.add_actors(reader.dataset_of_actors)
+    repo.add_users(state.users)
+    repo.add_reviews(state.reviews)

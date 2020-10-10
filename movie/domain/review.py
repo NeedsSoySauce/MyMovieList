@@ -15,7 +15,7 @@ class Review:
         return self.__movie
 
     @_movie.setter
-    def _movie(self, movie):
+    def _movie(self, movie: Movie):
         if not isinstance(movie, Movie):
             raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
         self.__movie = movie

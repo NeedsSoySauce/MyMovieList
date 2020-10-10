@@ -44,6 +44,9 @@ def create_app(test_config=None):
         from .movie import movie
         app.register_blueprint(movie.movie_blueprint)
 
+        from .auth import auth
+        app.register_blueprint(auth.auth_blueprint)
+
         app.register_error_handler(404, page_not_found)
 
     return app

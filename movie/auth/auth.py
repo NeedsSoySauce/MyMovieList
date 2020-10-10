@@ -8,19 +8,18 @@ from password_validator import PasswordValidator
 
 from functools import wraps
 
-import movie.utilities.utilities as utilities
-import movie.authentication.services as services
+import movie.auth.services as services
 import movie.adapters.repository as repo
 
 # Configure Blueprint.
-authentication_blueprint = Blueprint(
-    'authentication_bp', __name__, url_prefix='/authentication')
+auth_blueprint = Blueprint(
+    'auth_bp', __name__)
 
 
-@authentication_blueprint.route('/register', methods=['GET', 'POST'])
+@auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
-    username_not_unique = None
+    is_username_unique = None
 
     if form.validate_on_submit():
         # Successful POST, i.e. the username and password have passed validation checking.
@@ -29,24 +28,22 @@ def register():
             services.add_user(form.username.data, form.password.data, repo.repo_instance)
 
             # All is well, redirect the user to the login page.
-            return redirect(url_for('authentication_bp.login'))
+            return redirect(url_for('auth_bp.login'))
         except services.NameNotUniqueException:
-            username_not_unique = 'Your username is already taken - please supply another'
+            is_username_unique = 'Your username is already taken - please supply another'
 
     # For a GET or a failed POST request, return the Registration Web page.
     return render_template(
-        'authentication/credentials.html',
+        'auth/credentials.html',
         title='Register',
         form=form,
-        username_error_message=username_not_unique,
-        handler_url=url_for('authentication_bp.register'),
-        selected_articles=utilities.get_selected_articles(),
-        tag_urls=utilities.get_tags_and_urls()
+        username_error_message=is_username_unique,
+        handler_url=url_for('auth_bp.register')
     )
 
 
-@authentication_blueprint.route('/login', methods=['GET', 'POST'])
-def login():
+@auth_blueprint.route('/signin', methods=['GET', 'POST'])
+def signin():
     form = LoginForm()
     username_not_recognised = None
     password_does_not_match_username = None
@@ -75,17 +72,15 @@ def login():
 
     # For a GET or a failed POST, return the Login Web page.
     return render_template(
-        'authentication/credentials.html',
+        'auth/credentials.html',
         title='Login',
         username_error_message=username_not_recognised,
         password_error_message=password_does_not_match_username,
-        form=form,
-        selected_articles=utilities.get_selected_articles(),
-        tag_urls=utilities.get_tags_and_urls()
+        form=form
     )
 
 
-@authentication_blueprint.route('/logout')
+@auth_blueprint.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('home_bp.home'))
@@ -95,8 +90,9 @@ def login_required(view):
     @wraps(view)
     def wrapped_view(**kwargs):
         if 'username' not in session:
-            return redirect(url_for('authentication_bp.login'))
+            return redirect(url_for('auth_bp.login'))
         return view(**kwargs)
+
     return wrapped_view
 
 

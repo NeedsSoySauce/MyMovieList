@@ -28,3 +28,12 @@ def test_get_movie(client: FlaskClient):
 
     response = client.get('/movie/1234')
     assert response.status_code == 404
+
+
+def test_get_auth(client: FlaskClient):
+    response = client.get('/register')
+    assert response.status_code == 200
+
+    response = client.get('/signin')
+    assert response.status_code == 200
+

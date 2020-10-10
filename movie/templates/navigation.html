@@ -4,8 +4,8 @@
             <div class="ui large secondary inverted pointing menu">
                 <a class="active item" href="{{ url_for('home_bp.home') }}">Home</a>
                 <div class="right item">
-                    <a class="ui inverted button basic" id="sign-in">Sign in</a>
-                    <a class="ui inverted button basic">Register</a>
+                    <a class="ui inverted button basic" id="sign-in" href="{{ url_for('auth_bp.signin') }}">Sign in</a>
+                    <a class="ui inverted button basic" href="{{ url_for('auth_bp.register') }}">Register</a>
                 </div>
             </div>
         </div>

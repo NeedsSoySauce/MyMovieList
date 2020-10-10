@@ -1,6 +1,6 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from movie.adapters.repository import instance as repo
+from movie.adapters.repository import AbstractRepository
 from movie.domain.user import User
 
 
@@ -16,11 +16,14 @@ class AuthenticationException(Exception):
     pass
 
 
-def add_user(username: str, password: str):
+def add_user(repo: AbstractRepository, username: str, password: str) -> None:
     # Check that the given username is available.
-    user = repo.get_user(username)
-    if user is not None:
+    try:
+        _ = repo.get_user(username)
         raise NameNotUniqueException
+    except ValueError:
+        # No user with that username could be found
+        pass
 
     # Encrypt password so that the database doesn't store passwords 'in the clear'.
     password_hash = generate_password_hash(password)
@@ -30,31 +33,19 @@ def add_user(username: str, password: str):
     repo.add_user(user)
 
 
-def get_user(username: str):
-    user = repo.get_user(username)
-    if user is None:
+def get_user(repo: AbstractRepository, username: str) -> User:
+    try:
+        return repo.get_user(username)
+    except ValueError:
         raise UnknownUserException
 
-    return user_to_dict(user)
 
+def authenticate_user(repo: AbstractRepository, username: str, password: str) -> None:
+    """ Raises an AuthenticationException if the given username and or password are not valid. """
+    try:
+        user = repo.get_user(username)
+    except ValueError:
+        raise UnknownUserException
 
-def authenticate_user(username: str, password: str):
-    authenticated = False
-
-    user = repo.get_user(username)
-    if user is not None:
-        authenticated = check_password_hash(user.password, password)
-    if not authenticated:
+    if not check_password_hash(user.password, password):
         raise AuthenticationException
-
-
-# ===================================================
-# Functions to convert model entities to dictionaries
-# ===================================================
-
-def user_to_dict(user: User):
-    user_dict = {
-        'username': user.username,
-        'password': user.password
-    }
-    return user_dict

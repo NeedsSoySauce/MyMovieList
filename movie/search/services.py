@@ -1,8 +1,6 @@
 from typing import List, NamedTuple, Optional
 
-from movie.adapters.repository import instance as repo
-from movie.domain.actor import Actor
-from movie.domain.director import Director
+from movie.adapters.repository import AbstractRepository
 from movie.domain.movie import Movie
 
 _DEFAULT_PAGE_SIZE = 25
@@ -16,7 +14,8 @@ class SearchResults(NamedTuple):
     pages: int
 
 
-def search_movies(page_number: int,
+def search_movies(repo: AbstractRepository,
+                  page_number: int,
                   page_size: int = _DEFAULT_PAGE_SIZE,
                   query: str = '',
                   genres: List[str] = [],

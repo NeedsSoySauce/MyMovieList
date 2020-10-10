@@ -1,20 +1,20 @@
 from typing import List, Dict
 
-from movie.adapters.repository import instance as repo
+from movie.adapters.repository import AbstractRepository
 from movie.domain.actor import Actor
 from movie.domain.director import Director
 from movie.domain.genre import Genre
 
 
-def get_number_of_movies() -> int:
+def get_number_of_movies(repo: AbstractRepository) -> int:
     return repo.get_number_of_movies()
 
 
-def get_genres() -> List[Genre]:
+def get_genres(repo: AbstractRepository) -> List[Genre]:
     return repo.get_genres()
 
 
-def get_movies_per_genre(genres: List[Genre]) -> Dict[Genre, int]:
+def get_movies_per_genre(repo: AbstractRepository, genres: List[Genre]) -> Dict[Genre, int]:
     movies: Dict[Genre, int] = {}
 
     for genre in genres:
@@ -23,11 +23,11 @@ def get_movies_per_genre(genres: List[Genre]) -> Dict[Genre, int]:
     return movies
 
 
-def get_directors() -> List[Director]:
+def get_directors(repo: AbstractRepository) -> List[Director]:
     return repo.get_directors()
 
 
-def get_movies_per_director(directors: List[Director]) -> Dict[Director, int]:
+def get_movies_per_director(repo: AbstractRepository, directors: List[Director]) -> Dict[Director, int]:
     movies: Dict[Director, int] = {}
 
     for director in directors:
@@ -36,11 +36,11 @@ def get_movies_per_director(directors: List[Director]) -> Dict[Director, int]:
     return movies
 
 
-def get_actors() -> List[Actor]:
+def get_actors(repo: AbstractRepository) -> List[Actor]:
     return repo.get_actors()
 
 
-def get_movies_per_actor(actors: List[Actor]) -> Dict[Actor, int]:
+def get_movies_per_actor(repo: AbstractRepository, actors: List[Actor]) -> Dict[Actor, int]:
     movies: Dict[Actor, int] = {}
 
     for actor in actors:

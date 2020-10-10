@@ -6,12 +6,16 @@
                     <i class="film icon"></i>
                     MyMovieList
                 </a>
-                <div class="right item">
+
+                <div class="right menu">
                     {% if 'username' in session %}
-                    <a class="ui inverted button basic" id="logout" href="{{ url_for('auth_bp.logout') }}">Log out</a>
+                    <div class="item" href="{{ url_for('home_bp.home') }}">
+                        {{ session['username'] }}
+                    </div>
+                    <a class="item" id="logout" href="{{ url_for('auth_bp.logout') }}">Log out</a>
                     {% else %}
-                    <a class="ui inverted button basic" id="login" href="{{ url_for('auth_bp.login') }}">Log in</a>
-                    <a class="ui inverted button basic" href="{{ url_for('auth_bp.register') }}">Register</a>
+                    <a class="item" id="login" href="{{ url_for('auth_bp.login') }}">Log in</a>
+                    <a class="item" href="{{ url_for('auth_bp.register') }}">Register</a>
                     {% endif %}
                 </div>
             </div>

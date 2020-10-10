@@ -26,7 +26,9 @@ def register():
             add_user(repo, form.username.data, form.password.data)
 
             # All is well, redirect the user to the login page.
-            return redirect(url_for('auth_bp.login', success=True))
+            session.clear()
+            session['username'] = form.username.data
+            return redirect(url_for('home_bp.home', success=True))
         except NameNotUniqueException:
             username_error_message = 'Username taken. Please supply another'
 

@@ -21,7 +21,7 @@ def get_user_movies(user: User,
     page_number = max(0, min(page_number, pages - 1))
     offset = page_number * page_size
 
-    movies = (list(user.watchlist) + watched_movies)[offset:min(offset + page_size, hits)]
+    movies = list(set(list(user.watchlist) + watched_movies))[offset:min(offset + page_size, hits)]
     movies.sort()
 
     return SearchResults(movies, hits, page_number, pages)

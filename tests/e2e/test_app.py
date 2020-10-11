@@ -30,6 +30,14 @@ def test_get_movie(client: FlaskClient):
     assert response.status_code == 404
 
 
+def test_get_movie_reviews(client: FlaskClient):
+    response = client.get('/movie/7/reviews')
+    assert response.status_code == 200
+
+    response = client.get('/movie/1234/reviews')
+    assert response.status_code == 404
+
+
 def test_register(client: FlaskClient):
     response = client.get('/register')
     assert response.status_code == 200
@@ -55,5 +63,3 @@ def test_login(client: FlaskClient):
     client.post('/register', data=data)
     response = client.post('/login', data=data)
     assert response.status_code == 200
-
-

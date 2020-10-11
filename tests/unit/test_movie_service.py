@@ -15,7 +15,7 @@ def test_get_movie_reviews(movie, memory_repository):
     memory_repository.add_movie(movie)
     memory_repository.add_review(review)
 
-    result = get_movie_reviews(memory_repository, movie)
+    result = get_movie_reviews(memory_repository, movie, 0).reviews
 
     assert result[0] == review
 

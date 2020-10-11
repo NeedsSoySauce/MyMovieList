@@ -1,9 +1,0 @@
-{% if session['username'] %}
-<span
-        class="ui label {{ 'negative' if movie in user.watchlist else 'positive' }} button"
-        onclick="fetchWatchlist('{{ url_for('watchlist_bp.watchlist', movie_id=movie.id) }}', '{{ 'DELETE' if movie in user.watchlist else 'POST' }}')"
->
-    <i class="{{ 'remove' if movie in user.watchlist else 'add' }} icon"></i>
-    Watchlist
-</span>
-{% endif %}

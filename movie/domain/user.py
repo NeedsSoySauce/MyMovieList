@@ -93,6 +93,23 @@ class User:
         if isinstance(movie.runtime_minutes, int) and movie.runtime_minutes > 0:
             self._time_spent_watching_movies_minutes += movie.runtime_minutes
 
+    def remove_from_watched_movies(self, movie: Movie) -> None:
+        """
+        Removes the given movie to this user's list of watched movies and updates time_spent_watching_movies_minutes.
+        Does nothing if this user hasn't watched the given movie.
+        """
+        if not isinstance(movie, Movie):
+            raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
+
+        try:
+            self._watched_movies.remove(movie)
+        except ValueError:
+            # User hasn't watched this movie
+            return
+
+        if isinstance(movie.runtime_minutes, int) and movie.runtime_minutes > 0:
+            self._time_spent_watching_movies_minutes -= movie.runtime_minutes
+
     def add_review(self, review: Review) -> None:
         """ Adds the given review to the list of reviews written by this user. """
         if not isinstance(review, Review):
@@ -104,13 +121,9 @@ class User:
         self._reviews.append(review)
 
     def add_to_watchlist(self, movie: Movie) -> None:
-        """ Adds the given movie to this user's WatchList. Does nothing if the user has already watched the given movie.
-        """
+        """ Adds the given movie to this user's WatchList. """
         if not isinstance(movie, Movie):
             raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
-
-        if movie in self._watched_movies:
-            return
 
         self._watchlist.add_movie(movie)
 

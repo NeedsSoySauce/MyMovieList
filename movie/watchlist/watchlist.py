@@ -7,7 +7,7 @@ from werkzeug.utils import redirect
 from movie.adapters.repository import instance as repo
 from movie.auth.auth import login_required
 from movie.movie import services as movie_service
-from .services import get_watchlist_movies
+from .services import get_user_movies
 
 from ..auth import services as auth
 
@@ -53,7 +53,7 @@ def watchlist(movie_id: Union[int, None]):
     if page < 0:
         abort(404)
 
-    results = get_watchlist_movies(user, page, page_size)
+    results = get_user_movies(user, page, page_size)
 
     # The last page can move as the user can add/remove items from their watchlist, so redirect to the new last page
     # if they request the previous one
@@ -76,3 +76,28 @@ def watchlist(movie_id: Union[int, None]):
         pagination_endpoint='watchlist_bp.watchlist',
         args={key: request.args[key] for key in request.args if key != 'page'}
     )
+
+
+@watchlist_blueprint.route('/watch/<int:movie_id>', methods=['POST', 'DELETE'])
+@login_required
+def watch(movie_id: Union[int, None]):
+    user_name = session['username']
+    try:
+        user = auth.get_user(repo, user_name)
+    except auth.UnknownUserException:
+        current_app.logger.debug(f"Unknown user 'user_name'")
+        # invalid session
+        session.clear()
+        return redirect(url_for('auth_bp.login'))
+
+    try:
+        movie = movie_service.get_movie_by_id(repo, movie_id)
+    except ValueError:
+        abort(404)
+
+    if request.method == 'POST':
+        user.watch_movie(movie)
+        return 'Created', 201
+    else:
+        user.remove_from_watched_movies(movie)
+        return 'Deleted', 200

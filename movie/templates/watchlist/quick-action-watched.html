@@ -1,0 +1,9 @@
+{% if session['username'] %}
+<span
+        class="ui label {{ 'positive' if movie in user.watched_movies else 'grey' }} button"
+        onclick="request('{{ url_for('watchlist_bp.watch', movie_id=movie.id) }}', '{{ 'DELETE' if movie in user.watched_movies else 'POST' }}')"
+>
+    <i class="{{ 'remove' if movie in user.watched_movies else 'add' }} icon"></i>
+    Watched
+</span>
+{% endif %}

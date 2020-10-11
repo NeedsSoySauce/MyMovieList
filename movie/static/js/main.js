@@ -1,4 +1,4 @@
-function fetchWatchlist(url, method) {
+function request(url, method) {
     fetch(url, { method })
         .then((res) => {
             window.location.reload();

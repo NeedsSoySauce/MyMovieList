@@ -2,7 +2,9 @@
 {% block content %}
 <section class="ui segment basic padded">
     <h1 class="ui top attached block header">
-        {{ movie.title }} {% include 'watchlist/quick-action.html' %}
+        {{ movie.title }}
+        {% include 'watchlist/quick-action-watchlist.html' %}
+        {% include 'watchlist/quick-action-watched.html' %}
     </h1>
 
     <div class="ui top attached tabular menu">

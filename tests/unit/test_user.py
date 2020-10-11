@@ -213,6 +213,12 @@ def test_watch_movie_invalid_type(user):
         user.watch_movie(123)
 
 
+def test_remove_from_watched_movies(user, movie):
+    user.watch_movie(movie)
+    user.remove_from_watched_movies(movie)
+    assert movie not in user.watched_movies
+
+
 def test_add_review(user, review):
     user.add_review(review)
 

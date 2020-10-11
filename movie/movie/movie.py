@@ -13,12 +13,42 @@ movie_blueprint = Blueprint(
     'movie_bp', __name__)
 
 
-@movie_blueprint.route('/movie/<movie_id>', methods=['GET', 'POST'])
+@movie_blueprint.route('/movie/<movie_id>', methods=['GET'])
 def movie(movie_id: int):
     user = None
-    review_error_message = None
 
-    tab = int(request.args.get('tab') or 0)
+    try:
+        movie = get_movie_by_id(repo, int(movie_id))
+    except ValueError:
+        abort(404)
+
+    try:
+        user = auth.get_user(repo, session['username'])
+    except ValueError:
+        # No user with the given username
+        pass
+    except KeyError:
+        # No active session, anonymous/guest user
+        pass
+    except auth.UnknownUserException:
+        # Invalid session
+        session.clear()
+        pass
+
+    form = ReviewForm()
+
+    return render_template(
+        'movie/summary.html',
+        movie=movie,
+        reviews=reviews,
+        tab=0
+    )
+
+
+@movie_blueprint.route('/movie/<movie_id>/reviews', methods=['GET', 'POST'])
+def reviews(movie_id: int):
+    user = None
+    review_error_message = None
 
     try:
         movie = get_movie_by_id(repo, int(movie_id))
@@ -47,25 +77,23 @@ def movie(movie_id: int):
         add_review(repo, Review(movie, form.review.data, form.rating.data), user)
 
         # Reload the page to show the new review
-        return redirect(url_for('movie_bp.movie', movie_id=movie_id, tab=1))
+        return redirect(url_for('movie_bp.reviews', movie_id=movie.id))
 
     # Request is a HTTP POST where form validation has failed.
     if request.method == 'POST':
-        tab = 1
         review_error_message = 'Invalid review.'
 
     reviews = get_movie_reviews(repo, movie)
     reviews_user_map = get_reviews_user_map(repo, reviews)
 
     return render_template(
-        'movie/movie.html',
+        'movie/reviews.html',
         movie=movie,
         reviews=reviews,
         reviews_user_map=reviews_user_map,
         review_error_message=review_error_message,
         form=form,
-        movie_id=movie_id,
-        tab=tab
+        tab=1
     )
 
 

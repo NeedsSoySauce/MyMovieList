@@ -1,0 +1,71 @@
+{% extends 'movie/movie.html' %}
+{% block tab %}
+<section>
+    <h1 class="ui icon header huge">Leave a review</h1>
+    <form
+            method="POST"
+            action="{{ url_for('movie_bp.reviews', movie_id=movie.id) }}"
+            class="ui form {{ 'error' if review_error_message }} {{ 'success' if is_review_success }}"
+    >
+        {{ form.csrf_token }} <!-- Need to include this token - Flask WTForms requires it. -->
+        <div class="field {{ 'required' if is_register_form }} {{ 'error' if username_error_message }}">
+            {{ form.rating.label }}
+            {{ form.rating(placeholder='Enter an integer between 1 and 10') }}
+        </div>
+        <div class="field {{ 'required' if is_register_form }}  {{ 'error' if password_error_message }}">
+            {{ form.review.label }}
+            {{ form.review }}
+        </div>
+        <div class="ui error message">
+            {% if form.errors %}
+            <ul>
+                {% for field_name, field_errors in form.errors|dictsort if field_errors %}
+                {% for error in field_errors %}
+                <li>{{ error }}</li>
+                {% endfor %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+        <div class="ui success message">
+            <div class="header">Review submitted</div>
+        </div>
+        {{ form.submit(class_="ui button")}}
+    </form>
+</section>
+
+<div class="ui divider"></div>
+
+{% if reviews %}
+<section class="ui feed">
+    {% for review in reviews %}
+    <div class="event">
+        <div class="content">
+            <div class="summary">
+                        <span class="user">
+                            {{ reviews_user_map[review].user_name or 'Anonymous' }}
+                        </span>
+                <div class="date">
+                    {{ review.timestamp|dateformat }}
+                </div>
+            </div>
+            <div class="extra text">
+                {{ review.review_text }}
+            </div>
+            <div class="meta">
+                {% for _ in range(review.rating|int) %}
+                <i class="star icon yellow fitted"></i>
+                {% endfor %}
+                {{ review.rating }} star{{'s' if review.rating and review.rating > 1}}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</section>
+
+{% else %}
+<section>
+    <p>No reviews have been posted.</p>
+</section>
+{% endif %}
+{% endblock %}

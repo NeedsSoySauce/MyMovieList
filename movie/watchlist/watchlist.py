@@ -44,7 +44,7 @@ def watchlist(movie_id: Union[int, None]):
     # Page numbers are displayed as starting from 1 so subtract 1
     try:
         page = int(request.args.get('page') or 1) - 1
-        page_size = int(request.args.get('size') or 2)
+        page_size = int(request.args.get('size') or 25)
     except ValueError:
         abort(404)
 

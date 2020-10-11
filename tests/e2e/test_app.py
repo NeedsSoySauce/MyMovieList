@@ -150,3 +150,23 @@ def test_add_review_invalid_input(client, rating, text, message):
     print(response.data.decode("utf-8"))
 
     assert message in response.data
+
+
+def test_watchlist(client: FlaskClient, auth):
+    auth.login()
+
+    # User should have no movies on their watchlist to start with
+    response = client.get('/watchlist')
+    assert b'Looks like your watchlist is empty.' in response.data
+
+    # Add movie
+    response = client.post('/watchlist/1')
+    assert response.status_code == 201
+
+    # Check movie has been added
+    response = client.get('/watchlist')
+    assert b'Looks like your watchlist is empty.' not in response.data
+
+    # Remove movie
+    response = client.delete('/watchlist/1')
+    assert response.status_code == 200

@@ -2,8 +2,9 @@
 {% block content %}
 <section class="ui segment basic padded">
     <h1 class="ui top attached block header">
-        {{ movie.title }}
+        {{ movie.title }} {% include 'watchlist/quick-action.html' %}
     </h1>
+
     <div class="ui top attached tabular menu">
         <a class="item {{ 'active' if tab == 0 }}" href="{{ url_for('movie_bp.movie', movie_id=movie.id) }}">Summary</a>
         <a class="item {{ 'active' if tab == 1 }}"

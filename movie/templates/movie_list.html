@@ -1,12 +1,3 @@
-<script>
-function fetchWatchlist(url, method) {
-    fetch(url, { method })
-        .then((res) => {
-            window.location.reload();
-        })
-        .catch((error) => console.error(error));
-}
-</script>
 <div class="ui divided items">
     {% for movie in movies %}
     <section class="item">
@@ -35,15 +26,7 @@ function fetchWatchlist(url, method) {
                         {{genre.genre_name}}
                     </a>
                     {% endfor %}
-                    {% if session['username'] %}
-                    <span
-                            class="ui label {{ 'negative' if movie in user.watchlist else 'positive' }} button"
-                            onclick="fetchWatchlist('{{ url_for('watchlist_bp.watchlist', movie_id=movie.id) }}', '{{ 'DELETE' if movie in user.watchlist else 'POST' }}')"
-                    >
-                        <i class="{{ 'remove' if movie in user.watchlist else 'add' }} icon"></i>
-                        Watchlist
-                    </span>
-                    {% endif %}
+                    {% include 'watchlist/quick-action.html' %}
                 </div>
             </div>
         </div>

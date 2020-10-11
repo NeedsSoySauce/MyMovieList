@@ -15,15 +15,31 @@ movie_blueprint = Blueprint(
 
 @movie_blueprint.route('/movie/<movie_id>', methods=['GET'])
 def movie(movie_id: int):
+    user = None
+
     try:
         movie = get_movie_by_id(repo, int(movie_id))
     except ValueError:
         abort(404)
 
+    try:
+        user = auth.get_user(repo, session['username'])
+    except ValueError:
+        # No user with the given username
+        pass
+    except KeyError:
+        # No active session, anonymous/guest user
+        pass
+    except auth.UnknownUserException:
+        # Invalid session
+        session.clear()
+        pass
+
     return render_template(
         'movie/summary.html',
         movie=movie,
-        tab=0
+        tab=0,
+        user=user
     )
 
 
@@ -96,7 +112,8 @@ def reviews(movie_id: int):
         pages=results.pages,
         hits=results.hits,
         pagination_endpoint='movie_bp.reviews',
-        args=args
+        args=args,
+        user=user
     )
 
 

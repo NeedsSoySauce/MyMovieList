@@ -25,8 +25,12 @@ def search():
         pass
 
     # Page numbers are displayed as starting from 1 so subtract 1
-    page = int(request.args.get('page') or 1) - 1
-    page_size = int(request.args.get('size') or 25)
+    try:
+        page = int(request.args.get('page') or 1) - 1
+        page_size = int(request.args.get('size') or 25)
+    except ValueError:
+        abort(404)
+
     query = request.args.get('query') or ''
     genres = request.args.getlist('genre')
     director = request.args.get('director') or None

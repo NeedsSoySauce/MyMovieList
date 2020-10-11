@@ -74,5 +74,5 @@ def watchlist(movie_id: Union[int, None]):
         pages=results.pages,
         hits=results.hits,
         pagination_endpoint='watchlist_bp.watchlist',
-        args={key: request.args[key] for key in request.args if key != 'page'},
+        args={key: request.args[key] for key in request.args if key != 'page'}
     )

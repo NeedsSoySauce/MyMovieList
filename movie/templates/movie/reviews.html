@@ -37,32 +37,8 @@
 <div class="ui divider"></div>
 
 {% if reviews %}
-<section class="ui feed">
-    {% for review in reviews %}
-    <div class="event">
-        <div class="content">
-            <div class="summary">
-                        <span class="user">
-                            {{ reviews_user_map[review].user_name or 'Anonymous' }}
-                        </span>
-                <div class="date">
-                    {{ review.timestamp|dateformat }}
-                </div>
-            </div>
-            <div class="extra text">
-                {{ review.review_text }}
-            </div>
-            <div class="meta">
-                {% for _ in range(review.rating|int) %}
-                <i class="star icon yellow fitted"></i>
-                {% endfor %}
-                {{ review.rating }} star{{'s' if review.rating and review.rating > 1}}
-            </div>
-        </div>
-    </div>
-    {% endfor %}
-</section>
-
+{% include 'movie/reviews_feed.html' %}
+{% include 'page_navigation.html' %}
 {% else %}
 <section>
     <p>No reviews have been posted.</p>

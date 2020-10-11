@@ -15,27 +15,10 @@ movie_blueprint = Blueprint(
 
 @movie_blueprint.route('/movie/<movie_id>', methods=['GET'])
 def movie(movie_id: int):
-    user = None
-
     try:
         movie = get_movie_by_id(repo, int(movie_id))
     except ValueError:
         abort(404)
-
-    try:
-        user = auth.get_user(repo, session['username'])
-    except ValueError:
-        # No user with the given username
-        pass
-    except KeyError:
-        # No active session, anonymous/guest user
-        pass
-    except auth.UnknownUserException:
-        # Invalid session
-        session.clear()
-        pass
-
-    form = ReviewForm()
 
     return render_template(
         'movie/summary.html',
@@ -67,6 +50,18 @@ def reviews(movie_id: int):
         session.clear()
         pass
 
+    # Page numbers are displayed as starting from 1 so subtract 1
+    try:
+        page = int(request.args.get('page') or 1) - 1
+        page_size = int(request.args.get('size') or 2)
+    except ValueError:
+        abort(404)
+
+    results = get_movie_reviews(repo, movie, page, page_size)
+
+    if page < 0 or page > results.pages:
+        abort(404)
+
     form = ReviewForm()
 
     if form.validate_on_submit():
@@ -82,8 +77,11 @@ def reviews(movie_id: int):
     if request.method == 'POST':
         review_error_message = 'Invalid review.'
 
-    reviews = get_movie_reviews(repo, movie)
+    reviews = results.reviews
     reviews_user_map = get_reviews_user_map(repo, reviews)
+
+    args = {key: request.args[key] for key in request.args if key != 'page'}
+    args['movie_id'] = movie.id
 
     return render_template(
         'movie/reviews.html',
@@ -92,7 +90,13 @@ def reviews(movie_id: int):
         reviews_user_map=reviews_user_map,
         review_error_message=review_error_message,
         form=form,
-        tab=1
+        tab=1,
+        page=results.page,
+        page_size=page_size,
+        pages=results.pages,
+        hits=results.hits,
+        pagination_endpoint='movie_bp.reviews',
+        args=args
     )
 
 

@@ -1,4 +1,5 @@
 import pytest
+from flask import session
 from flask.testing import FlaskClient
 
 
@@ -94,4 +95,58 @@ def test_login_invalid_input(client, username, password, message):
         '/login',
         data={'username': username, 'password': password}
     )
+    assert message in response.data
+
+
+def test_add_review_anonymous(client: FlaskClient):
+    response = client.get('/movie/1/reviews')
+    assert response.status_code == 200
+
+    data = {
+        'rating': 1,
+        'review': 'abc 123'
+    }
+
+    response = client.post('/movie/1/reviews', data=data, follow_redirects=True)
+
+    assert b'Anonymous' in response.data
+    assert b'1' in response.data
+    assert b'abc 123' in response.data
+
+
+def test_add_review_authenticated(client: FlaskClient, auth):
+    data = {
+        'rating': 1,
+        'review': 'abc 123'
+    }
+
+    auth.login()
+    response = client.post('/movie/1/reviews', data=data, follow_redirects=True)
+
+    assert b'test' in response.data
+    assert b'1' in response.data
+    assert b'abc 123' in response.data
+
+
+@pytest.mark.parametrize(('rating', 'text', 'message'), (
+        ('', 'abc', b'Invalid Choice: could not coerce'),
+        (0, 'abc', b'Ratings must be an integer between 1 and 10.'),
+        (11, 'abc', b'Ratings must be an integer between 1 and 10.'),
+        (2.5, 'abc', b'Invalid Choice: could not coerce'),
+        (1, '', b'Reviews must be at least one character long.'),
+        (1, 'crap', b'Please keep it PG (no profanity!).')
+))
+def test_add_review_invalid_input(client, rating, text, message):
+    data = {
+        'rating': rating,
+        'review': text
+    }
+
+    if rating is None:
+        del data['rating']
+
+    response = client.post('/movie/1/reviews', data=data, follow_redirects=True)
+    print()
+    print(response.data.decode("utf-8"))
+
     assert message in response.data

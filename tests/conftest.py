@@ -136,3 +136,19 @@ def client():
     })
 
     return my_app.test_client()
+
+
+class AuthenticationManager:
+    def __init__(self, client):
+        self._client = client
+
+    def login(self, username='test', password='test123A'):
+        return self._client.post('/login', data={'username': username, 'password': password})
+
+    def logout(self):
+        return self._client.get('/logout')
+
+
+@pytest.fixture
+def auth(client):
+    return AuthenticationManager(client)

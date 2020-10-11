@@ -10,7 +10,7 @@
         {{ form.csrf_token }} <!-- Need to include this token - Flask WTForms requires it. -->
         <div class="field {{ 'required' if is_register_form }} {{ 'error' if username_error_message }}">
             {{ form.rating.label }}
-            {{ form.rating(placeholder='Enter an integer between 1 and 10') }}
+            {{ form.rating }}
         </div>
         <div class="field {{ 'required' if is_register_form }}  {{ 'error' if password_error_message }}">
             {{ form.review.label }}

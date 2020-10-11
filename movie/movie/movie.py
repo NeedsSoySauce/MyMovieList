@@ -112,13 +112,17 @@ class ProfanityFree:
 
 
 class ReviewForm(FlaskForm):
+    rating = SelectField('Rating',
+                         [DataRequired(message="Ratings must be an integer between 1 and 10."),
+                          NumberRange(min=1, max=10, message="Ratings must be an integer between 1 and 10.")],
+                         choices=range(1, 11),
+                         coerce=int,
+                         default=10,
+
+                         )
     review = TextAreaField('Review', [
-        DataRequired(),
+        DataRequired(message='Reviews must be at least one character long.'),
         Length(min=1, message='Reviews must be at least one character long.'),
         ProfanityFree(message='Please keep it PG (no profanity!).')
     ])
-    rating = SelectField('Rating',
-                         validators=[DataRequired(), NumberRange(min=1, max=10)],
-                         choices=range(1, 11),
-                         coerce=int)
     submit = SubmitField('Submit')

@@ -1,4 +1,5 @@
 from functools import wraps
+from typing import Union
 
 from flask import Blueprint, render_template, redirect, url_for, session, request
 from flask_wtf import FlaskForm
@@ -28,7 +29,7 @@ def register():
             # All is well, redirect the user to the login page.
             session.clear()
             session['username'] = form.username.data
-            return redirect(url_for('home_bp.home', success=True))
+            return redirect(url_for('home_bp.home'))
         except NameNotUniqueException:
             username_error_message = 'Username unavailable.'
 

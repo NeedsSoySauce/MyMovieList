@@ -30,7 +30,7 @@ def register():
             session['username'] = form.username.data
             return redirect(url_for('home_bp.home', success=True))
         except NameNotUniqueException:
-            username_error_message = 'Username taken. Please supply another'
+            username_error_message = 'Username unavailable.'
 
     # For a GET or a failed POST request, return the Registration Web page.
     return render_template(
@@ -102,8 +102,8 @@ def login_required(view):
 class PasswordValid:
     def __init__(self, message=None):
         if not message:
-            message = u'Your password must be at least 8 characters, contain an upper case letter,\
-            a lower case letter, and a digit'
+            message = 'Your password must be at least 8 characters, contain an upper case letter, a lower case ' \
+                      'letter, and a digit'
         self.message = message
 
     def __call__(self, form, field):

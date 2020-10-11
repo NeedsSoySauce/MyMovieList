@@ -51,6 +51,24 @@ def test_register(client: FlaskClient):
     assert response.status_code == 200
 
 
+@pytest.mark.parametrize(('username', 'password', 'message'), (
+        ('', '', b'Username required'),
+        ('cj', '', b'Usernames must be at least 3 characters'),
+        ('test', '', b'Password required'),
+        ('test', 'test', b'Your password must be at least 8 characters, contain an upper case letter, a lower case ' \
+                         b'letter, and a digit'),
+        ('test', 'test123A', b'Username unavailable'),
+))
+def test_register_with_invalid_input(client, username, password, message):
+    # Check that attempting to register with invalid combinations of username and password generate appropriate error
+    # messages.
+    response = client.post(
+        '/register',
+        data={'username': username, 'password': password}
+    )
+    assert message in response.data
+
+
 def test_login(client: FlaskClient):
     response = client.get('/login')
     assert response.status_code == 200
@@ -63,3 +81,17 @@ def test_login(client: FlaskClient):
     client.post('/register', data=data)
     response = client.post('/login', data=data)
     assert response.status_code == 200
+
+
+@pytest.mark.parametrize(('username', 'password', 'message'), (
+        ('abcd', 'abcd', b'Unrecognized username - please check and try again.'),
+        ('test', 'abcd', b'Incorrect password - please check and try again.')
+))
+def test_login_invalid_input(client, username, password, message):
+    # Check that attempting to register with invalid combinations of username and password generate appropriate error
+    # messages.
+    response = client.post(
+        '/login',
+        data={'username': username, 'password': password}
+    )
+    assert message in response.data

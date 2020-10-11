@@ -1,6 +1,8 @@
 import abc
 from typing import List, Union, Optional, Dict
 
+from werkzeug.security import generate_password_hash
+
 from movie.domain.actor import Actor
 from movie.domain.director import Director
 from movie.domain.movie import Movie
@@ -223,3 +225,6 @@ def populate(repo: AbstractRepository, data_path: str):
     repo.add_actors(reader.dataset_of_actors)
     repo.add_users(state.users)
     repo.add_reviews(state.reviews)
+
+    test_user = User('test', generate_password_hash('test123A'))
+    repo.add_user(test_user)

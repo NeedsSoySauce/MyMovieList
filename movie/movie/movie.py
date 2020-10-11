@@ -2,7 +2,7 @@ from better_profanity import profanity
 from flask import Blueprint, render_template, abort, session, url_for, request
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
-from wtforms import ValidationError, TextAreaField, SubmitField, IntegerField, RadioField, SelectField
+from wtforms import ValidationError, TextAreaField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, NumberRange
 
 from movie.adapters.repository import instance as repo
@@ -40,7 +40,6 @@ def movie(movie_id: int):
     return render_template(
         'movie/summary.html',
         movie=movie,
-        reviews=reviews,
         tab=0
     )
 

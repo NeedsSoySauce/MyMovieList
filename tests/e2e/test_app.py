@@ -146,9 +146,6 @@ def test_add_review_invalid_input(client, rating, text, message):
         del data['rating']
 
     response = client.post('/movie/1/reviews', data=data, follow_redirects=True)
-    print()
-    print(response.data.decode("utf-8"))
-
     assert message in response.data
 
 

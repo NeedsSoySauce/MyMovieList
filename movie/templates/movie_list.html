@@ -1,0 +1,52 @@
+<script>
+function fetchWatchlist(url, method) {
+    fetch(url, { method })
+        .then((res) => {
+            window.location.reload();
+        })
+        .catch((error) => console.error(error));
+}
+</script>
+<div class="ui divided items">
+    {% for movie in movies %}
+    <section class="item">
+        <div class="content">
+            <a class="header" href="{{ url_for('movie_bp.movie', movie_id=movie.id) }}">{{ movie.title }}</a>
+            <div class="meta">
+                <span>
+                    <a href="{{ url_for('search_bp.search', director=movie.director.director_full_name) }}">
+                        {{ movie.director.director_full_name }}
+                    </a>
+                </span>
+                <span>|</span>
+                <span>{{ movie.runtime_minutes }} minutes</span>
+                <span>|</span>
+                <span>Rated {{ movie.rating }}</span>
+            </div>
+            <div class="description">
+                <p>{{ movie.description }}</p>
+            </div>
+            <div class="extra">
+                <div class="ui labels">
+                    {% for genre in movie.genres %}
+                    <a
+                            class="ui label"
+                            href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
+                        {{genre.genre_name}}
+                    </a>
+                    {% endfor %}
+                    {% if session['username'] %}
+                    <span
+                            class="ui label {{ 'negative' if movie in user.watchlist else 'positive' }} button"
+                            onclick="fetchWatchlist('{{ url_for('watchlist_bp.watchlist', movie_id=movie.id) }}', '{{ 'DELETE' if movie in user.watchlist else 'POST' }}')"
+                    >
+                        <i class="{{ 'remove' if movie in user.watchlist else 'add' }} icon"></i>
+                        Watchlist
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endfor %}
+</div>

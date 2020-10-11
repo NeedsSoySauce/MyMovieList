@@ -33,9 +33,9 @@ def add_user(repo: AbstractRepository, username: str, password: str) -> None:
     repo.add_user(user)
 
 
-def get_user(repo: AbstractRepository, username: str) -> User:
+def get_user(repo: AbstractRepository, user_name: str) -> User:
     try:
-        return repo.get_user(username)
+        return repo.get_user(user_name)
     except ValueError:
         raise UnknownUserException
 

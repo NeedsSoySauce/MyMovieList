@@ -7,7 +7,7 @@ from wtforms.validators import DataRequired, Length, NumberRange
 
 from movie.adapters.repository import instance as repo
 from .services import *
-from ..utilities import services as utilities
+from ..auth import services as auth
 
 movie_blueprint = Blueprint(
     'movie_bp', __name__)
@@ -26,12 +26,16 @@ def movie(movie_id: int):
         abort(404)
 
     try:
-        user = utilities.get_user(repo, session['username'])
+        user = auth.get_user(repo, session['username'])
     except ValueError:
         # No user with the given username
         pass
     except KeyError:
         # No active session, anonymous/guest user
+        pass
+    except auth.UnknownUserException:
+        # Invalid session
+        session.clear()
         pass
 
     form = ReviewForm()

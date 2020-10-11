@@ -6,9 +6,12 @@
                     <i class="film icon"></i>
                     MyMovieList
                 </a>
+                <a class="item" href="{{ url_for('watchlist_bp.watchlist') }}">
+                    Watchlist
+                </a>
 
                 <div class="right menu">
-                    {% if 'username' in session %}
+                    {% if session['username'] %}
                     <div class="item" href="{{ url_for('home_bp.home') }}">
                         {{ session['username'] }}
                     </div>

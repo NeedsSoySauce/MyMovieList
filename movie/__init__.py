@@ -47,6 +47,9 @@ def create_app(test_config=None):
         from .auth import auth
         app.register_blueprint(auth.auth_blueprint)
 
+        from .watchlist import watchlist
+        app.register_blueprint(watchlist.watchlist_blueprint)
+
         from .utilities import utilities
         app.register_blueprint(utilities.utilities_blueprint)
 

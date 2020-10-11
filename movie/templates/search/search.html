@@ -6,104 +6,19 @@
         Showing {{ page * page_size + 1}} to {{ page * page_size + [page_size, movies|length]|min }} of {{ hits }}
         results
     </h1>
-
-    <div class="ui divided items">
-        {% for movie in movies %}
-        <section class="item">
-            <div class="content">
-                <a class="header" href="{{ url_for('movie_bp.movie', movie_id=movie.id) }}">{{ movie.title }}</a>
-                <div class="meta">
-                    <span>
-                        <a href="{{ url_for('search_bp.search', director=movie.director.director_full_name) }}">
-                            {{ movie.director.director_full_name }}
-                        </a>
-                    </span>
-                    <span>|</span>
-                    <span>{{ movie.runtime_minutes }} minutes</span>
-                    <span>|</span>
-                    <span>Rated {{ movie.rating }}</span>
-                </div>
-                <div class="description">
-                    <p>{{ movie.description }}</p>
-                </div>
-
-                <div class="extra">
-                    <div class="ui labels">
-                        {% for genre in movie.genres %}
-                        <a
-                                class="ui label"
-                                href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
-                            {{genre.genre_name}}
-                        </a>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </section>
-        {% endfor %}
-    </div>
-
-    <section class="ui segment basic center aligned">
-        <div class="ui pagination menu" id="pagination-large">
-            <a
-                    class="item {{ 'disabled' if page <= 0 }}"
-                    href="{{ url_for('search_bp.search', page=1, **args) }}"
-            >
-                <<
-            </a>
-            <a
-                    class="item {{ 'disabled' if page <= 0 }}"
-                    href="{{ url_for('search_bp.search', page=page, **args) }}"
-            >
-                <
-            </a>
-            {% for i in range([0, page-3]|max, [pages, page + 4]|min) %}
-            <a
-                    class="item {{ 'active' if i == page }}"
-                    href="{{ url_for('search_bp.search', page=i+1, **args) }}"
-            >
-                {{ i + 1 }}
-            </a>
-            {% endfor %}
-            <a
-                    class="item {{ 'disabled' if page >= pages - 1 }}"
-                    href="{{ url_for('search_bp.search', page=page+2, **args) }}"
-            >
-                >
-            </a>
-            <a
-                    class="item {{ 'disabled' if page >= pages - 1 }}"
-                    href="{{ url_for('search_bp.search', page=pages, **args) }}"
-            >
-                >>
-            </a>
-        </div>
-        <div class="ui pagination menu" id="pagination-small">
-            <a
-                    class="item {{ 'disabled' if page <= 0 }}"
-                    href="{{ url_for('search_bp.search', page=page, **args) }}"
-            >
-                <
-            </a>
-            {% for i in range([0, page-2]|max, [pages, page + 3]|min) %}
-            <a
-                    class="item {{ 'active' if i == page }}"
-                    href="{{ url_for('search_bp.search', page=i+1, **args) }}"
-            >
-                {{ i + 1 }}
-            </a>
-            {% endfor %}
-            <a
-                    class="item {{ 'disabled' if page >= pages - 1 }}"
-                    href="{{ url_for('search_bp.search', page=page+2, **args) }}"
-            >
-                >
-            </a>
-        </div>
-    </section>
-
+    {% include 'movie_list.html' %}
+    {% include 'page_navigation.html' %}
     {% else %}
-    <h1>No results</h1>
+    <h2 class="ui icon header center aligned">
+        <i class="massive frown outline icon"></i>
+        <div class="content">
+            No results.
+            <div class="sub header">Don't give up! Try searching for something else.</div>
+        </div>
+    </h2>
+    <section class="ui center aligned segment padded basic">
+            {% include 'searchbar.html' %}
+    </section>
     {% endif %}
 </section>
 {% endblock %}

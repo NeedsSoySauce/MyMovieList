@@ -192,7 +192,7 @@ class MemoryRepository(AbstractRepository):
     def _get_filtered_movies(self,
                              query: str = "",
                              genres: List[Genre] = [],
-                             director: Optional[Director] = None,
+                             directors: List[Director] = [],
                              actors: List[Actor] = []) -> List[Movie]:
 
         filtered = self._movies
@@ -204,8 +204,8 @@ class MemoryRepository(AbstractRepository):
         if genres:
             filtered = filter(lambda x: all(genre in x.genres for genre in genres), filtered)
 
-        if director:
-            filtered = filter(lambda x: director == x.director, filtered)
+        if directors:
+            filtered = filter(lambda x: any(director == x.director for director in directors), filtered)
 
         if actors:
             filtered = filter(lambda x: all(actor in x.actors for actor in actors), filtered)
@@ -215,24 +215,24 @@ class MemoryRepository(AbstractRepository):
     def get_number_of_movies(self,
                              query: str = "",
                              genres: List[Genre] = [],
-                             director: Optional[Director] = None,
+                             directors: List[Director] = [],
                              actors: List[Actor] = []) -> int:
-        return len(self._get_filtered_movies(query, genres, director, actors))
+        return len(self._get_filtered_movies(query, genres, directors, actors))
 
     def get_number_of_pages(self,
                             page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
                             query: str = "",
                             genres: List[Genre] = [],
-                            director: Optional[Director] = None,
+                            directors: List[Director] = [],
                             actors: List[Actor] = []) -> int:
-        return ceil(self.get_number_of_movies(query, genres, director, actors) / page_size)
+        return ceil(self.get_number_of_movies(query, genres, directors, actors) / page_size)
 
     def get_movies(self,
                    page_number: int,
                    page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
                    query: str = "",
                    genres: List[Genre] = [],
-                   director: Optional[Director] = None,
+                   directors: List[Director] = [],
                    actors: List[Actor] = []) -> List[Movie]:
 
         if not isinstance(page_number, int):
@@ -247,8 +247,8 @@ class MemoryRepository(AbstractRepository):
         if not isinstance(genres, list) or any(not isinstance(genre, Genre) for genre in genres):
             raise TypeError(f"'genres' must be of type 'List[Genre]' but was '{type(genres).__name__}'")
 
-        if director is not None and not isinstance(director, Director):
-            raise TypeError(f"'director' must be of type 'Director' or None but was '{type(director).__name__}'")
+        if not isinstance(directors, list) or any(not isinstance(director, Director) for director in directors):
+            raise TypeError(f"'directors' must be of type 'List[Director]' but was '{type(directors).__name__}'")
 
         if not isinstance(actors, list) or any(not isinstance(actors, Actor) for actors in actors):
             raise TypeError(f"'actors' must be of type 'List[Actor]' but was '{type(genres).__name__}'")
@@ -259,7 +259,7 @@ class MemoryRepository(AbstractRepository):
         if page_size < 1:
             raise ValueError(f"'page_size' must be at least 1 but was {page_size}")
 
-        filtered = self._get_filtered_movies(query, genres, director, actors)
+        filtered = self._get_filtered_movies(query, genres, directors, actors)
 
         offset = page_number * page_size
         return filtered[offset:min(offset + page_size, len(self._movies))]

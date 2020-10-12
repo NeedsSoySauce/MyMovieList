@@ -1,9 +1,9 @@
-from flask import Blueprint, render_template, request, current_app, session, url_for
+from flask import Blueprint, render_template, request, session, url_for, current_app
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from movie.adapters.repository import instance as repo
-from .services import search_movies
+from .services import search_movies, create_search_form
 from ..auth import services as auth
 
 search_blueprint = Blueprint(
@@ -12,6 +12,7 @@ search_blueprint = Blueprint(
 
 @search_blueprint.route('/search', methods=['GET'])
 def search():
+    form = create_search_form(repo, request.args)
     user = None
 
     try:
@@ -31,18 +32,18 @@ def search():
     except ValueError:
         abort(404)
 
-    query = request.args.get('query') or ''
-    genres = request.args.getlist('genre')
-    director = request.args.get('director') or None
-    actors = request.args.getlist('actor')
+    query = form.query.data
+    genres = form.genres.data
+    directors = form.directors.data
+    actors = form.actors.data
 
     if page < 0:
         abort(404)
 
-    results = search_movies(repo, page, page_size=page_size, query=query, genres=genres, director=director,
+    results = search_movies(repo, page, page_size=page_size, query=query, genres=genres, directors=directors,
                             actors=actors)
 
-    if page >= results.pages:
+    if page >= results.pages and page != 0:
         abort(404)
 
     return render_template(
@@ -54,5 +55,6 @@ def search():
         page_size=page_size,
         args={key: request.args[key] for key in request.args if key != 'page'},
         pagination_endpoint='search_bp.search',
-        user=user
+        user=user,
+        form=form
     )

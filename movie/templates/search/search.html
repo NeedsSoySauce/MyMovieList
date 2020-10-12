@@ -2,10 +2,13 @@
 {% block content %}
 <section class="ui segment basic padded">
     {% if movies %}
-    <h1 class="ui header center aligned">
+    <section class="ui center aligned segment padded basic">
+        {% include 'searchbar.html' %}
+    </section>
+    <p class="ui center aligned segment basic">
         Showing {{ page * page_size + 1}} to {{ page * page_size + [page_size, movies|length]|min }} of {{ hits }}
         results
-    </h1>
+    </p>
     {% include 'movie_list.html' %}
     {% include 'page_navigation.html' %}
     {% else %}
@@ -17,7 +20,7 @@
         </div>
     </h2>
     <section class="ui center aligned segment padded basic">
-            {% include 'searchbar.html' %}
+        {% include 'searchbar.html' %}
     </section>
     {% endif %}
 </section>

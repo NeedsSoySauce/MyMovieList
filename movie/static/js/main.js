@@ -5,3 +5,7 @@ function request(url, method) {
         })
         .catch((error) => console.error(error));
 }
+
+$('.ui.accordion').accordion();
+
+$('.ui.dropdown').dropdown();

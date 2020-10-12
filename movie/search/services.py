@@ -1,17 +1,22 @@
 from typing import List, NamedTuple, Optional
 
+from flask_wtf import FlaskForm
+from wtforms import SelectMultipleField, SubmitField, StringField
+
 from movie.adapters.repository import AbstractRepository
+from movie.domain.director import Director
 from movie.domain.movie import Movie
+from movie.utilities.services import get_genres, get_actors, get_directors
 
 _DEFAULT_PAGE_SIZE = 25
 
 
 # Note - page numbers starts from 0.
 class SearchResults(NamedTuple):
-    movies: List[Movie]
-    hits: int
-    page: int
-    pages: int
+    movies: List[Movie] = []
+    hits: int = 0
+    page: int = 0
+    pages: int = 0
 
 
 def search_movies(repo: AbstractRepository,
@@ -19,7 +24,7 @@ def search_movies(repo: AbstractRepository,
                   page_size: int = _DEFAULT_PAGE_SIZE,
                   query: str = '',
                   genres: List[str] = [],
-                  director: Optional[str] = None,
+                  directors: List[Director] = [],
                   actors: List[str] = []) -> SearchResults:
     """
     Searches for movies using the given filtering options and returns a SearchResults NamedTuple.
@@ -31,9 +36,9 @@ def search_movies(repo: AbstractRepository,
     except ValueError:
         return SearchResults([], 0, page_number, 0)
 
-    if director:
+    if directors:
         try:
-            director = repo.get_director(director)
+            directors = [repo.get_director(name) for name in directors]
         except ValueError:
             return SearchResults([], 0, page_number, 0)
 
@@ -42,8 +47,32 @@ def search_movies(repo: AbstractRepository,
     except ValueError:
         return SearchResults([], 0, page_number, 0)
 
-    movies = repo.get_movies(page_number, page_size, query, genres, director, actors)
-    hits = repo.get_number_of_movies(query, genres, director, actors)
-    pages = repo.get_number_of_pages(page_size, query, genres, director, actors)
+    movies = repo.get_movies(page_number, page_size, query, genres, directors, actors)
+    hits = repo.get_number_of_movies(query, genres, directors, actors)
+    pages = repo.get_number_of_pages(page_size, query, genres, directors, actors)
 
     return SearchResults(movies, hits, page_number, pages)
+
+
+def create_search_form(repo: AbstractRepository, request_args):
+    """ Returns a MovieSearchForm populated with options from the given repository. """
+
+    genres = get_genres(repo)
+    directors = get_directors(repo)
+    actors = get_actors(repo)
+
+    form = MovieSearchForm(request_args, meta={'csrf': False})
+    form.genres.choices = [(genre.genre_name, genre.genre_name) for genre in genres] + [('', 'Genre')]
+    form.directors.choices = [(director.director_full_name, director.director_full_name) for director in directors] + [
+        ('', 'Director')]
+    form.actors.choices = [(actor.actor_full_name, actor.actor_full_name) for actor in actors] + [('', 'Actor')]
+
+    return form
+
+
+class MovieSearchForm(FlaskForm):
+    query = StringField("Query")
+    genres = SelectMultipleField('Genres')
+    directors = SelectMultipleField('Directors')
+    actors = SelectMultipleField('Actors')
+    submit = SubmitField('Submit')

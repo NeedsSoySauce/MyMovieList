@@ -26,9 +26,11 @@
                         {{genre.genre_name}}
                     </a>
                     {% endfor %}
-                    {% include 'watchlist/quick-action-watchlist.html' %}
-                    {% include 'watchlist/quick-action-watched.html' %}
                 </div>
+            </div>
+            <div class="ui labels">
+                {% include 'watchlist/quick-action-watchlist.html' %}
+                {% include 'watchlist/quick-action-watched.html' %}
             </div>
         </div>
     </section>

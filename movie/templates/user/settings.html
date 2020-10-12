@@ -8,9 +8,37 @@
         <tr>
             <td class="right aligned">Change username</td>
             <td>
-                <button class="ui button">
-                    Change
-                </button>
+                <form
+                        method="POST"
+                        action="{{ url_for('user_bp.change_username', username=user.user_name) }}"
+                        class="ui form {{ 'error' if change_username_error_message or change_username_form.errors}} {{ 'success' if is_username_change_success }}"
+                >
+                    {{ change_username_form.csrf_token }}
+                    <!-- Need to include this token - Flask WTForms requires it. -->
+                    <div class="field required">
+                        {{ change_username_form.new_username.label }}
+                        {{ change_username_form.new_username }}
+                    </div>
+                    <div class="ui left aligned segment basic error message">
+                        <ul>
+                            {% if change_username_error_message %}
+                            <li>{{ change_username_error_message or '' }}</li>
+                            {% endif %}
+
+                            {% if change_username_form.errors %}
+                            {% for field_name, field_errors in change_username_form.errors|dictsort if field_errors %}
+                            {% for error in field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                            {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="ui success message">
+                        <p>Your username has been changed.</p>
+                    </div>
+                    {{ change_username_form.submit(class_="ui button")}}
+                </form>
             </td>
         </tr>
         <tr>

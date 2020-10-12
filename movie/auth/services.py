@@ -16,14 +16,19 @@ class AuthenticationException(Exception):
     pass
 
 
-def add_user(repo: AbstractRepository, username: str, password: str) -> None:
-    # Check that the given username is available.
+def check_if_user_exists(repo: AbstractRepository, username: str) -> bool:
+    """ Returns True if a user with the given name exists in the given repository otherwise False. """
     try:
         _ = repo.get_user(username)
-        raise NameNotUniqueException
     except ValueError:
-        # No user with that username could be found
-        pass
+        return False
+    return True
+
+
+def add_user(repo: AbstractRepository, username: str, password: str) -> None:
+    # Check that the given username is available.
+    if check_if_user_exists(repo, username):
+        raise NameNotUniqueException
 
     # Encrypt password so that the database doesn't store passwords 'in the clear'.
     password_hash = generate_password_hash(password)
@@ -51,6 +56,20 @@ def authenticate_user(repo: AbstractRepository, username: str, password: str) ->
         raise AuthenticationException
 
 
+def change_username(repo: AbstractRepository, user: User, username: str) -> None:
+    """
+    Sets the given user's username to the given username.
+
+    Raises:
+        NameNotUniqueException: if the given username is already taken.
+    """
+    # Check that the given username is available.
+    if check_if_user_exists(repo, username):
+        raise NameNotUniqueException
+
+    repo.update_username(user, username)
+
+
 def change_password(repo: AbstractRepository, user: User, password: str) -> None:
-    """ Changes the given user's password to the given password. """
+    """ Sets the given user's password to the given password. """
     user.password = generate_password_hash(password)

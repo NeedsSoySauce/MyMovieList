@@ -28,7 +28,8 @@ class MemoryRepository(AbstractRepository):
         self._actors: List[Actor] = []
         self._actor_map: Dict[str, Actor] = {}
         self._users: List[User] = []
-        self._user_map: Dict[str, User] = {}
+        self._user_id_map: Dict[str, int] = {}  # maps usernames to a user id
+        self._user_map: Dict[int, User] = {}  # maps user ids to a User
         self._reviews: List[Review] = []
         self._reviews_movie_map: Dict[Movie, List[Review]] = defaultdict(list)
         self._reviews_user_map: Dict[Review, Union[User, None]] = {}
@@ -136,7 +137,8 @@ class MemoryRepository(AbstractRepository):
             return
 
         insort(self._users, user)
-        self._user_map[user.user_name] = user
+        self._user_id_map[user.user_name] = user.id
+        self._user_map[user.id] = user
 
         if user.reviews:
             for review in user.reviews:
@@ -151,9 +153,15 @@ class MemoryRepository(AbstractRepository):
 
     def get_user(self, user_name: str) -> User:
         try:
-            return self._user_map[user_name]
+            return self._user_map[self._user_id_map[user_name]]
         except KeyError:
             raise ValueError(f"No user with the name '{user_name}'")
+
+    def update_username(self, user: User, new_username: str) -> None:
+        # Update the mapping from username to user id
+        del self._user_id_map[user.user_name]
+        self._user_id_map[new_username] = user.id
+        user.user_name = new_username
 
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         if review in self._reviews:

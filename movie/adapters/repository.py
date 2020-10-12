@@ -109,6 +109,11 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def update_username(self, user: User, new_username: str) -> None:
+        """ Updates the given user's username in this repository. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         """
         Adds a review to this repository. If a user is specified it is treated as being the review's creator, otherwise

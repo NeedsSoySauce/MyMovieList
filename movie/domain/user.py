@@ -15,6 +15,7 @@ class User:
         self._time_spent_watching_movies_minutes: int = 0
         self._watchlist = WatchList()
         self._joined_on_utc = datetime.utcnow()
+        self._id: int = hash(self)
 
     @property
     def _user_name(self):
@@ -41,6 +42,10 @@ class User:
     def user_name(self):
         return self._user_name
 
+    @user_name.setter
+    def user_name(self, user_name):
+        self._user_name = user_name
+
     @property
     def password(self):
         return self.__password
@@ -64,6 +69,10 @@ class User:
     @property
     def watchlist(self):
         return self._watchlist
+
+    @property
+    def id(self):
+        return self._id
 
     @property
     def joined_on_utc(self):

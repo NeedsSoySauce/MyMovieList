@@ -32,10 +32,13 @@ def search():
     except ValueError:
         abort(404)
 
-    query = form.query.data
-    genres = form.genres.data
-    directors = form.directors.data
-    actors = form.actors.data
+    query = request.args.get('query', '')
+    genres = request.args.getlist('genre')
+    directors = request.args.getlist('director')
+    actors = request.args.getlist('actor')
+
+    current_app.logger.info(f'search-form {repr(query)}, {repr(genres)}, {repr(directors)}, {repr(actors)}')
+    current_app.logger.info(f'search-args {repr(request.args)}')
 
     if page < 0:
         abort(404)

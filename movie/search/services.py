@@ -62,17 +62,17 @@ def create_search_form(repo: AbstractRepository, request_args):
     actors = get_actors(repo)
 
     form = MovieSearchForm(request_args, meta={'csrf': False})
-    form.genres.choices = [(genre.genre_name, genre.genre_name) for genre in genres] + [('', 'Genre')]
-    form.directors.choices = [(director.director_full_name, director.director_full_name) for director in directors] + [
+    form.genre.choices = [(genre.genre_name, genre.genre_name) for genre in genres] + [('', 'Genre')]
+    form.director.choices = [(director.director_full_name, director.director_full_name) for director in directors] + [
         ('', 'Director')]
-    form.actors.choices = [(actor.actor_full_name, actor.actor_full_name) for actor in actors] + [('', 'Actor')]
+    form.actor.choices = [(actor.actor_full_name, actor.actor_full_name) for actor in actors] + [('', 'Actor')]
 
     return form
 
 
 class MovieSearchForm(FlaskForm):
     query = StringField("Query")
-    genres = SelectMultipleField('Genres')
-    directors = SelectMultipleField('Directors')
-    actors = SelectMultipleField('Actors')
+    genre = SelectMultipleField('Genres')
+    director = SelectMultipleField('Directors')
+    actor = SelectMultipleField('Actors')
     submit = SubmitField('Submit')

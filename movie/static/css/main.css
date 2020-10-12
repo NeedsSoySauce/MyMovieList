@@ -11,10 +11,6 @@ main {
     flex-grow: 1
 }
 
-#login {
-    margin-right: 8px;
-}
-
 td:first-child {
     font-weight: bold;
 }
@@ -27,6 +23,10 @@ td:first-child {
     display: none;
 }
 
+#nav-large {
+    display: none;
+}
+
 @media only screen and (min-width: 600px) {
     #pagination-large {
         display: inline-flex;
@@ -34,5 +34,13 @@ td:first-child {
 
     #pagination-small {
         display: none;
+    }
+
+    #nav-small {
+        display: none;
+    }
+
+    #nav-large {
+        display: flex;
     }
 }

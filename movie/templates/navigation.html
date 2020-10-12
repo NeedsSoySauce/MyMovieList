@@ -14,7 +14,7 @@
 
                 <div class="right menu">
                     {% if session['username'] %}
-                    <a class="item" href="{{ url_for('user_bp.user', username=session['username']) }}">
+                    <a class="item {{ 'active' if request.path == '/user/' + session['username'] }}" href="{{ url_for('user_bp.user', username=session['username']) }}">
                         <i class="user icon"></i>
                         {{ session['username'] }}
                     </a>
@@ -46,7 +46,7 @@
 
                 <div class="right menu">
                     {% if session['username'] %}
-                    <a class="item" href="{{ url_for('user_bp.user', username=session['username']) }}">
+                    <a class="item {{ 'active' if request.path == '/user/' + session['username'] }}" href="{{ url_for('user_bp.user', username=session['username']) }}">
                         <i class="user icon"></i>
                     </a>
                     <a class="item {{ 'active' if request.path == '/logout' }}" href="{{ url_for('auth_bp.logout') }}">

@@ -27,6 +27,11 @@ td:first-child {
     display: none;
 }
 
+.ui.statistics.stackable {
+    flex-direction: column;
+    align-items: center;
+}
+
 @media only screen and (min-width: 600px) {
     #pagination-large {
         display: inline-flex;
@@ -42,5 +47,10 @@ td:first-child {
 
     #nav-large {
         display: flex;
+    }
+
+
+    .ui.statistics.stackable {
+        flex-direction: row;
     }
 }

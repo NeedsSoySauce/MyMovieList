@@ -1,40 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 <section class="ui segment basic padded">
-    <div class="ui four statistics stackable">
-        <div class="statistic">
-            <div class="value">
-                {{ user.time_spent_watching_movies_minutes }}
-            </div>
-            <div class="label">
-                Minutes watched
-            </div>
-        </div>
-        <div class="statistic">
-            <div class="value">
-                {{ user.watched_movies|length }}
-            </div>
-            <div class="label">
-                Movies watched
-            </div>
-        </div>
-        <div class="statistic">
-            <div class="value">
-                {{ user.watchlist_size() }}
-            </div>
-            <div class="label">
-                Movies on your watched
-            </div>
-        </div>
-        <div class="statistic">
-            <div class="value">
-                {{ user.reviews|length }}
-            </div>
-            <div class="label">
-                Reviews written
-            </div>
-        </div>
-    </div>
+    {% include 'user/stats.html' %}
     <div class="ui divider"></div>
     {% if user.watchlist_size() or user.watched_movies|length %}
     {% include 'movie_list.html' %}

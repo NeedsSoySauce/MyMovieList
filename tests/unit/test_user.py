@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pytest
 
 from movie.domain.user import User
@@ -11,6 +13,7 @@ def test_constructor():
 
     assert user.user_name == username_expected
     assert user.password == password
+    assert isinstance(user.joined_on_utc, datetime)
 
 
 def test_constructor_empty_string_username():

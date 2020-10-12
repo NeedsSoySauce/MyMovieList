@@ -1,0 +1,34 @@
+<div class="ui four statistics stackable">
+    <div class="statistic">
+        <div class="value">
+            {{ user.time_spent_watching_movies_minutes }}
+        </div>
+        <div class="label">
+            Minutes watched
+        </div>
+    </div>
+    <div class="statistic">
+        <div class="value">
+            {{ user.watched_movies|length }}
+        </div>
+        <div class="label">
+            Movies watched
+        </div>
+    </div>
+    <div class="statistic">
+        <div class="value">
+            {{ user.watchlist_size() }}
+        </div>
+        <div class="label">
+            Movies on watchlist
+        </div>
+    </div>
+    <div class="statistic">
+        <div class="value">
+            {{ user.reviews|length }}
+        </div>
+        <div class="label">
+            Reviews written
+        </div>
+    </div>
+</div>

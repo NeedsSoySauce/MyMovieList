@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 from .movie import Movie
@@ -13,6 +14,7 @@ class User:
         self._reviews: List[Review] = []
         self._time_spent_watching_movies_minutes: int = 0
         self._watchlist = WatchList()
+        self._joined_on_utc = datetime.utcnow()
 
     @property
     def _user_name(self):
@@ -43,6 +45,10 @@ class User:
     def password(self):
         return self.__password
 
+    @password.setter
+    def password(self, password):
+        self._password = password
+
     @property
     def watched_movies(self):
         return self._watched_movies
@@ -58,6 +64,10 @@ class User:
     @property
     def watchlist(self):
         return self._watchlist
+
+    @property
+    def joined_on_utc(self):
+        return self._joined_on_utc
 
     def __repr__(self) -> str:
         return f'<{type(self).__name__} {self._user_name}>'

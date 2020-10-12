@@ -3,9 +3,15 @@
     <div class="event">
         <div class="content">
             <div class="summary">
-                        <span class="user">
-                            {{ reviews_user_map[review].user_name or 'Anonymous' }}
-                        </span>
+                {% if reviews_user_map[review] %}
+                <a class="user" href="{{ url_for('user_bp.user', username=reviews_user_map[review].user_name) }}">
+                    {{ reviews_user_map[review].user_name }}
+                </a>
+                {% else %}
+                <span class="user">
+                    Anonymous
+                </span>
+                {% endif %}
                 <div class="date">
                     {{ review.timestamp|dateformat }}
                 </div>

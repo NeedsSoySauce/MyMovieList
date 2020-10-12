@@ -50,6 +50,9 @@ def create_app(test_config=None):
         from .watchlist import watchlist
         app.register_blueprint(watchlist.watchlist_blueprint)
 
+        from .user import user
+        app.register_blueprint(user.user_blueprint)
+
         from .utilities import utilities
         app.register_blueprint(utilities.utilities_blueprint)
 

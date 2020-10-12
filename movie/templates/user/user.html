@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+{% block content %}
+<section class="ui segment basic padded">
+
+    {% include 'user/stats.html' %}
+
+    <h1 class="ui top attached block header">
+        {{ user.user_name }}
+    </h1>
+
+    <div class="ui segment active">
+        <table class="ui very basic table padded">
+            <tbody>
+            <tr>
+                <td>Joined</td>
+                <td>
+                    {{ user.joined_on_utc|dateformat }}
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    {% if user.user_name == session['username'] %}
+    {% include 'user/settings.html' %}
+    {% endif %}
+</section>
+{% endblock %}

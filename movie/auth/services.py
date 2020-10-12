@@ -49,3 +49,8 @@ def authenticate_user(repo: AbstractRepository, username: str, password: str) ->
 
     if not check_password_hash(user.password, password):
         raise AuthenticationException
+
+
+def change_password(repo: AbstractRepository, user: User, password: str) -> None:
+    """ Changes the given user's password to the given password. """
+    user.password = generate_password_hash(password)

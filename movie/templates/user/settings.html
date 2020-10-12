@@ -22,7 +22,7 @@
                     <div class="ui left aligned segment basic error message">
                         <ul>
                             {% if change_username_error_message %}
-                            <li>{{ change_username_error_message or '' }}</li>
+                            <li>{{ change_username_error_message }}</li>
                             {% endif %}
 
                             {% if change_username_form.errors %}
@@ -62,7 +62,7 @@
                     <div class="ui left aligned segment basic error message">
                         <ul>
                             {% if change_password_error_message %}
-                            <li>{{ change_password_error_message or '' }}</li>
+                            <li>{{ change_password_error_message }}</li>
                             {% endif %}
 
                             {% if change_password_form.errors %}
@@ -84,9 +84,35 @@
         <tr class="warning">
             <td class="right aligned">Delete account</td>
             <td>
-                <button class="ui button negative">
-                    Submit
-                </button>
+                <p class="ui red">This action cannot be undone.</p>
+                <form
+                        method="POST"
+                        action="{{ url_for('user_bp.delete_account', username=user.user_name) }}"
+                        class="ui form {{ 'error' if delete_account_error_message or delete_account_form.errors}}"
+                >
+                    {{ delete_account_form.csrf_token }}
+                    <!-- Need to include this token - Flask WTForms requires it. -->
+                    <div class="field required">
+                        {{ delete_account_form.confirmation.label }}
+                        {{ delete_account_form.confirmation(placeholder="Enter your username to confirm") }}
+                    </div>
+                    <div class="ui left aligned segment basic error message">
+                        <ul>
+                            {% if delete_account_error_message %}
+                            <li>{{ delete_account_error_message }}</li>
+                            {% endif %}
+
+                            {% if delete_account_form.errors %}
+                            {% for field_name, field_errors in delete_account_form.errors|dictsort if field_errors %}
+                            {% for error in field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                            {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </div>
+                    {{ delete_account_form.submit(class_="ui button")}}
+                </form>
             </td>
         </tr>
         </tbody>

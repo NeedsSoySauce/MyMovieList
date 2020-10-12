@@ -73,3 +73,8 @@ def change_username(repo: AbstractRepository, user: User, username: str) -> None
 def change_password(repo: AbstractRepository, user: User, password: str) -> None:
     """ Sets the given user's password to the given password. """
     user.password = generate_password_hash(password)
+
+
+def delete_user(repo: AbstractRepository, user: User) -> None:
+    """ Removes the given user from the given repository. """
+    repo.delete_user(user)

@@ -163,6 +163,19 @@ class MemoryRepository(AbstractRepository):
         self._user_id_map[new_username] = user.id
         user.user_name = new_username
 
+    def delete_user(self, user: User) -> None:
+        self._users.remove(user)
+        del self._user_id_map[user.user_name]
+        del self._user_map[user.id]
+
+        if not user.reviews:
+            return
+
+        for review in user.reviews:
+            self._reviews.remove(review)
+            del self._reviews_user_map[review]
+            self._reviews_movie_map[review.movie].remove(review)
+
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         if review in self._reviews:
             return

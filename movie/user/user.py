@@ -1,6 +1,6 @@
 from urllib.parse import quote_plus
 
-from flask import Blueprint, render_template, request, session, url_for
+from flask import Blueprint, render_template, request, session, url_for, current_app
 from flask_wtf import FlaskForm
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
@@ -31,6 +31,9 @@ def user(username: str):
     # Within the session object we store a flag to tell us whether or not this call is the result of the above redirect.
     is_username_change_success = bool(session.get('is_username_change_success', False))
     session.pop('is_username_change_success', None)
+
+    delete_account_form = DeleteAccountForm()
+    delete_account_error_message = None
 
     try:
         user = auth.get_user(repo, username)
@@ -74,6 +77,18 @@ def user(username: str):
             except NameNotUniqueException:
                 # Incorrect password
                 change_username_error_message = "Username unavailable."
+    elif request.path == f'/user/{username}/delete':
+
+        # Request is a POST to delete this account
+        if delete_account_form.validate_on_submit():
+            confirmation = delete_account_form.confirmation.data
+
+            if confirmation != username:
+                delete_account_error_message = "Confirmation failed - enter your username to confirm."
+            else:
+                auth.delete_user(repo, user)
+                session.clear()
+                return redirect(url_for('home_bp.home'))
 
     return render_template(
         'user/user.html',
@@ -83,7 +98,9 @@ def user(username: str):
         is_password_change_success=is_password_change_success,
         change_username_form=change_username_form,
         change_username_error_message=change_username_error_message,
-        is_username_change_success=is_username_change_success
+        is_username_change_success=is_username_change_success,
+        delete_account_form=delete_account_form,
+        delete_account_error_message=delete_account_error_message
     )
 
 
@@ -96,6 +113,12 @@ def change_password(username: str):
 @user_blueprint.route('/user/<string:username>/username/change', methods=['POST'])
 @login_required
 def change_username(username: str):
+    return user(username)
+
+
+@user_blueprint.route('/user/<string:username>/delete', methods=['POST'])
+@login_required
+def delete_account(username: str):
     return user(username)
 
 
@@ -113,5 +136,12 @@ class ChangeUsernameForm(FlaskForm):
     new_username = StringField('New username', [
         DataRequired(message='New username required.'),
         Length(min=3, message='Usernames must be at least 3 characters')
+    ])
+    submit = SubmitField('Submit')
+
+
+class DeleteAccountForm(FlaskForm):
+    confirmation = StringField('Confirmation', [
+        DataRequired(message='Confirmation required..')
     ])
     submit = SubmitField('Submit')

@@ -109,6 +109,16 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def delete_user(self, user: User) -> None:
+        """
+        Removes the given user from this repository.
+
+        This has the effect of removing any reviews the user may be linked to as well as any other data associated with
+        them.
+        """
+        raise NotImplementedError()
+
+    @abc.abstractmethod
     def update_username(self, user: User, new_username: str) -> None:
         """ Updates the given user's username in this repository. """
         raise NotImplementedError

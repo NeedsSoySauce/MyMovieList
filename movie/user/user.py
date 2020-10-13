@@ -1,6 +1,4 @@
-from urllib.parse import quote_plus
-
-from flask import Blueprint, render_template, request, session, url_for, current_app
+from flask import Blueprint, render_template, request, session, url_for
 from flask_wtf import FlaskForm
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
@@ -73,7 +71,7 @@ def user(username: str):
                 is_username_change_success = True
 
                 session['is_username_change_success'] = True
-                return redirect(url_for('user_bp.user', username=quote_plus(new_username)))
+                return redirect(url_for('user_bp.user', username=new_username))
             except NameNotUniqueException:
                 # Incorrect password
                 change_username_error_message = "Username unavailable."

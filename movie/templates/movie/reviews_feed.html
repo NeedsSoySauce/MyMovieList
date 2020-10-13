@@ -16,9 +16,7 @@
                     {{ review.timestamp|dateformat }}
                 </div>
             </div>
-            <div class="extra text">
-                {{ review.review_text }}
-            </div>
+            <div class="extra text pre-wrap">{{ review.review_text }}</div>
             <div class="meta">
                 {% for _ in range(review.rating|int) %}
                 <i class="star icon yellow fitted"></i>

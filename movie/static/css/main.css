@@ -37,6 +37,10 @@ td:first-child {
     padding-bottom: 0;
 }
 
+.pre-wrap {
+    white-space: pre-wrap
+}
+
 @media only screen and (min-width: 600px) {
     #pagination-large {
         display: inline-flex;

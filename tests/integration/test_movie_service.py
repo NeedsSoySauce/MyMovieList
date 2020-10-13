@@ -31,7 +31,7 @@ def test_get_reviews_user_map(user, review, memory_repository):
 
 def test_add_review_with_user(user, review, memory_repository):
     add_review(memory_repository, review.movie, review.review_text, review.rating, user)
-
+    print(memory_repository._reviews)
     result = get_reviews_user_map(memory_repository, [review])
 
     assert result[review] == user

@@ -6,7 +6,7 @@ from movie.domain.movie import Movie
 from movie.domain.review import Review
 from movie.domain.user import User
 
-_DEFAULT_PAGE_SIZE = 25
+DEFAULT_PAGE_SIZE = 25
 
 
 # Note - page numbers starts from 0.
@@ -18,27 +18,27 @@ class SearchResults(NamedTuple):
 
 
 def get_movie_by_id(repo: AbstractRepository, movie_id: int) -> Movie:
+    """ Returns the Movie with the given id in the given repository. """
     return repo.get_movie_by_id(movie_id)
 
 
 def get_movie_reviews(repo: AbstractRepository,
                       movie: Movie,
                       page_number: int,
-                      page_size: int = _DEFAULT_PAGE_SIZE) -> SearchResults:
+                      page_size: int = DEFAULT_PAGE_SIZE) -> SearchResults:
     """ Returns a page of the reviews for the specified movie. Page numbers start from zero. """
 
-    reviews = repo.get_movie_reviews(movie)
-    hits = len(reviews)
-    pages = ceil(hits / page_size)
-    page_number = max(0, min(page_number, pages - 1))
-    offset = page_number * page_size
-
-    reviews = reviews[offset:min(offset + page_size, hits)]
+    reviews = repo.get_reviews_for_movie(movie, page_number, page_size)
+    hits = repo.get_number_of_reviews_for_movie(movie)
+    pages = repo.get_number_of_review_pages_for_movie(movie, page_size)
 
     return SearchResults(reviews, hits, page_number, pages)
 
 
 def get_reviews_user_map(repo: AbstractRepository, reviews: List[Review]) -> Dict[Review, User]:
+    """
+    Returns a dict that maps a Review to the User who posted it or None if the review was posted anonymously.
+    """
     reviews_user_map: Dict[Review, Union[User, None]] = {}
 
     for review in reviews:
@@ -47,7 +47,12 @@ def get_reviews_user_map(repo: AbstractRepository, reviews: List[Review]) -> Dic
     return reviews_user_map
 
 
-def add_review(repo: AbstractRepository, review: Review, user: Union[User, None]):
+def add_review(repo: AbstractRepository, movie: Movie, review_text: str, rating: int, user: Union[User, None]):
+    """
+    Adds a review to this repository. If a user is specified it is treated as being the review's creator, otherwise the
+    review is considered to be posted anonymously.
+    """
+    review = Review(movie, review_text, rating)
     repo.add_review(review, user)
 
     if user:

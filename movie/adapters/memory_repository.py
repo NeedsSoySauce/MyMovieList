@@ -188,9 +188,6 @@ class MemoryRepository(AbstractRepository):
         for review in reviews:
             self.add_review(review)
 
-    def get_movie_reviews(self, movie: Movie) -> List[Review]:
-        return self._reviews_movie_map[movie]
-
     def get_review_user(self, review: Review) -> Union[User, None]:
         try:
             return self._reviews_user_map[review]
@@ -198,7 +195,40 @@ class MemoryRepository(AbstractRepository):
             return None
 
     @staticmethod
-    def _query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:
+    def _movie_reviews_query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:
+
+        title = movie.title.lower()
+        director = movie.director.director_full_name.lower() if movie.director else ''
+        description = movie.description.lower() if movie.description else ''
+        genres = [genre.genre_name.lower() for genre in movie.genres] if movie.genres else []
+        actors = [actor.actor_full_name.lower() for actor in movie.actors] if movie.actors else []
+
+        movie_str = " ".join([title, director, description] + genres + actors)
+
+        return fuzz.token_set_ratio(query, movie_str) >= min_ratio
+
+    def _get_reviews_for_movie(self, movie):
+        return self._reviews_movie_map[movie]
+
+    def get_number_of_reviews_for_movie(self, movie: Movie) -> int:
+        return len(self._get_reviews_for_movie(movie))
+
+    def get_number_of_review_pages_for_movie(self,
+                                             movie: Movie,
+                                             page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
+        return ceil(self.get_number_of_reviews_for_movie(movie) / page_size)
+
+    def get_reviews_for_movie(self,
+                              movie: Movie,
+                              page_number: int,
+                              page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Review]:
+        reviews = self._get_reviews_for_movie(movie)
+
+        offset = page_number * page_size
+        return reviews[offset:min(offset + page_size, len(self._reviews))]
+
+    @staticmethod
+    def _movie_query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:
 
         title = movie.title.lower()
         director = movie.director.director_full_name.lower() if movie.director else ''
@@ -220,7 +250,7 @@ class MemoryRepository(AbstractRepository):
 
         _query = query.strip().lower()
         if _query:
-            filtered = filter(lambda x: self._query_filter(x, _query), filtered)
+            filtered = filter(lambda x: self._movie_query_filter(x, _query), filtered)
 
         if genres:
             filtered = filter(lambda x: all(genre in x.genres for genre in genres), filtered)
@@ -240,12 +270,12 @@ class MemoryRepository(AbstractRepository):
                              actors: List[Actor] = []) -> int:
         return len(self._get_filtered_movies(query, genres, directors, actors))
 
-    def get_number_of_pages(self,
-                            page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
-                            query: str = "",
-                            genres: List[Genre] = [],
-                            directors: List[Director] = [],
-                            actors: List[Actor] = []) -> int:
+    def get_number_of_movie_pages(self,
+                                  page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
+                                  query: str = "",
+                                  genres: List[Genre] = [],
+                                  directors: List[Director] = [],
+                                  actors: List[Actor] = []) -> int:
         return ceil(self.get_number_of_movies(query, genres, directors, actors) / page_size)
 
     def get_movies(self,

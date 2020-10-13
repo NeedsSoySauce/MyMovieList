@@ -3,7 +3,7 @@ from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
 from movie.adapters.repository import instance as repo
-from .services import search_movies, create_search_form
+from .services import search_movies, create_search_form, DEFAULT_PAGE_SIZE
 from ..auth import services as auth
 
 search_blueprint = Blueprint(
@@ -28,7 +28,7 @@ def search():
     # Page numbers are displayed as starting from 1 so subtract 1
     try:
         page = int(request.args.get('page') or 1) - 1
-        page_size = int(request.args.get('size') or 25)
+        page_size = int(request.args.get('size') or DEFAULT_PAGE_SIZE)
     except ValueError:
         abort(404)
 
@@ -37,8 +37,8 @@ def search():
     directors = request.args.getlist('director')
     actors = request.args.getlist('actor')
 
-    current_app.logger.info(f'search-form {repr(query)}, {repr(genres)}, {repr(directors)}, {repr(actors)}')
-    current_app.logger.info(f'search-args {repr(request.args)}')
+    current_app.logger.debug(f'search-form {repr(query)}, {repr(genres)}, {repr(directors)}, {repr(actors)}')
+    current_app.logger.debug(f'search-args {repr(request.args)}')
 
     if page < 0:
         abort(404)

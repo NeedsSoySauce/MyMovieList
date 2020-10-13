@@ -1,16 +1,16 @@
 import abc
-from typing import List, Union, Optional, Dict
+from typing import List, Union, Dict
 
 from werkzeug.security import generate_password_hash
 
+from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
+from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from movie.domain.actor import Actor
 from movie.domain.director import Director
-from movie.domain.movie import Movie
 from movie.domain.genre import Genre
-from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
+from movie.domain.movie import Movie
 from movie.domain.review import Review
 from movie.domain.user import User
-from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
 
 instance: Union[None, 'AbstractRepository'] = None
 """ Application wide repository instance. """
@@ -135,13 +135,36 @@ class AbstractRepository(abc.ABC):
         """ Adds the given reviews to this repository. """
         raise NotImplementedError
 
-    @abc.abstractmethod
-    def get_movie_reviews(self, movie: Movie) -> List[Review]:
-        """ Returns the reviews for the given movie """
-        raise NotImplementedError
-
     def get_review_user(self, review: Review) -> Union[User, None]:
         """ Returns the User who created the given Review or None if the review was anonymous. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_number_of_reviews_for_movie(self, movie: Movie) -> int:
+        """ Returns the number of Reviews for the given Movie."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_number_of_review_pages_for_movie(self,
+                                             movie: Movie,
+                                             page_size: int = DEFAULT_PAGE_SIZE) -> int:
+        """ Returns the number of pages of reviews that can be created from the given filtering options. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_reviews_for_movie(self,
+                              movie: Movie,
+                              page_number: int,
+                              page_size: int = DEFAULT_PAGE_SIZE) -> List[Review]:
+        """
+        Returns a list containing the nth page of Reviews for the given Movie ordered by the review's timestamp.
+
+        Args:
+            movie (Movie): movie to return reviews for.
+            page_number (int): page number of the the page to return, starting from zero.
+            page_size (int, optional): number of results per page. The last page may have less results than this.
+
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -158,14 +181,14 @@ class AbstractRepository(abc.ABC):
         """
         raise NotImplementedError
 
-    def get_number_of_pages(self,
-                            page_size: int = DEFAULT_PAGE_SIZE,
-                            query: str = "",
-                            genres: List[Genre] = [],
-                            directors: List[Director] = [],
-                            actors: List[Actor] = []) -> int:
+    def get_number_of_movie_pages(self,
+                                  page_size: int = DEFAULT_PAGE_SIZE,
+                                  query: str = "",
+                                  genres: List[Genre] = [],
+                                  directors: List[Director] = [],
+                                  actors: List[Actor] = []) -> int:
         """
-        Returns the number of pages that can be created from the given filtering options.
+        Returns the number of pages of movies that can be created from the given filtering options.
 
         Check 'get_movies' for documentation on filtering options.
         """
@@ -179,7 +202,8 @@ class AbstractRepository(abc.ABC):
                    genres: List[Genre] = [],
                    directors: List[Director] = [],
                    actors: List[Actor] = []) -> List[Movie]:
-        """ Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
+        """
+        Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
 
         Args:
             page_number (int): page number of the the page to return, starting from zero.

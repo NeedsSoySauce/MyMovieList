@@ -43,7 +43,7 @@ def movie(movie_id: int):
     )
 
 
-@movie_blueprint.route('/movie/<movie_id>/reviews', methods=['GET', 'POST'])
+@movie_blueprint.route('/movie/<int:movie_id>/reviews', methods=['GET', 'POST'])
 def reviews(movie_id: int):
     user = None
     review_error_message = None
@@ -73,9 +73,14 @@ def reviews(movie_id: int):
     except ValueError:
         abort(404)
 
+    if page < 0:
+        abort(404)
+
     results = get_movie_reviews(repo, movie, page, page_size)
 
-    if page < 0 or page > results.pages:
+    print(page, results.pages)
+
+    if page >= results.pages and page != 0:
         abort(404)
 
     form = ReviewForm()
@@ -84,7 +89,7 @@ def reviews(movie_id: int):
         # Successful POST, i.e. the review has passed data validation.
 
         # Use the service layer to store the new review.
-        add_review(repo, Review(movie, form.review.data, form.rating.data), user)
+        add_review(repo, movie, form.review.data, form.rating.data, user)
 
         # Reload the page to show the new review
         return redirect(url_for('movie_bp.reviews', movie_id=movie.id))

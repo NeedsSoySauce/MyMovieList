@@ -1,4 +1,4 @@
-from typing import List, NamedTuple, Optional
+from typing import List, NamedTuple
 
 from flask_wtf import FlaskForm
 from wtforms import SelectMultipleField, SubmitField, StringField
@@ -8,7 +8,7 @@ from movie.domain.director import Director
 from movie.domain.movie import Movie
 from movie.utilities.services import get_genres, get_actors, get_directors
 
-_DEFAULT_PAGE_SIZE = 25
+DEFAULT_PAGE_SIZE = 25
 
 
 # Note - page numbers starts from 0.
@@ -21,7 +21,7 @@ class SearchResults(NamedTuple):
 
 def search_movies(repo: AbstractRepository,
                   page_number: int,
-                  page_size: int = _DEFAULT_PAGE_SIZE,
+                  page_size: int = DEFAULT_PAGE_SIZE,
                   query: str = '',
                   genres: List[str] = [],
                   directors: List[Director] = [],
@@ -49,7 +49,7 @@ def search_movies(repo: AbstractRepository,
 
     movies = repo.get_movies(page_number, page_size, query, genres, directors, actors)
     hits = repo.get_number_of_movies(query, genres, directors, actors)
-    pages = repo.get_number_of_pages(page_size, query, genres, directors, actors)
+    pages = repo.get_number_of_movie_pages(page_size, query, genres, directors, actors)
 
     return SearchResults(movies, hits, page_number, pages)
 

@@ -172,12 +172,12 @@ def test_get_genres(genres, memory_repository: MemoryRepository):
 
 
 def test_get_number_of_pages(populated_memory_repository: MemoryRepository):
-    pages = populated_memory_repository.get_number_of_pages()
+    pages = populated_memory_repository.get_number_of_movie_pages()
     assert pages == 1
 
 
 def test_get_number_of_pages_empty(memory_repository: MemoryRepository):
-    pages = memory_repository.get_number_of_pages()
+    pages = memory_repository.get_number_of_movie_pages()
     assert pages == 0
 
 
@@ -187,9 +187,27 @@ def test_add_review(review, memory_repository: MemoryRepository):
     assert review in memory_repository._reviews
 
 
-def test_get_review(review, memory_repository: MemoryRepository):
+def test_get_number_of_reviews_for_movie_empty(movie, memory_repository):
+    assert memory_repository.get_number_of_reviews_for_movie(movie) == 0
+
+
+def test_get_number_of_reviews_for_movie(review, memory_repository):
     memory_repository.add_review(review)
-    result = memory_repository.get_movie_reviews(review.movie)
+    assert memory_repository.get_number_of_reviews_for_movie(review.movie) == 1
+
+
+def test_get_number_of_reviews_for_movie_pages(review, memory_repository):
+    result = memory_repository.get_number_of_review_pages_for_movie(review.movie)
+    assert result == 0
+
+    memory_repository.add_review(review)
+    result = memory_repository.get_number_of_review_pages_for_movie(review.movie)
+    assert result == 1
+
+
+def test_get_reviews_for_movie(review, memory_repository: MemoryRepository):
+    memory_repository.add_review(review)
+    result = memory_repository.get_reviews_for_movie(review.movie, 0)
 
     assert result[0] == review
 
@@ -199,18 +217,3 @@ def test_get_review_user(user, review, memory_repository: MemoryRepository):
     memory_repository.add_user(user)
     result = memory_repository.get_review_user(review)
     assert result == user
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

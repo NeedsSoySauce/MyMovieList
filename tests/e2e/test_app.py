@@ -167,3 +167,8 @@ def test_watchlist(client: FlaskClient, auth):
     # Remove movie
     response = client.delete('/watchlist/1')
     assert response.status_code == 200
+
+
+def test_user(client: FlaskClient):
+    response = client.get('/user/test')
+    assert response.status_code == 200

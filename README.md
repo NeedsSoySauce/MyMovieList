@@ -51,3 +51,11 @@ From the project's root and within the activated virtual environment:
 ```shell script
 python -m pytest
 ```
+
+To run tests with coverage:
+
+```shell script
+coverage run --source ./movie -m pytest
+coverage report
+```
+

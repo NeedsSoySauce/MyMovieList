@@ -12,6 +12,16 @@ from ..auth import services as auth
 movie_blueprint = Blueprint(
     'movie_bp', __name__)
 
+INVALID_CHOICE_MESSAGE = 'Invalid Choice: could not coerce'
+
+INVALID_REVIEW_TEXT_MESSAGE = 'Invalid review text.'
+RATING_REQUIRED_MESSAGE = 'Ratings must be an integer between 1 and 10.'
+INVALID_RATING_RANGE_MESSAGE = 'Ratings must be an integer between 1 and 10.'
+
+REVIEW_TEXT_REQUIRED_MESSAGE = 'Reviews must be at least one character long.'
+INVALID_REVIEW_TEXT_LENGTH_MESSAGE = 'Reviews must be at least one character long.'
+REVIEW_TEXT_CONTAINS_PROFANITY_MESSAGE = 'Please keep it PG (no profanity!).'
+
 
 @movie_blueprint.route('/movie/<int:movie_id>', methods=['GET'])
 def movie(movie_id: int):
@@ -125,7 +135,7 @@ def reviews(movie_id: int):
 class ProfanityFree:
     def __init__(self, message=None):
         if not message:
-            message = u'Field must not contain profanity'
+            message = INVALID_REVIEW_TEXT_MESSAGE
         self.message = message
 
     def __call__(self, form, field):
@@ -135,16 +145,16 @@ class ProfanityFree:
 
 class ReviewForm(FlaskForm):
     rating = SelectField('Rating',
-                         [DataRequired(message="Ratings must be an integer between 1 and 10."),
-                          NumberRange(min=1, max=10, message="Ratings must be an integer between 1 and 10.")],
+                         [DataRequired(message=RATING_REQUIRED_MESSAGE),
+                          NumberRange(min=1, max=10, message=INVALID_RATING_RANGE_MESSAGE)],
                          choices=range(1, 11),
                          coerce=int,
                          default=10,
 
                          )
     review = TextAreaField('Review', [
-        DataRequired(message='Reviews must be at least one character long.'),
-        Length(min=1, message='Reviews must be at least one character long.'),
-        ProfanityFree(message='Please keep it PG (no profanity!).')
+        DataRequired(message=REVIEW_TEXT_REQUIRED_MESSAGE),
+        Length(min=1, message=INVALID_REVIEW_TEXT_LENGTH_MESSAGE),
+        ProfanityFree(message=REVIEW_TEXT_CONTAINS_PROFANITY_MESSAGE)
     ])
     submit = SubmitField('Submit')

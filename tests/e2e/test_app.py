@@ -3,6 +3,7 @@ from flask import session
 from flask.testing import FlaskClient
 
 from movie.auth import auth
+from movie.movie import movie
 
 
 def test_get_home(client: FlaskClient):
@@ -130,12 +131,12 @@ def test_add_review_authenticated(client: FlaskClient, auth):
 
 
 @pytest.mark.parametrize(('rating', 'text', 'message'), (
-        ('', 'abc', b'Invalid Choice: could not coerce'),
-        (0, 'abc', b'Ratings must be an integer between 1 and 10.'),
-        (11, 'abc', b'Ratings must be an integer between 1 and 10.'),
-        (2.5, 'abc', b'Invalid Choice: could not coerce'),
-        (1, '', b'Reviews must be at least one character long.'),
-        (1, 'crap', b'Please keep it PG (no profanity!).')
+        ('', 'abc', movie.INVALID_CHOICE_MESSAGE),
+        (0, 'abc', movie.INVALID_RATING_RANGE_MESSAGE),
+        (11, 'abc', movie.INVALID_RATING_RANGE_MESSAGE),
+        (2.5, 'abc', movie.INVALID_CHOICE_MESSAGE),
+        (1, '', movie.INVALID_REVIEW_TEXT_LENGTH_MESSAGE),
+        (1, 'crap', movie.REVIEW_TEXT_CONTAINS_PROFANITY_MESSAGE)
 ))
 def test_add_review_invalid_input(client, rating, text, message):
     data = {
@@ -147,7 +148,7 @@ def test_add_review_invalid_input(client, rating, text, message):
         del data['rating']
 
     response = client.post('/movie/1/reviews', data=data, follow_redirects=True)
-    assert message in response.data
+    assert message.encode() in response.data
 
 
 def test_watchlist(client: FlaskClient, auth):

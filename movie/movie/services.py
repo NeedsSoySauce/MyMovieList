@@ -47,7 +47,7 @@ def get_reviews_user_map(repo: AbstractRepository, reviews: List[Review]) -> Dic
     return reviews_user_map
 
 
-def add_review(repo: AbstractRepository, movie: Movie, review_text: str, rating: int, user: Union[User, None]):
+def add_review(repo: AbstractRepository, movie: Movie, review_text: str, rating: int, user: Union[User, None] = None):
     """
     Adds a review to this repository. If a user is specified it is treated as being the review's creator, otherwise the
     review is considered to be posted anonymously.

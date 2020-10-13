@@ -30,8 +30,8 @@ def test_get_reviews_user_map(user, review, memory_repository):
 
 
 def test_add_review_with_user(user, review, memory_repository):
+    # Note that the review that's created will have a different identity to the one passed in as the timestamps differ
     add_review(memory_repository, review.movie, review.review_text, review.rating, user)
-    print(memory_repository._reviews)
-    result = get_reviews_user_map(memory_repository, [review])
+    result = memory_repository.get_review_user(user.reviews[0])
 
-    assert result[review] == user
+    assert result == user

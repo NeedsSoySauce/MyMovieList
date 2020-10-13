@@ -21,14 +21,11 @@
     <div class="ui grid stackable">
         {% for genre in genre_movies|sort %}
         <div class="two wide column centered">
-            <div class="ui horizontal list big">
-                <div class="item">
-                    <div class="content">
-                        <a class="header" href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
-                            {{ genre.genre_name}}
-                        </a>
-                        {{ genre_movies[genre] }} movies
-                    </div>
+            <div class="statistic">
+                <a class="value" href="{{ url_for('search_bp.search', genre=genre.genre_name) }}">
+                    {{ genre.genre_name }}
+                </a>
+                <div class="label">{{ genre_movies[genre] }} movies
                 </div>
             </div>
         </div>

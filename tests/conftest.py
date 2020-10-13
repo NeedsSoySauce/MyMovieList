@@ -36,7 +36,7 @@ def actor():
 
 @pytest.fixture
 def movie():
-    return Movie("TestMovie", 2020)
+    return Movie("TestMovie", 2020, 0)
 
 
 @pytest.fixture
@@ -56,7 +56,7 @@ def actors():
 
 @pytest.fixture
 def movies():
-    return [Movie(f'Movie{i}', 2020) for i in range(10)]
+    return [Movie(f'Movie{i}', 2020, i) for i in range(10)]
 
 
 @pytest.fixture
@@ -89,7 +89,7 @@ def populated_movies(genres, directors, actors):
     movies = []
 
     for i in range(10):
-        movie = Movie(f'Movie{i}', 2000 + i)
+        movie = Movie(f'Movie{i}', 2000 + i, i)
         movie.genres = [genres[i]]
         movie.description = f'Description{i}'
         movie.director = directors[i]
@@ -132,7 +132,7 @@ def client():
     my_app = create_app({
         'TESTING': True,
         'WTF_CSRF_ENABLED': False,
-        'TEST_DATA_PATH': './tests/data/Data1000Movies.csv'
+        'TEST_DATA_PATH': './tests/data/movies.csv'
     })
 
     return my_app.test_client()

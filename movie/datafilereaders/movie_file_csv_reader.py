@@ -82,7 +82,7 @@ class MovieFileCSVReader:
     def _get_genre(self, genre: Genre) -> Genre:
         return self._get_dict_value(genre, self._genres)
 
-    def _read_row(self, row: _ROW) -> Movie:
+    def _read_row(self, row: _ROW, id_: int) -> Movie:
         """
         Helper method to construct a Movie from a row.
 
@@ -111,7 +111,7 @@ class MovieFileCSVReader:
         if error:
             raise ValueError(f'unable to parse row: {row}')
 
-        movie = Movie(title, release_year)
+        movie = Movie(title, release_year, id_)
         movie.genres = genres
         movie.description = description
         movie.director = director
@@ -138,6 +138,8 @@ class MovieFileCSVReader:
         self._directors = {}
         self._genres = {}
 
+        count = 0
+
         with open(self._file_name, mode='r', encoding='utf-8-sig') as file:
             movie_file_reader = DictReader(file)
 
@@ -148,10 +150,12 @@ class MovieFileCSVReader:
 
             for row in movie_file_reader:
                 try:
-                    movie = self._read_row(row)
+                    movie = self._read_row(row, count)
                 except ValueError:
                     # Failed to parse row to Movie
                     continue
+
+                count += 1
 
                 unique_movies.add(movie)
 

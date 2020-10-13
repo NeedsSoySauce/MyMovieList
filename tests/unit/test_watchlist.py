@@ -107,5 +107,5 @@ def test_contains(watchlist, movie, movies):
     for i, movie in enumerate(movies):
         assert movie in watchlist
 
-    assert not (Movie("test", 2020) in watchlist)
+    assert not (Movie("test", 2020, 1234) in watchlist)
     assert not (123 in watchlist)

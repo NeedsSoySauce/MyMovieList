@@ -2,6 +2,8 @@ import pytest
 from flask import session
 from flask.testing import FlaskClient
 
+from movie.auth import auth
+
 
 def test_get_home(client: FlaskClient):
     response = client.get('/')
@@ -53,12 +55,11 @@ def test_register(client: FlaskClient):
 
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
-        ('', '', b'Username required'),
-        ('cj', '', b'Usernames must be at least 3 characters'),
-        ('test', '', b'Password required'),
-        ('test', 'test', b'Your password must be at least 8 characters, contain an upper case letter, a lower case ' \
-                         b'letter, and a digit'),
-        ('test', 'test123A', b'Username unavailable'),
+        ('', '', auth.USERNAME_REQUIRED_MESSAGE),
+        ('cj', '', auth.INVALID_USERNAME_LENGTH_MESSAGE),
+        ('test', '', auth.PASSWORD_REQUIRED_MESSAGE),
+        ('test', 'test', auth.INVALID_PASSWORD_MESSAGE),
+        ('test', 'test123Ab', auth.USERNAME_UNAVAILABLE_MESSAGE)
 ))
 def test_register_with_invalid_input(client, username, password, message):
     # Check that attempting to register with invalid combinations of username and password generate appropriate error
@@ -67,7 +68,7 @@ def test_register_with_invalid_input(client, username, password, message):
         '/register',
         data={'username': username, 'password': password}
     )
-    assert message in response.data
+    assert message.encode() in response.data
 
 
 def test_login(client: FlaskClient):
@@ -85,8 +86,8 @@ def test_login(client: FlaskClient):
 
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
-        ('abcd', 'abcd', b'Unrecognized username - please check and try again.'),
-        ('test', 'abcd', b'Incorrect password - please check and try again.')
+        ('abcd', 'abcd', auth.UNKNOWN_USER_MESSAGE),
+        ('test', 'abcd', auth.INCORRECT_PASSWORD_MESSAGE)
 ))
 def test_login_invalid_input(client, username, password, message):
     # Check that attempting to register with invalid combinations of username and password generate appropriate error
@@ -95,7 +96,7 @@ def test_login_invalid_input(client, username, password, message):
         '/login',
         data={'username': username, 'password': password}
     )
-    assert message in response.data
+    assert message.encode() in response.data
 
 
 def test_add_review_anonymous(client: FlaskClient):

@@ -7,28 +7,28 @@ from movie.domain.movie import Movie
 
 
 def test_constructor():
-    movie = Movie("   Movie   name  with    spaces  \n", 1900)
+    movie = Movie("   Movie   name  with    spaces  \n", 1900, 1)
     assert movie.title == "Movie   name  with    spaces"
 
 
 def test_constructor_empty_string_title():
-    movie = Movie("", 2000)
+    movie = Movie("", 2000, 1)
     assert movie.title is None
 
 
 def test_constructor_invalid_title():
-    movie = Movie(123, 2000)
+    movie = Movie(123, 2000, 1)
     assert movie.title is None
 
 
 def test_constructor_invalid_release_date_value():
     with pytest.raises(ValueError):
-        _ = Movie("Test", 1899)
+        _ = Movie("Test", 1899, 1)
 
 
 def test_constructor_invalid_release_date_type():
     with pytest.raises(TypeError):
-        _ = Movie("Test", 2000.9)
+        _ = Movie("Test", 2000.9, 1)
 
 
 def test_title(movie):
@@ -202,25 +202,25 @@ def test_repr(movie):
 
 
 def test_repr_with_no_name():
-    movie = Movie("", 2020)
+    movie = Movie("", 2020, 1)
     assert repr(movie) == "<Movie None, 2020>"
 
 
 def test_equality_when_equal(movie):
-    other = Movie("TestMovie", 2020)
+    other = Movie("TestMovie", 2020, 1)
     assert movie == other
 
 
 def test_equality_when_not_equal(movie):
     # Check not equal when partially equal
-    other = Movie("TestMovie", 2000)
+    other = Movie("TestMovie", 2000, 1)
     assert movie != other
 
-    other = Movie("123", 2020)
+    other = Movie("123", 2020, 1)
     assert movie != other
 
     # Check not equal when title and release date both differ
-    other = Movie("123", 2000)
+    other = Movie("123", 2000, 1)
     assert movie != other
 
 
@@ -229,30 +229,30 @@ def test_equality_with_different_type(movie):
 
 
 def test_less_than_when_true():
-    a = Movie("123", 2020)
-    b = Movie("1234", 2020)
+    a = Movie("123", 2020, 1)
+    b = Movie("1234", 2020, 2)
     assert a < b
 
-    a = Movie("123", 2020)
-    b = Movie("123", 2021)
+    a = Movie("123", 2020, 1)
+    b = Movie("123", 2021, 2)
     assert a < b
 
-    a = Movie("123", 2020)
-    b = Movie("1234", 2021)
+    a = Movie("123", 2020, 1)
+    b = Movie("1234", 2021, 2)
     assert a < b
 
 
 def test_less_than_when_false():
-    a = Movie("1234", 2020)
-    b = Movie("123", 2020)
+    a = Movie("1234", 2020, 1)
+    b = Movie("123", 2020, 2)
     assert not (a < b)
 
-    a = Movie("123", 2021)
-    b = Movie("123", 2020)
+    a = Movie("123", 2021, 1)
+    b = Movie("123", 2020, 2)
     assert not (a < b)
 
-    a = Movie("123", 2020)
-    b = Movie("123", 2020)
+    a = Movie("123", 2020, 1)
+    b = Movie("123", 2020, 2)
     assert not (a < b)
     assert not (b < a)
 
@@ -267,16 +267,16 @@ def test_hash(movie):
 
 
 def test_hash_changes():
-    a = Movie("1234", 2020)
-    b = Movie("123", 2020)
+    a = Movie("1234", 2020, 1)
+    b = Movie("123", 2020, 2)
     assert hash(a) != hash(b)
 
-    a = Movie("123", 2021)
-    b = Movie("123", 2020)
+    a = Movie("123", 2021, 1)
+    b = Movie("123", 2020, 2)
     assert hash(a) != hash(b)
 
-    a = Movie("1234", 2021)
-    b = Movie("123", 2020)
+    a = Movie("1234", 2021, 1)
+    b = Movie("123", 2020, 2)
     assert hash(a) != hash(b)
 
 

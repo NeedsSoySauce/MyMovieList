@@ -6,9 +6,7 @@ from .director import Director
 
 
 class Movie:
-    id_count: int = 0
-
-    def __init__(self, title: str, release_date: int) -> None:
+    def __init__(self, title: str, release_date: int, id_: int) -> None:
         self._title = title
         self._release_date = release_date
         self._description: str = None
@@ -20,8 +18,7 @@ class Movie:
         self._votes: int = None
         self._revenue_millions: float = None
         self._metascore: int = None
-        self._id: int = Movie.id_count
-        Movie.id_count += 1
+        self._id: int = id_
 
     @property
     def _title(self):

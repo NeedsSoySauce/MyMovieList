@@ -145,7 +145,7 @@ def test_equality_when_equal(review, movie):
 
 def test_equality_when_not_equal(review):
     # Check not equal when reviews are partially equal
-    movie = Movie("Test", 2000)
+    movie = Movie("Test", 2000, 1)
     review_text = review.review_text
     rating = review.rating
     other = Review(movie, review_text, rating)
@@ -164,7 +164,7 @@ def test_equality_when_not_equal(review):
     assert review != other
 
     # Check not equal when reviews are completely different
-    movie = Movie("Test", 2000)
+    movie = Movie("Test", 2000, 1)
     review_text = "Test"
     rating = 5
     other = Review(movie, review_text, rating)

@@ -1,6 +1,5 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, current_app
 
-from movie.adapters.repository import instance as repo
 from movie.search.services import create_search_form
 from movie.utilities.services import get_number_of_movies, get_movies_per_genre
 
@@ -10,6 +9,7 @@ home_blueprint = Blueprint(
 
 @home_blueprint.route('/', methods=['GET'])
 def home():
+    repo = current_app.config['REPOSITORY']
     form = create_search_form(repo, request.args)
 
     return render_template(

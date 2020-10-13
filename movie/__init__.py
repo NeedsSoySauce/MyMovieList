@@ -29,8 +29,8 @@ def create_app(test_config=None):
         data_path = app.config['TEST_DATA_PATH']
 
     # Create the MemoryRepository implementation for a memory-based repository.
-    repo.instance = MemoryRepository()
-    populate(repo.instance, data_path)
+    app.config['REPOSITORY'] = MemoryRepository()
+    populate(app.config['REPOSITORY'], data_path)
 
     # Build the application - these steps require an application context.
     with app.app_context():

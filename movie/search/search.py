@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, session, url_for, current
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
-from movie.adapters.repository import instance as repo
+import movie.adapters.repository as repo
 from .services import search_movies, create_search_form, DEFAULT_PAGE_SIZE
 from ..auth import services as auth
 
@@ -12,6 +12,7 @@ search_blueprint = Blueprint(
 
 @search_blueprint.route('/search', methods=['GET'])
 def search():
+    repo = current_app.config['REPOSITORY']
     form = create_search_form(repo, request.args)
     user = None
 

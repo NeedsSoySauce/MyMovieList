@@ -1,11 +1,11 @@
 from better_profanity import profanity
-from flask import Blueprint, render_template, abort, session, url_for, request
+from flask import Blueprint, render_template, abort, session, url_for, request, current_app
 from flask_wtf import FlaskForm
 from werkzeug.utils import redirect
 from wtforms import ValidationError, TextAreaField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, NumberRange
 
-from movie.adapters.repository import instance as repo
+import movie.adapters.repository as repo
 from .services import *
 from ..auth import services as auth
 
@@ -13,8 +13,9 @@ movie_blueprint = Blueprint(
     'movie_bp', __name__)
 
 
-@movie_blueprint.route('/movie/<movie_id>', methods=['GET'])
+@movie_blueprint.route('/movie/<int:movie_id>', methods=['GET'])
 def movie(movie_id: int):
+    repo = current_app.config['REPOSITORY']
     user = None
 
     try:
@@ -45,6 +46,7 @@ def movie(movie_id: int):
 
 @movie_blueprint.route('/movie/<int:movie_id>/reviews', methods=['GET', 'POST'])
 def reviews(movie_id: int):
+    repo = current_app.config['REPOSITORY']
     user = None
     review_error_message = None
 
@@ -77,8 +79,6 @@ def reviews(movie_id: int):
         abort(404)
 
     results = get_movie_reviews(repo, movie, page, page_size)
-
-    print(page, results.pages)
 
     if page >= results.pages and page != 0:
         abort(404)

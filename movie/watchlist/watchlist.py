@@ -4,7 +4,7 @@ from flask import Blueprint, render_template, session, url_for, request, current
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
-from movie.adapters.repository import instance as repo
+import movie.adapters.repository as repo
 from movie.auth.auth import login_required
 from movie.movie import services as movie_service
 from .services import get_user_movies, DEFAULT_PAGE_SIZE
@@ -19,6 +19,7 @@ watchlist_blueprint = Blueprint(
 @watchlist_blueprint.route('/watchlist/<int:movie_id>', methods=['GET', 'POST', 'DELETE'])
 @login_required
 def watchlist(movie_id: Union[int, None]):
+    repo = current_app.config['REPOSITORY']
     user_name = session['username']
     try:
         user = auth.get_user(repo, user_name)
@@ -81,7 +82,9 @@ def watchlist(movie_id: Union[int, None]):
 @watchlist_blueprint.route('/watch/<int:movie_id>', methods=['POST', 'DELETE'])
 @login_required
 def watch(movie_id: Union[int, None]):
+    repo = current_app.config['REPOSITORY']
     user_name = session['username']
+
     try:
         user = auth.get_user(repo, user_name)
     except auth.UnknownUserException:

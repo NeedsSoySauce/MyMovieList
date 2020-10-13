@@ -12,9 +12,6 @@ from movie.domain.movie import Movie
 from movie.domain.review import Review
 from movie.domain.user import User
 
-instance: Union[None, 'AbstractRepository'] = None
-""" Application wide repository instance. """
-
 
 class AbstractRepository(abc.ABC):
     DEFAULT_PAGE_SIZE = 25

@@ -1,11 +1,11 @@
-from flask import Blueprint, render_template, request, session, url_for
+from flask import Blueprint, render_template, request, session, url_for, current_app
 from flask_wtf import FlaskForm
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from wtforms import PasswordField, SubmitField, StringField
 from wtforms.validators import DataRequired, Length
 
-from movie.adapters.repository import instance as repo
+import movie.adapters.repository as repo
 from movie.auth import auth
 from movie.auth.auth import UnknownUserException, PasswordValid, login_required, AuthenticationException, \
     NameNotUniqueException
@@ -16,6 +16,7 @@ user_blueprint = Blueprint(
 
 @user_blueprint.route('/user/<string:username>', methods=['GET'])
 def user(username: str):
+    repo = current_app.config['REPOSITORY']
     user = None
 
     change_password_form = ChangePasswordForm()

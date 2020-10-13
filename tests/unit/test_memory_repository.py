@@ -171,12 +171,12 @@ def test_get_genres(genres, memory_repository: MemoryRepository):
     assert sorted(repo_genres) == repo_genres
 
 
-def test_get_number_of_pages(populated_memory_repository: MemoryRepository):
+def test_get_number_of_movie_pages(populated_memory_repository: MemoryRepository):
     pages = populated_memory_repository.get_number_of_movie_pages()
     assert pages == 1
 
 
-def test_get_number_of_pages_empty(memory_repository: MemoryRepository):
+def test_get_number_of_movie_pages_empty(memory_repository: MemoryRepository):
     pages = memory_repository.get_number_of_movie_pages()
     assert pages == 0
 
@@ -185,6 +185,16 @@ def test_add_review(review, memory_repository: MemoryRepository):
     memory_repository.add_review(review)
 
     assert review in memory_repository._reviews
+
+
+def test_add_review_with_user(review, user, memory_repository):
+    memory_repository.add_review(review, user)
+
+    # Check a relationship is created between the review and the user
+    result = memory_repository.get_review_user(review)
+    assert result == user
+
+    assert review in user.reviews
 
 
 def test_get_number_of_reviews_for_movie_empty(movie, memory_repository):
@@ -217,3 +227,54 @@ def test_get_review_user(user, review, memory_repository: MemoryRepository):
     memory_repository.add_user(user)
     result = memory_repository.get_review_user(review)
     assert result == user
+
+
+def test_get_number_of_movies_for_user_empty(user, memory_repository: MemoryRepository):
+    memory_repository.add_user(user)
+
+    result = memory_repository.get_number_of_movies_for_user(user)
+    assert result == 0
+
+
+def test_get_number_of_movies_for_user(user, movies, memory_repository: MemoryRepository):
+    memory_repository.add_user(user)
+    user.watch_movie(movies[0])
+    user.add_to_watchlist(movies[1])
+
+    result = memory_repository.get_number_of_movies_for_user(user)
+    assert result == 2
+
+
+def test_get_number_of_movies_for_user(user, movies, memory_repository: MemoryRepository):
+    memory_repository.add_user(user)
+    user.watch_movie(movies[0])
+    user.add_to_watchlist(movies[1])
+
+    result = memory_repository.get_number_of_movies_for_user(user)
+    assert result == 2
+
+
+def test_get_number_of_movie_pages_for_user(user, movies, memory_repository: MemoryRepository):
+    memory_repository.add_user(user)
+
+    result = memory_repository.get_number_of_movie_pages_for_user(user)
+    assert result == 0
+
+    user.add_to_watchlist(movies[0])
+    user.add_to_watchlist(movies[1])
+
+    result = memory_repository.get_number_of_movie_pages_for_user(user, 1)
+    assert result == 2
+
+
+def test_get_movies_for_user(user, movies, memory_repository: MemoryRepository):
+    memory_repository.add_user(user)
+
+    result = memory_repository.get_movies_for_user(user, 0)
+    assert len(result) == 0
+
+    user.watch_movie(movies[0])
+    user.add_to_watchlist(movies[1])
+
+    result = memory_repository.get_movies_for_user(user, 0)
+    assert len(result) == 2

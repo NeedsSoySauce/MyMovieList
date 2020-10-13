@@ -182,6 +182,7 @@ class MemoryRepository(AbstractRepository):
         insort(self._reviews, review)
         insort(self._reviews_movie_map[review.movie], review)
         if user:
+            user.add_review(review)
             self._reviews_user_map[review] = user
 
     def add_reviews(self, reviews: List[Review]) -> None:
@@ -225,7 +226,7 @@ class MemoryRepository(AbstractRepository):
         reviews = self._get_reviews_for_movie(movie)
 
         offset = page_number * page_size
-        return reviews[offset:min(offset + page_size, len(self._reviews))]
+        return reviews[offset:min(offset + page_size, len(reviews))]
 
     @staticmethod
     def _movie_query_filter(movie: Movie, query: str = "", min_ratio: int = 80) -> bool:
@@ -314,6 +315,38 @@ class MemoryRepository(AbstractRepository):
 
         offset = page_number * page_size
         return filtered[offset:min(offset + page_size, len(self._movies))]
+
+    @staticmethod
+    def _get_movies_for_user(user) -> List[Movie]:
+        movies = list(set(user.watched_movies + list(user.watchlist)))
+        movies.sort()
+        return movies
+
+    def get_number_of_movies_for_user(self, user: User) -> int:
+        return len(self._get_movies_for_user(user))
+
+    def get_number_of_movie_pages_for_user(self,
+                                           user: User,
+                                           page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
+        """ Returns the number of pages of movies that can be created from the given filtering options. """
+        return ceil(self.get_number_of_movies_for_user(user) / page_size)
+
+    def get_movies_for_user(self,
+                            user: User,
+                            page_number: int,
+                            page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Movie]:
+        """
+        Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
+
+        Args:
+            user (User): user to return movies for.
+            page_number (int): page number of the the page to return, starting from zero.
+            page_size (int, optional): number of results per page. The last page may have less results than this.
+        """
+        movies = self._get_movies_for_user(user)
+
+        offset = page_number * page_size
+        return movies[offset:min(offset + page_size, len(movies))]
 
     def get_movie_by_id(self, movie_id: int) -> Movie:
         try:

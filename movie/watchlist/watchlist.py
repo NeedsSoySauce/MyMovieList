@@ -7,9 +7,9 @@ from werkzeug.utils import redirect
 from movie.adapters.repository import instance as repo
 from movie.auth.auth import login_required
 from movie.movie import services as movie_service
-from .services import get_user_movies
-
+from .services import get_user_movies, DEFAULT_PAGE_SIZE
 from ..auth import services as auth
+from ..movie.services import get_movie_by_id
 
 watchlist_blueprint = Blueprint(
     'watchlist_bp', __name__)
@@ -23,7 +23,7 @@ def watchlist(movie_id: Union[int, None]):
     try:
         user = auth.get_user(repo, user_name)
     except auth.UnknownUserException:
-        current_app.logger.debug(f"Unknown user 'user_name'")
+        current_app.logger.debug(f"Unknown user '{user_name}'")
         # invalid session
         session.clear()
         return redirect(url_for('auth_bp.login'))
@@ -44,7 +44,7 @@ def watchlist(movie_id: Union[int, None]):
     # Page numbers are displayed as starting from 1 so subtract 1
     try:
         page = int(request.args.get('page') or 1) - 1
-        page_size = int(request.args.get('size') or 25)
+        page_size = int(request.args.get('size') or DEFAULT_PAGE_SIZE)
     except ValueError:
         abort(404)
 
@@ -53,7 +53,7 @@ def watchlist(movie_id: Union[int, None]):
     if page < 0:
         abort(404)
 
-    results = get_user_movies(user, page, page_size)
+    results = get_user_movies(repo, user, page, page_size)
 
     # The last page can move as the user can add/remove items from their watchlist, so redirect to the new last page
     # if they request the previous one
@@ -85,13 +85,13 @@ def watch(movie_id: Union[int, None]):
     try:
         user = auth.get_user(repo, user_name)
     except auth.UnknownUserException:
-        current_app.logger.debug(f"Unknown user 'user_name'")
+        current_app.logger.debug(f"Unknown user '{user_name}'")
         # invalid session
         session.clear()
         return redirect(url_for('auth_bp.login'))
 
     try:
-        movie = movie_service.get_movie_by_id(repo, movie_id)
+        movie = get_movie_by_id(repo, movie_id)
     except ValueError:
         abort(404)
 

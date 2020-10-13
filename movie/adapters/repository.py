@@ -219,6 +219,33 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def get_number_of_movies_for_user(self, user: User) -> int:
+        """  Returns the number of  unique movies from the given user's watchlist and watched list. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_number_of_movie_pages_for_user(self,
+                                           user: User,
+                                           page_size: int = DEFAULT_PAGE_SIZE) -> int:
+        """ Returns the number of pages of movies that can be created from the given filtering options. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_movies_for_user(self,
+                            user: User,
+                            page_number: int,
+                            page_size: int = DEFAULT_PAGE_SIZE) -> List[Movie]:
+        """
+        Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
+
+        Args:
+            user (User): user to return movies for.
+            page_number (int): page number of the the page to return, starting from zero.
+            page_size (int, optional): number of results per page. The last page may have less results than this.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def get_movie_by_id(self, movie_id: int) -> Movie:
         """ Returns the movie with the given id in this repository.
 

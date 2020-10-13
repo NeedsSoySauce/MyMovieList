@@ -26,6 +26,7 @@ def check_if_user_exists(repo: AbstractRepository, username: str) -> bool:
 
 
 def add_user(repo: AbstractRepository, username: str, password: str) -> None:
+    """ Adds the given user to the given repository. """
     # Check that the given username is available.
     if check_if_user_exists(repo, username):
         raise NameNotUniqueException
@@ -39,6 +40,7 @@ def add_user(repo: AbstractRepository, username: str, password: str) -> None:
 
 
 def get_user(repo: AbstractRepository, user_name: str) -> User:
+    """ Gets the user with the given username from the given repository. """
     try:
         return repo.get_user(user_name)
     except ValueError:

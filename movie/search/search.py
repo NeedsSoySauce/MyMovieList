@@ -50,6 +50,8 @@ def search():
     if page >= results.pages and page != 0:
         abort(404)
 
+    is_advanced_search = bool(genres or directors or actors)
+
     return render_template(
         'search/search.html',
         movies=results.movies,
@@ -60,5 +62,6 @@ def search():
         args={key: request.args[key] for key in request.args if key != 'page'},
         pagination_endpoint='search_bp.search',
         user=user,
-        form=form
+        form=form,
+        is_advanced_search=is_advanced_search
     )

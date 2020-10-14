@@ -5,13 +5,21 @@ from werkzeug.utils import redirect
 from wtforms import PasswordField, SubmitField, StringField
 from wtforms.validators import DataRequired, Length
 
-import movie.adapters.repository as repo
 from movie.auth import auth
 from movie.auth.auth import UnknownUserException, PasswordValid, login_required, AuthenticationException, \
     NameNotUniqueException
 
 user_blueprint = Blueprint(
     'user_bp', __name__)
+
+NEW_USERNAME_REQUIRED_MESSAGE = 'New username required.'
+
+CURRENT_PASSWORD_REQUIRED_MESSAGE = 'Current password required.'
+NEW_PASSWORD_REQUIRED_MESSAGE = 'New password required.'
+PASSWORDS_EQUAL_MESSAGE = "Passwords must be different."
+
+CONFIRMATION_REQUIRED_MESSAGE = 'Confirmation required.'
+CONFIRMATION_FAILED_MESSAGE = "Confirmation failed - enter your username to confirm."
 
 
 @user_blueprint.route('/user/<string:username>', methods=['GET'])
@@ -31,6 +39,10 @@ def user(username: str):
     is_username_change_success = bool(session.get('is_username_change_success', False))
     session.pop('is_username_change_success', None)
 
+    # Same as above but for password change
+    is_password_change_success = bool(session.get('is_password_change_success', False))
+    session.pop('is_password_change_success', None)
+
     delete_account_form = DeleteAccountForm()
     delete_account_error_message = None
 
@@ -40,28 +52,7 @@ def user(username: str):
         # No user with the given username
         abort(404)
 
-    if request.path == f'/user/{username}/password/change':
-        # Request is a POST to change password
-        if change_password_form.validate_on_submit():
-            current_password = change_password_form.current_password.data
-            new_password = change_password_form.new_password.data
-
-            if current_password == new_password:
-                change_password_error_message = "Passwords must be different."
-            else:
-                try:
-                    # Check the current password is valid for this user
-                    auth.authenticate_user(repo, username, current_password)
-
-                    auth.change_password(repo, user, new_password)
-                    is_password_change_success = True
-                except AuthenticationException:
-                    # Incorrect password
-                    change_password_error_message = "Incorrect password - please check and try again."
-                except UnknownUserException:
-                    # User isn't recognized at this point (unlikely)
-                    abort(404)
-    elif request.path == f'/user/{username}/username/change':
+    if request.path == f'/user/{username}/username/change':
         # Request is a POST to change username
         if change_username_form.validate_on_submit():
             new_username = change_username_form.new_username.data
@@ -69,13 +60,33 @@ def user(username: str):
             try:
                 auth.change_username(repo, user, new_username)
                 session['username'] = new_username
-                is_username_change_success = True
-
                 session['is_username_change_success'] = True
                 return redirect(url_for('user_bp.user', username=new_username))
             except NameNotUniqueException:
                 # Incorrect password
-                change_username_error_message = "Username unavailable."
+                change_username_error_message = auth.USERNAME_UNAVAILABLE_MESSAGE
+    elif request.path == f'/user/{username}/password/change':
+        # Request is a POST to change password
+        if change_password_form.validate_on_submit():
+            current_password = change_password_form.current_password.data
+            new_password = change_password_form.new_password.data
+
+            if current_password == new_password:
+                change_password_error_message = PASSWORDS_EQUAL_MESSAGE
+            else:
+                try:
+                    # Check the current password is valid for this user
+                    auth.authenticate_user(repo, username, current_password)
+
+                    auth.change_password(repo, user, new_password)
+                    session['is_password_change_success'] = True
+                    return redirect(url_for('user_bp.user', username=user.user_name))
+                except AuthenticationException:
+                    # Incorrect password
+                    change_password_error_message = auth.INCORRECT_PASSWORD_MESSAGE
+                except UnknownUserException:
+                    # User isn't recognized at this point (unlikely)
+                    abort(404)
     elif request.path == f'/user/{username}/delete':
 
         # Request is a POST to delete this account
@@ -83,7 +94,7 @@ def user(username: str):
             confirmation = delete_account_form.confirmation.data
 
             if confirmation != username:
-                delete_account_error_message = "Confirmation failed - enter your username to confirm."
+                delete_account_error_message = CONFIRMATION_FAILED_MESSAGE
             else:
                 auth.delete_user(repo, user)
                 session.clear()
@@ -121,26 +132,26 @@ def delete_account(username: str):
     return user(username)
 
 
-class ChangePasswordForm(FlaskForm):
-    current_password = PasswordField('Current password', [
-        DataRequired(message='Current password required.')
+class ChangeUsernameForm(FlaskForm):
+    new_username = StringField('New username', [
+        DataRequired(message=NEW_USERNAME_REQUIRED_MESSAGE),
+        Length(min=3, message=auth.INVALID_USERNAME_LENGTH_MESSAGE)
     ])
-    new_password = PasswordField('New password', [
-        DataRequired(message='New password required.'),
-        PasswordValid()])
     submit = SubmitField('Submit')
 
 
-class ChangeUsernameForm(FlaskForm):
-    new_username = StringField('New username', [
-        DataRequired(message='New username required.'),
-        Length(min=3, message='Usernames must be at least 3 characters')
+class ChangePasswordForm(FlaskForm):
+    current_password = PasswordField('Current password', [
+        DataRequired(message=CURRENT_PASSWORD_REQUIRED_MESSAGE)
     ])
+    new_password = PasswordField('New password', [
+        DataRequired(message=NEW_PASSWORD_REQUIRED_MESSAGE),
+        PasswordValid()])
     submit = SubmitField('Submit')
 
 
 class DeleteAccountForm(FlaskForm):
     confirmation = StringField('Confirmation', [
-        DataRequired(message='Confirmation required..')
+        DataRequired(message=CONFIRMATION_REQUIRED_MESSAGE)
     ])
     submit = SubmitField('Submit')

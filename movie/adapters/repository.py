@@ -290,5 +290,8 @@ def populate(repo: AbstractRepository, data_path: str):
     repo.add_users(state.users)
     repo.add_reviews(state.reviews)
 
-    test_user = User('test', generate_password_hash('test123A'))
+    test_user = User('testuser', generate_password_hash('test123A'))
     repo.add_user(test_user)
+
+    test_user2 = User('testuser2', generate_password_hash('test123A'))
+    repo.add_user(test_user2)

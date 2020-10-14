@@ -93,12 +93,13 @@ def test_get_movies_invalid_page_size(populated_memory_repository):
         populated_memory_repository.get_movies(0, page_size=0.5)
 
 
-def test_get_movies_genres_filter(genres, populated_memory_repository):
-    for i in range(len(genres)):
-        # The movies in our test configuration should each have one genre
-        repo_movies = populated_memory_repository.get_movies(0, genres=[genres[i]])
-        assert len(repo_movies) == 1
-        assert genres[i] in repo_movies[0].genres
+def test_get_movies_genres_filter(populated_memory_repository):
+    genres = [genre for genre in populated_memory_repository.get_genres() if genre.genre_name in ['Action', 'Adventure']]
+    # The movies in our test configuration should each have one genre
+    repo_movies = populated_memory_repository.get_movies(0, genres=genres)
+    assert len(repo_movies) == 4
+    for movie in repo_movies:
+        assert all(genre in movie.genres for genre in genres)
 
 
 def test_get_movies_invalid_genres(genre, populated_memory_repository):

@@ -24,7 +24,7 @@ def search_movies(repo: AbstractRepository,
                   page_size: int = DEFAULT_PAGE_SIZE,
                   query: str = '',
                   genres: List[str] = [],
-                  directors: List[Director] = [],
+                  directors: List[str] = [],
                   actors: List[str] = []) -> SearchResults:
     """
     Searches for movies using the given filtering options and returns a SearchResults NamedTuple.

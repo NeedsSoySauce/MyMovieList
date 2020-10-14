@@ -30,7 +30,7 @@ def create_app(test_config=None):
 
     # Create the MemoryRepository implementation for a memory-based repository.
     app.config['REPOSITORY'] = MemoryRepository()
-    populate(app.config['REPOSITORY'], data_path)
+    populate(app.config['REPOSITORY'], data_path, 123)
 
     # Build the application - these steps require an application context.
     with app.app_context():

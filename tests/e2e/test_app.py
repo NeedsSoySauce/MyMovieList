@@ -222,6 +222,21 @@ def test_change_username_invalid_input(client: FlaskClient, auth: Authentication
     assert message.encode() in response.data
 
 
+def test_change_username_unauthorized(client: FlaskClient, auth: AuthenticationManager):
+    auth.login()
+
+    data = {
+        'new_username': 'abc123'
+    }
+
+    response = client.post('/user/testuser2/username/change', data=data)
+    assert response.status_code == 401
+
+    # Check the other user's account is okay
+    response = client.get('/user/testuser2')
+    assert response.status_code == 200
+
+
 def test_change_password(client: FlaskClient, auth: AuthenticationManager):
     auth.login()
 
@@ -270,6 +285,22 @@ def test_change_password_invalid_input(client: FlaskClient,
     assert message.encode() in response.data
 
 
+def test_change_password_unauthorized(client: FlaskClient, auth: AuthenticationManager):
+    auth.login()
+
+    data = {
+        'current_password': 'test123A',
+        "new_password": "test123B"
+    }
+
+    response = client.post('/user/testuser2/password/change', data=data)
+    assert response.status_code == 401
+
+    # Check the other user's account is okay
+    response = client.get('/user/testuser2')
+    assert response.status_code == 200
+
+
 def test_delete_account(client: FlaskClient, auth: AuthenticationManager):
     auth.login()
 
@@ -316,3 +347,18 @@ def test_delete_account_invalid_input(client: FlaskClient,
     response = client.post('/user/testuser/delete', data=data)
 
     assert message.encode() in response.data
+
+
+def test_delete_account_unauthorized(client: FlaskClient, auth: AuthenticationManager):
+    auth.login()
+
+    data = {
+        'confirmation': 'testuser'
+    }
+
+    response = client.post('/user/testuser2/delete', data=data)
+    assert response.status_code == 401
+
+    # Check the other user's account is okay
+    response = client.get('/user/testuser2')
+    assert response.status_code == 200

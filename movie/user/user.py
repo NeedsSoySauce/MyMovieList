@@ -29,7 +29,6 @@ def user(username: str):
 
     change_password_form = ChangePasswordForm()
     change_password_error_message = None
-    is_password_change_success = False
 
     change_username_form = ChangeUsernameForm()
     change_username_error_message = None
@@ -51,6 +50,10 @@ def user(username: str):
     except UnknownUserException:
         # No user with the given username
         abort(404)
+
+    # User's can't take actions for other users
+    if request.method == 'POST' and session['username'] != username:
+        abort(401)
 
     if request.path == f'/user/{username}/username/change':
         # Request is a POST to change username

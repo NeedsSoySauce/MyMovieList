@@ -6,7 +6,8 @@ from werkzeug.utils import redirect
 
 from movie.auth.auth import login_required
 from movie.movie import services as movie_service
-from .services import get_user_movies, DEFAULT_PAGE_SIZE
+from .services import get_user_movies, DEFAULT_PAGE_SIZE, add_movie_to_watchlist, remove_movie_from_watchlist, \
+    add_movie_to_watched, remove_movie_from_watched
 from ..auth import services as auth
 from ..movie.services import get_movie_by_id
 
@@ -30,15 +31,15 @@ def watchlist(movie_id: Union[int, None]):
 
     if request.method in ['POST', 'DELETE']:
         try:
-            movie = movie_service.get_movie_by_id(repo, movie_id)
+            movie = get_movie_by_id(repo, movie_id)
         except ValueError:
             abort(404)
 
         if request.method == 'POST':
-            user.add_to_watchlist(movie)
+            add_movie_to_watchlist(repo, user, movie)
             return 'Created', 201
         elif request.method == 'DELETE':
-            user.remove_from_watchlist(movie)
+            remove_movie_from_watchlist(repo, user, movie)
             return 'Deleted', 200
 
     # Page numbers are displayed as starting from 1 so subtract 1
@@ -98,8 +99,8 @@ def watch(movie_id: Union[int, None]):
         abort(404)
 
     if request.method == 'POST':
-        user.watch_movie(movie)
+        add_movie_to_watched(repo, user, movie)
         return 'Created', 201
     else:
-        user.remove_from_watched_movies(movie)
+        remove_movie_from_watched(repo, user, movie)
         return 'Deleted', 200

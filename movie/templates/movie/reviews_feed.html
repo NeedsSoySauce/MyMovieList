@@ -4,8 +4,8 @@
         <div class="content">
             <div class="summary">
                 {% if reviews_user_map[review] %}
-                <a class="user" href="{{ url_for('user_bp.user', username=reviews_user_map[review].user_name) }}">
-                    {{ reviews_user_map[review].user_name }}
+                <a class="user" href="{{ url_for('user_bp.user', username=reviews_user_map[review].username) }}">
+                    {{ reviews_user_map[review].username }}
                 </a>
                 {% else %}
                 <span class="user">

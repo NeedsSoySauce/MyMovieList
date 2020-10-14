@@ -83,7 +83,7 @@ def user(username: str):
 
                     auth.change_password(repo, user, new_password)
                     session['is_password_change_success'] = True
-                    return redirect(url_for('user_bp.user', username=user.user_name))
+                    return redirect(url_for('user_bp.user', username=user.username))
                 except AuthenticationException:
                     # Incorrect password
                     change_password_error_message = auth.INCORRECT_PASSWORD_MESSAGE

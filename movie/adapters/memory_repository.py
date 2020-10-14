@@ -137,7 +137,7 @@ class MemoryRepository(AbstractRepository):
             return
 
         insort(self._users, user)
-        self._user_id_map[user.user_name] = user.id
+        self._user_id_map[user.username] = user.id
         self._user_map[user.id] = user
 
         if user.reviews:
@@ -151,21 +151,21 @@ class MemoryRepository(AbstractRepository):
         for user in users:
             self.add_user(user)
 
-    def get_user(self, user_name: str) -> User:
+    def get_user(self, username: str) -> User:
         try:
-            return self._user_map[self._user_id_map[user_name]]
+            return self._user_map[self._user_id_map[username]]
         except KeyError:
-            raise ValueError(f"No user with the name '{user_name}'")
+            raise ValueError(f"No user with the name '{username}'")
 
     def update_username(self, user: User, new_username: str) -> None:
         # Update the mapping from username to user id
-        del self._user_id_map[user.user_name]
+        del self._user_id_map[user.username]
         self._user_id_map[new_username] = user.id
-        user.user_name = new_username
+        user.username = new_username
 
     def delete_user(self, user: User) -> None:
         self._users.remove(user)
-        del self._user_id_map[user.user_name]
+        del self._user_id_map[user.username]
         del self._user_map[user.id]
 
         if not user.reviews:

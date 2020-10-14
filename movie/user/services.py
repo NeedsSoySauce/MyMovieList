@@ -5,9 +5,9 @@ from movie.auth.services import AuthenticationException, UnknownUserException
 from movie.domain.user import User
 
 
-def get_user(repo: AbstractRepository, user_name: str) -> User:
+def get_user(repo: AbstractRepository, username: str) -> User:
     try:
-        return repo.get_user(user_name)
+        return repo.get_user(username)
     except ValueError:
         raise UnknownUserException
 

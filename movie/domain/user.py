@@ -7,8 +7,8 @@ from .watchlist import WatchList
 
 
 class User:
-    def __init__(self, user_name: str, password: str) -> None:
-        self._user_name = user_name
+    def __init__(self, username: str, password: str) -> None:
+        self._username = username
         self._password = password
         self._watched_movies: List[Movie] = []
         self._reviews: List[Review] = []
@@ -18,15 +18,15 @@ class User:
         self._id: int = hash(self)
 
     @property
-    def _user_name(self):
-        return self.__user_name
+    def _username(self):
+        return self.__username
 
-    @_user_name.setter
-    def _user_name(self, user_name):
-        if user_name == "" or not isinstance(user_name, str):
-            self.__user_name = None
+    @_username.setter
+    def _username(self, username):
+        if username == "" or not isinstance(username, str):
+            self.__username = None
         else:
-            self.__user_name = user_name.strip().lower()
+            self.__username = username.strip().lower()
 
     @property
     def _password(self):
@@ -39,12 +39,12 @@ class User:
         self.__password = password
 
     @property
-    def user_name(self):
-        return self._user_name
+    def username(self):
+        return self._username
 
-    @user_name.setter
-    def user_name(self, user_name):
-        self._user_name = user_name
+    @username.setter
+    def username(self, username):
+        self._username = username
 
     @property
     def password(self):
@@ -79,21 +79,21 @@ class User:
         return self._joined_on_utc
 
     def __repr__(self) -> str:
-        return f'<{type(self).__name__} {self._user_name}>'
+        return f'<{type(self).__name__} {self._username}>'
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, User):
             return False
-        return self._user_name == other._user_name and self._password == other._password
+        return self._username == other._username and self._password == other._password
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, User):
             raise TypeError(
                 f"'<' not supported between instances of '{type(self).__name__}' and '{type(other).__name__}'")
-        return self._user_name < other._user_name
+        return self._username < other._username
 
     def __hash__(self) -> int:
-        return hash(self._user_name)
+        return hash(self._username)
 
     def watch_movie(self, movie: Movie) -> None:
         """

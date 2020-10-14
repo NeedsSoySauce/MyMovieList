@@ -20,11 +20,11 @@ watchlist_blueprint = Blueprint(
 @login_required
 def watchlist(movie_id: Union[int, None]):
     repo = current_app.config['REPOSITORY']
-    user_name = session['username']
+    username = session['username']
     try:
-        user = auth.get_user(repo, user_name)
+        user = auth.get_user(repo, username)
     except auth.UnknownUserException:
-        current_app.logger.debug(f"Unknown user '{user_name}'")
+        current_app.logger.debug(f"Unknown user '{username}'")
         # invalid session
         session.clear()
         return redirect(url_for('auth_bp.login'))
@@ -83,12 +83,12 @@ def watchlist(movie_id: Union[int, None]):
 @login_required
 def watch(movie_id: Union[int, None]):
     repo = current_app.config['REPOSITORY']
-    user_name = session['username']
+    username = session['username']
 
     try:
-        user = auth.get_user(repo, user_name)
+        user = auth.get_user(repo, username)
     except auth.UnknownUserException:
-        current_app.logger.debug(f"Unknown user '{user_name}'")
+        current_app.logger.debug(f"Unknown user '{username}'")
         # invalid session
         session.clear()
         return redirect(url_for('auth_bp.login'))

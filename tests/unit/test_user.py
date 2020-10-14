@@ -11,7 +11,7 @@ def test_constructor():
     password = "abc123"
     user = User(username, password)
 
-    assert user.user_name == username_expected
+    assert user.username == username_expected
     assert user.password == password
     assert isinstance(user.joined_on_utc, datetime)
 
@@ -21,7 +21,7 @@ def test_constructor_empty_string_username():
     password = "abc123"
     user = User(username, password)
 
-    assert user.user_name is None
+    assert user.username is None
     assert user.password == password
 
 
@@ -30,7 +30,7 @@ def test_constructor_invalid_username():
     password = "abc123"
     user = User(username, password)
 
-    assert user.user_name is None
+    assert user.username is None
     assert user.password == password
 
 
@@ -40,7 +40,7 @@ def test_constructor_empty_string_password():
     password = ""
     user = User(username, password)
 
-    assert user.user_name == username_expected
+    assert user.username == username_expected
     assert user.password == password
 
 
@@ -67,7 +67,7 @@ def test_repr_no_username():
 def test_equality_when_equal(user):
     assert user == user
 
-    username = user.user_name
+    username = user.username
     password = user.password
     other = User(username, password)
 
@@ -81,7 +81,7 @@ def test_equality_when_not_equal(user):
     other = User(username, password)
     assert user != other
 
-    username = user.user_name
+    username = user.username
     password = "123"
     other = User(username, password)
     assert user != other
@@ -148,13 +148,13 @@ def test_hash(user):
     assert hash(user) == hash(user)
 
     # Check hash is the same with another instance with the same properties
-    username = user.user_name
+    username = user.username
     password = user.password
     other = User(username, password)
     assert hash(user) == hash(other)
 
     # Check password doesn't affect hash
-    username = user.user_name
+    username = user.username
     password = "123"
     other = User(username, password)
     assert hash(user) == hash(other)

@@ -5,7 +5,7 @@
     {% include 'user/stats.html' %}
 
     <h1 class="ui top attached block header">
-        {{ user.user_name }}
+        {{ user.username }}
     </h1>
 
     <div class="ui segment active">
@@ -21,7 +21,7 @@
         </table>
     </div>
 
-    {% if user.user_name == session['username'] %}
+    {% if user.username == session['username'] %}
     {% include 'user/settings.html' %}
     {% endif %}
 </section>

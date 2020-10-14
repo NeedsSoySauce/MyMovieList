@@ -56,7 +56,7 @@ def test_simulation_users_are_valid(movie_watching_simulation: MovieWatchingSimu
     state = movie_watching_simulation.simulate()
 
     for user in state.users:
-        assert user.user_name is not None
+        assert user.username is not None
         assert user.password is not None
 
         # Check that the movies this user has are in our movies

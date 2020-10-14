@@ -69,11 +69,11 @@ def login():
             user = get_user(repo, form.username.data)
 
             # Authenticate user.
-            authenticate_user(repo, user.user_name, form.password.data)
+            authenticate_user(repo, user.username, form.password.data)
 
             # Initialise session and redirect the user to the home page.
             session.clear()
-            session['username'] = user.user_name
+            session['username'] = user.username
             return redirect(url_for('home_bp.home'))
 
         except UnknownUserException:

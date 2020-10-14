@@ -9,8 +9,8 @@ These setup instructions assume you already have Python and [virtualenv](https:/
 ### Windows
 
 ```shell script
-git clone https://github.com/NeedsSoySauce/COMPSCI-235-A1.git
-cd .\COMPSCI-235-A1\
+git clone https://github.com/NeedsSoySauce/COMPSCI-235-A2.git
+cd .\COMPSCI-235-A2\
 virtualenv .virtualenv
 .\.virtualenv\Scripts\activate
 pip install -r requirements.txt
@@ -19,8 +19,8 @@ pip install -r requirements.txt
 ### Mac OS / Linux
 
 ```shell script
-git clone https://github.com/NeedsSoySauce/COMPSCI-235-A1.git
-cd .\COMPSCI-235-A1\
+git clone https://github.com/NeedsSoySauce/COMPSCI-235-A2.git
+cd .\COMPSCI-235-A2\
 virtualenv .virtualenv
 source .\.virtualenv\Scripts\activate
 pip install -r requirements.txt

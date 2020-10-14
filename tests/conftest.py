@@ -1,6 +1,6 @@
 import pytest
 
-from movie import create_app
+from movie import create_app, populate
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
 from movie.adapters.memory_repository import MemoryRepository
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
@@ -12,6 +12,9 @@ from movie.domain.person import Person
 from movie.domain.review import Review
 from movie.domain.user import User
 from movie.domain.watchlist import WatchList
+
+
+TEST_DATA_PATH = './tests/data/movies.csv'
 
 
 @pytest.fixture
@@ -122,8 +125,7 @@ def memory_repository():
 @pytest.fixture
 def populated_memory_repository(populated_movies, genres):
     repository = MemoryRepository()
-    repository.add_movies(populated_movies)
-    repository.add_genres(genres)
+    populate(repository, TEST_DATA_PATH, 123)
     return repository
 
 
@@ -132,7 +134,7 @@ def client():
     my_app = create_app({
         'TESTING': True,
         'WTF_CSRF_ENABLED': False,
-        'TEST_DATA_PATH': './tests/data/movies.csv'
+        'TEST_DATA_PATH': TEST_DATA_PATH
     })
 
     return my_app.test_client()

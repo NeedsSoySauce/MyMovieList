@@ -31,7 +31,7 @@ def get_movies_per_director(repo: AbstractRepository, directors: List[Director])
     movies: Dict[Director, int] = {}
 
     for director in directors:
-        movies[director] = repo.get_number_of_movies(director=director)
+        movies[director] = repo.get_number_of_movies(directors=[director])
 
     return movies
 

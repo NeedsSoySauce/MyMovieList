@@ -1,5 +1,6 @@
 from datetime import datetime
-from random import randint, sample, choice, random
+from random import randint, sample, choice, random, seed
+from typing import Optional
 
 from random_words.random_words import RandomWords
 
@@ -19,6 +20,10 @@ class MovieWatchingSimulation(AbstractMovingWatchingSimulation):
     _DEFAULT_USER_COUNT = 10
     _DEFAULT_MIN_MOVIES_PER_USER = 0
     _DEFAULT_MAX_MOVIES_PER_USER = None
+
+    def __init__(self, movies, seed_: Optional[int] = None):
+        super().__init__(movies)
+        seed(seed_)
 
     @staticmethod
     def _validate_params(num_users: int, min_num_movies: int, max_num_movies: int):

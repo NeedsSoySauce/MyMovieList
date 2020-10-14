@@ -1,5 +1,5 @@
 import abc
-from typing import List, Union, Dict
+from typing import List, Union, Dict, Optional
 
 from werkzeug.security import generate_password_hash
 
@@ -275,12 +275,12 @@ class AbstractRepository(abc.ABC):
         return f'<{type(self).__name__}>'
 
 
-def populate(repo: AbstractRepository, data_path: str):
+def populate(repo: AbstractRepository, data_path: str, seed: Optional[int] = None):
     """ Populates the given repository using data at the given path. """
     reader = MovieFileCSVReader(data_path)
     reader.read_csv_file()
 
-    sim = MovieWatchingSimulation(reader.dataset_of_movies)
+    sim = MovieWatchingSimulation(reader.dataset_of_movies, seed)
     state = sim.simulate(num_users=50, min_num_movies=10, max_num_movies=20)
 
     repo.add_movies(reader.dataset_of_movies)

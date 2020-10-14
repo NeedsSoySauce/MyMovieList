@@ -4,7 +4,6 @@ from flask import Blueprint, render_template, session, url_for, request, current
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 
-import movie.adapters.repository as repo
 from movie.auth.auth import login_required
 from movie.movie import services as movie_service
 from .services import get_user_movies, DEFAULT_PAGE_SIZE

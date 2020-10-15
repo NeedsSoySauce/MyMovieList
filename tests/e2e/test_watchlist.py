@@ -14,7 +14,7 @@ def test_watchlist(client: FlaskClient, auth):
 
     # Check movie has been added
     response = client.get('/watchlist')
-    assert b'Looks like your watchlist is empty.' not in response.data
+    assert b"request('/watchlist/1', 'DELETE')" in response.data
 
     # Remove movie
     response = client.delete('/watchlist/1')
@@ -33,8 +33,8 @@ def test_watchlist_watch_movie(client, auth):
     assert response.status_code == 201
 
     # Check movie has been added
-    response = client.get('/watch')
-    assert b'Looks like your watchlist is empty.' not in response.data
+    response = client.get('/watchlist')
+    assert b"request('/watch/1', 'DELETE')" in response.data
 
     # Remove movie
     response = client.delete('/watch/1')

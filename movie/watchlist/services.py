@@ -32,10 +32,10 @@ def remove_movie_from_watchlist(repo: AbstractRepository, user: User, movie: Mov
 
 def add_movie_to_watched(repo: AbstractRepository, user: User, movie: Movie) -> None:
     """ Adds the given movie to the given user's list of watched movies. """
-    user.add_to_watchlist(movie)
+    user.watch_movie(movie)
 
 
 def remove_movie_from_watched(repo: AbstractRepository, user: User, movie: Movie) -> None:
     """ Removes the given movie from the given user's list of watched movies. """
-    user.remove_from_watchlist(movie)
+    user.remove_from_watched_movies(movie)
 

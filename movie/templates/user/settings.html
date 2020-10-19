@@ -13,7 +13,7 @@
                         action="{{ url_for('user_bp.change_username', username=user.username) }}"
                         class="ui form {{ 'error' if change_username_error_message or change_username_form.errors}} {{ 'success' if is_username_change_success }}"
                 >
-                    {{ change_username_form.csrf_token }}
+                    {{ change_username_form.csrf_token(id="change-username-csrf-token") }}
                     <!-- Need to include this token - Flask WTForms requires it. -->
                     <div class="field required">
                         {{ change_username_form.new_username.label }}
@@ -37,7 +37,7 @@
                     <div class="ui success message">
                         <p>Your username has been changed.</p>
                     </div>
-                    {{ change_username_form.submit(class_="ui button")}}
+                    {{ change_username_form.submit(class_="ui button", id="change-username-submit") }}
                 </form>
             </td>
         </tr>
@@ -49,7 +49,7 @@
                         action="{{ url_for('user_bp.change_password', username=user.username) }}"
                         class="ui form {{ 'error' if change_password_error_message or change_password_form.errors}} {{ 'success' if is_password_change_success }}"
                 >
-                    {{ change_password_form.csrf_token }}
+                    {{ change_password_form.csrf_token(id="change-password-csrf-token")  }}
                     <!-- Need to include this token - Flask WTForms requires it. -->
                     <div class="field required">
                         {{ change_password_form.current_password.label }}
@@ -77,7 +77,7 @@
                     <div class="ui success message">
                         <p>Your password has been changed.</p>
                     </div>
-                    {{ change_password_form.submit(class_="ui button")}}
+                    {{ change_password_form.submit(class_="ui button", id="change-password-submit") }}
                 </form>
             </td>
         </tr>
@@ -90,7 +90,7 @@
                         action="{{ url_for('user_bp.delete_account', username=user.username) }}"
                         class="ui form {{ 'error' if delete_account_error_message or delete_account_form.errors}}"
                 >
-                    {{ delete_account_form.csrf_token }}
+                    {{ delete_account_form.csrf_token(id="delete-account-csrf-token")  }}
                     <!-- Need to include this token - Flask WTForms requires it. -->
                     <div class="field required">
                         {{ delete_account_form.confirmation.label }}
@@ -111,7 +111,7 @@
                             {% endif %}
                         </ul>
                     </div>
-                    {{ delete_account_form.submit(class_="ui button")}}
+                    {{ delete_account_form.submit(class_="ui button", id="delete-account-submit") }}
                 </form>
             </td>
         </tr>

@@ -5,13 +5,22 @@ from flask.testing import FlaskClient
 from movie.auth import auth
 
 
-def test_register(client: FlaskClient):
+@pytest.mark.parametrize('username', (
+        'a' * 3,
+        'a' * 32,
+        'abc-123',
+        'abc_123',
+        '0123456789',
+        'abcdefghijklmnopqrstuvwxyz',
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+))
+def test_register(client: FlaskClient, username):
     response = client.get('/register')
     assert response.status_code == 200
 
     data = {
-        'username': 'thorke',
-        'password': 'test123A'
+        'username': username,
+        'password': 'abcd123A'
     }
 
     response = client.post('/register', data=data, follow_redirects=False)
@@ -23,12 +32,16 @@ def test_register(client: FlaskClient):
     # Check a session is created
     with client:
         client.get('/')
-        assert session['username'] == 'thorke'
+        assert session['username'] == username
 
 
 @pytest.mark.parametrize(('username', 'password', 'message'), (
         ('', '', auth.USERNAME_REQUIRED_MESSAGE),
-        ('cj', '', auth.INVALID_USERNAME_LENGTH_MESSAGE),
+        ('a' * 2, '', auth.INVALID_USERNAME_LENGTH_MESSAGE),
+        ('a' * 33, '', auth.INVALID_USERNAME_LENGTH_MESSAGE),
+        ('  abc123   ', '', auth.INVALID_USERNAME_MESSAGE),
+        ('abc   123', '', auth.INVALID_USERNAME_MESSAGE),
+        ('abc123!', '', auth.INVALID_USERNAME_MESSAGE),
         ('test', '', auth.PASSWORD_REQUIRED_MESSAGE),
         ('testuser', 'test', auth.INVALID_PASSWORD_MESSAGE),
         ('testuser', 'test123Ab', auth.USERNAME_UNAVAILABLE_MESSAGE)

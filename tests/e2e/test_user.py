@@ -13,27 +13,39 @@ def test_user(client: FlaskClient):
     assert response.status_code == 200
 
 
-def test_change_username(client: FlaskClient, auth: AuthenticationManager):
+@pytest.mark.parametrize('username', (
+        'a' * 3,
+        'a' * 32,
+        'abc-123',
+        'abc_123',
+        '0123456789',
+        'abcdefghijklmnopqrstuvwxyz',
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+))
+def test_change_username(client: FlaskClient, auth: AuthenticationManager, username):
     auth.login()
 
     data = {
-        'new_username': 'abc123'
+        'new_username': username
     }
 
     # Check user is redirected after a successful username change
     response = client.post('/user/testuser/username/change', data=data, follow_redirects=False)
     assert response.status_code == 302
-    assert response.headers['location'] == 'http://localhost/user/abc123'
+    assert response.headers['location'] == f'http://localhost/user/{username}'
 
     # Check old user no longer exists
-    response = client.get('/user/test')
+    response = client.get('/user/testuser')
     assert response.status_code == 404
 
 
 @pytest.mark.parametrize(('new_username', 'message'), (
         ('', user.NEW_USERNAME_REQUIRED_MESSAGE),
         ('ab', auth.INVALID_USERNAME_LENGTH_MESSAGE),
-        ('testuser2', auth.USERNAME_UNAVAILABLE_MESSAGE)
+        ('testuser2', auth.USERNAME_UNAVAILABLE_MESSAGE),
+        ('  abc123   ', auth.INVALID_USERNAME_MESSAGE),
+        ('abc   123', auth.INVALID_USERNAME_MESSAGE),
+        ('abc123!', auth.INVALID_USERNAME_MESSAGE),
 ))
 def test_change_username_invalid_input(client: FlaskClient, auth: AuthenticationManager, new_username, message):
     auth.login()

@@ -3,7 +3,7 @@ from flask_wtf import FlaskForm
 from werkzeug.exceptions import abort
 from werkzeug.utils import redirect
 from wtforms import PasswordField, SubmitField, StringField
-from wtforms.validators import DataRequired, Length
+from wtforms.validators import DataRequired, Length, Regexp
 
 from movie.auth import auth
 from movie.auth.auth import UnknownUserException, PasswordValid, login_required, AuthenticationException, \
@@ -138,8 +138,8 @@ def delete_account(username: str):
 class ChangeUsernameForm(FlaskForm):
     new_username = StringField('New username', [
         DataRequired(message=NEW_USERNAME_REQUIRED_MESSAGE),
-        Length(min=3, message=auth.INVALID_USERNAME_LENGTH_MESSAGE)
-    ])
+        Length(min=3, max=32, message=auth.INVALID_USERNAME_LENGTH_MESSAGE),
+        Regexp(regex=auth.USERNAME_REGEXP, flags=auth.USERNAME_REGEXP_FLAGS, message=auth.INVALID_USERNAME_MESSAGE)])
     submit = SubmitField('Submit')
 
 

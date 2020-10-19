@@ -1,10 +1,11 @@
+import re
 from functools import wraps
 
 from flask import Blueprint, render_template, redirect, url_for, session, request, current_app
 from flask_wtf import FlaskForm
 from password_validator import PasswordValidator
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms.validators import DataRequired, Length, ValidationError, Regexp
 
 from .services import *
 
@@ -17,12 +18,15 @@ INVALID_PASSWORD_MESSAGE = 'Your password must be at least 8 characters, contain
 
 UNKNOWN_USER_MESSAGE = 'Unrecognized username - please check and try again.'
 USERNAME_REQUIRED_MESSAGE = 'Username required.'
-INVALID_USERNAME_LENGTH_MESSAGE = 'Usernames must be at least 3 characters.'
+INVALID_USERNAME_LENGTH_MESSAGE = 'Usernames must be between 3 and 32 characters long.'
 USERNAME_UNAVAILABLE_MESSAGE = 'Username unavailable.'
+INVALID_USERNAME_MESSAGE = 'Usernames may only contain characters from a-z, 0-9, underscores, and dashes.'
 
 PASSWORD_REQUIRED_MESSAGE = 'Password required.'
 INCORRECT_PASSWORD_MESSAGE = 'Incorrect password - please check and try again.'
 
+USERNAME_REGEXP = '^[a-z0-9_\-]+$'
+USERNAME_REGEXP_FLAGS = re.IGNORECASE
 
 @auth_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
@@ -131,7 +135,8 @@ class PasswordValid:
 class RegistrationForm(FlaskForm):
     username = StringField('Username', [
         DataRequired(message=USERNAME_REQUIRED_MESSAGE),
-        Length(min=3, message=INVALID_USERNAME_LENGTH_MESSAGE)])
+        Length(min=3, max=32, message=INVALID_USERNAME_LENGTH_MESSAGE),
+        Regexp(regex=USERNAME_REGEXP, flags=USERNAME_REGEXP_FLAGS, message=INVALID_USERNAME_MESSAGE)])
     password = PasswordField('Password', [
         DataRequired(message=PASSWORD_REQUIRED_MESSAGE),
         PasswordValid()])

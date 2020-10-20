@@ -36,8 +36,6 @@ def create_app(test_config=None):
     repo: Union[memory_repository.MemoryRepository, database_repository.SqlAlchemyRepository, None] = None
     repository = app.config['REPOSITORY']
 
-    print(repository)
-
     if repository == 'memory':
         # Create the MemoryRepository implementation for a memory-based repository.
         repo = memory_repository.MemoryRepository()

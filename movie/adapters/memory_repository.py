@@ -1,6 +1,10 @@
 from typing import List, Dict, Optional, Union
 
+from werkzeug.security import generate_password_hash
+
+from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
 from movie.adapters.repository import AbstractRepository
+from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from movie.domain.actor import Actor
 from movie.domain.director import Director
 from movie.domain.movie import Movie
@@ -328,21 +332,12 @@ class MemoryRepository(AbstractRepository):
     def get_number_of_movie_pages_for_user(self,
                                            user: User,
                                            page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
-        """ Returns the number of pages of movies that can be created from the given filtering options. """
         return ceil(self.get_number_of_movies_for_user(user) / page_size)
 
     def get_movies_for_user(self,
                             user: User,
                             page_number: int,
                             page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Movie]:
-        """
-        Returns a list containing the nth page of Movies in this repository ordered by title and then release date.
-
-        Args:
-            user (User): user to return movies for.
-            page_number (int): page number of the the page to return, starting from zero.
-            page_size (int, optional): number of results per page. The last page may have less results than this.
-        """
         movies = self._get_movies_for_user(user)
 
         offset = page_number * page_size
@@ -372,3 +367,25 @@ class MemoryRepository(AbstractRepository):
                     movies_per_genre[genre] += 1
 
         return movies_per_genre
+
+
+def populate(repo: AbstractRepository, data_path: str, seed: Optional[int] = None):
+    """ Populates the given repository using data at the given path. """
+    reader = MovieFileCSVReader(data_path)
+    reader.read_csv_file()
+
+    sim = MovieWatchingSimulation(reader.dataset_of_movies, seed)
+    state = sim.simulate(num_users=50, min_num_movies=10, max_num_movies=20)
+
+    repo.add_movies(reader.dataset_of_movies)
+    repo.add_genres(reader.dataset_of_genres)
+    repo.add_directors(reader.dataset_of_directors)
+    repo.add_actors(reader.dataset_of_actors)
+    repo.add_users(state.users)
+    repo.add_reviews(state.reviews)
+
+    test_user = User('testuser', generate_password_hash('test123A'))
+    repo.add_user(test_user)
+
+    test_user2 = User('testuser2', generate_password_hash('test123A'))
+    repo.add_user(test_user2)

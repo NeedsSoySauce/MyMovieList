@@ -1,6 +1,6 @@
 import pytest
 
-from movie import MemoryRepository
+from movie.adapters.memory_repository import MemoryRepository
 from movie.search.services import *
 
 

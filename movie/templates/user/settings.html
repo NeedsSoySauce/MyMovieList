@@ -13,8 +13,9 @@
                         action="{{ url_for('user_bp.change_username', username=user.username) }}"
                         class="ui form {{ 'error' if change_username_error_message or change_username_form.errors}} {{ 'success' if is_username_change_success }}"
                 >
+                    {% if 'csrf_token' in change_username_form %}
                     {{ change_username_form.csrf_token(id="change-username-csrf-token") }}
-                    <!-- Need to include this token - Flask WTForms requires it. -->
+                    {% endif %}
                     <div class="field required">
                         {{ change_username_form.new_username.label }}
                         {{ change_username_form.new_username }}
@@ -49,8 +50,9 @@
                         action="{{ url_for('user_bp.change_password', username=user.username) }}"
                         class="ui form {{ 'error' if change_password_error_message or change_password_form.errors}} {{ 'success' if is_password_change_success }}"
                 >
-                    {{ change_password_form.csrf_token(id="change-password-csrf-token")  }}
-                    <!-- Need to include this token - Flask WTForms requires it. -->
+                    {% if 'csrf_token' in change_password_form %}
+                    {{ change_password_form.csrf_token(id="change-password-csrf-token") }}
+                    {% endif %}
                     <div class="field required">
                         {{ change_password_form.current_password.label }}
                         {{ change_password_form.current_password }}
@@ -90,8 +92,9 @@
                         action="{{ url_for('user_bp.delete_account', username=user.username) }}"
                         class="ui form {{ 'error' if delete_account_error_message or delete_account_form.errors}}"
                 >
-                    {{ delete_account_form.csrf_token(id="delete-account-csrf-token")  }}
-                    <!-- Need to include this token - Flask WTForms requires it. -->
+                    {% if 'csrf_token' in delete_account_form %}
+                    {{ delete_account_form.csrf_token(id="delete-account-csrf-token") }}
+                    {% endif %}
                     <div class="field required">
                         {{ delete_account_form.confirmation.label }}
                         {{ delete_account_form.confirmation(placeholder="Enter your username to confirm") }}

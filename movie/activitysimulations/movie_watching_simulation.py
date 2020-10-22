@@ -68,7 +68,8 @@ class MovieWatchingSimulation(AbstractMovingWatchingSimulation):
 
         for i in range(num_users):
             username = _rand_string(1, 4)
-            password = generate_password_hash(_rand_string(1, 4))
+            # Hash the password. We use method='plain' here to save time.
+            password = generate_password_hash(_rand_string(1, 1), method='plain')
             user = User(username, password)
 
             # Pick n distinct movies

@@ -48,7 +48,7 @@ class User:
 
     @property
     def password(self):
-        return self.__password
+        return self._password
 
     @password.setter
     def password(self, password):

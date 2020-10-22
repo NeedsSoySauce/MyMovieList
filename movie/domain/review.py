@@ -7,8 +7,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .user import User
 
+
 class Review:
-    def __init__(self, movie: Movie, review_text: str, rating: int, timestamp: datetime = None, user: 'User' = None) -> None:
+    def __init__(self, movie: Movie, review_text: str, rating: int, timestamp: datetime = None,
+                 user: 'User' = None) -> None:
         self._user = user
         self._movie = movie
         self._review_text = review_text
@@ -17,46 +19,46 @@ class Review:
 
     @property
     def _movie(self):
-        return self.__movie
+        return self._mapped_movie
 
     @_movie.setter
     def _movie(self, movie: Movie):
         if not isinstance(movie, Movie):
             raise TypeError(f"'movie' must be of type 'Movie' but was '{type(movie).__name__}'")
-        self.__movie = movie
+        self._mapped_movie = movie
 
     @property
     def _review_text(self):
-        return self.__review_text
+        return self._mapped_review_text
 
     @_review_text.setter
     def _review_text(self, review_text):
         if review_text == "" or not isinstance(review_text, str):
-            self.__review_text = None
+            self._mapped_review_text = None
         else:
-            self.__review_text = review_text.strip()
+            self._mapped_review_text = review_text.strip()
 
     @property
     def _rating(self):
-        return self.__rating
+        return self._mapped_rating
 
     @_rating.setter
     def _rating(self, rating):
         if not isinstance(rating, int) or rating < 1 or rating > 10:
-            self.__rating = None
+            self._mapped_rating = None
         else:
-            self.__rating = rating
+            self._mapped_rating = rating
 
     @property
     def _timestamp(self):
-        return self.__timestamp
+        return self._mapped_timestamp
 
     @_timestamp.setter
     def _timestamp(self, timestamp):
         if not isinstance(timestamp, datetime):
             raise TypeError(f"'timestamp' must be of type 'datetime' but was '{type(timestamp).__name__}'")
         else:
-            self.__timestamp = timestamp
+            self._mapped_timestamp = timestamp
 
     @property
     def movie(self):

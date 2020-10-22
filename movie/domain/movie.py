@@ -22,18 +22,18 @@ class Movie:
 
     @property
     def _title(self):
-        return self.__title
+        return self._mapped_title
 
     @_title.setter
     def _title(self, title: str):
         if title == "" or not isinstance(title, str):
-            self.__title = None
+            self._mapped_title = None
         else:
-            self.__title = title.strip()
+            self._mapped_title = title.strip()
 
     @property
     def _release_date(self):
-        return self.__release_date
+        return self._mapped_release_date
 
     @_release_date.setter
     def _release_date(self, release_date: int):
@@ -43,7 +43,7 @@ class Movie:
         if release_date < 1900:
             raise ValueError("'release_date' must be greater than or equal to 1900")
 
-        self.__release_date = release_date
+        self._mapped_release_date = release_date
 
     @property
     def title(self):

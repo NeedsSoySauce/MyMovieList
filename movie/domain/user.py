@@ -19,24 +19,24 @@ class User:
 
     @property
     def _username(self):
-        return self.__username
+        return self._mapped_username
 
     @_username.setter
     def _username(self, username):
         if username == "" or not isinstance(username, str):
-            self.__username = None
+            self._mapped_username = None
         else:
-            self.__username = username.strip().lower()
+            self._mapped_username = username.strip()
 
     @property
     def _password(self):
-        return self.__password
+        return self._mapped_password
 
     @_password.setter
     def _password(self, password):
         if not isinstance(password, str):
             raise TypeError(f"'password' must be of type 'str' but was '{type(password).__name__}'")
-        self.__password = password
+        self._mapped_password = password
 
     @property
     def username(self):

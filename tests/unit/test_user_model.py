@@ -7,7 +7,7 @@ from movie.domain.user import User
 
 def test_constructor():
     username = "  Test  User  "
-    username_expected = "test  user"
+    username_expected = "Test  User"
     password = "abc123"
     user = User(username, password)
 
@@ -36,7 +36,7 @@ def test_constructor_invalid_username():
 
 def test_constructor_empty_string_password():
     username = "  Test  User  "
-    username_expected = "test  user"
+    username_expected = "Test  User"
     password = ""
     user = User(username, password)
 

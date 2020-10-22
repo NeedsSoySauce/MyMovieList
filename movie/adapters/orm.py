@@ -96,8 +96,8 @@ movie_genres = Table(
 def map_model_to_tables():
     mapper(User, users, properties={
         '_id': users.c.id,
-        '_username': users.c.username,
-        '_password': users.c.password,
+        '_mapped_username': users.c.username,
+        '_mapped_password': users.c.password,
         '_time_spent_watching_movies_minutes': users.c.time_spent_watching_movies_minutes,
         '_joined_on_utc': users.c.joined_on_utc,
         '_watched_movies': relationship(Movie, secondary=user_watched_movies),
@@ -107,8 +107,8 @@ def map_model_to_tables():
 
     mapper(Movie, movies, properties={
         '_id': movies.c.id,
-        '_title': movies.c.title,
-        '_release_date': movies.c.release_date,
+        '_mapped_title': movies.c.title,
+        '_mapped_release_date': movies.c.release_date,
         '_description': movies.c.description,
         '_director': relationship(Director),
         '_actors': relationship(Actor, secondary=movie_actors),
@@ -121,11 +121,11 @@ def map_model_to_tables():
     })
 
     mapper(Review, reviews, properties={
-        '_user': relationship(User),
-        '_movie': relationship(Movie),
-        '_review_text': reviews.c.review_text,
-        '_rating': reviews.c.rating,
-        '_timestamp': reviews.c.timestamp
+        '_mapped_user': relationship(User),
+        '_mapped_movie': relationship(Movie),
+        '_mapped_review_text': reviews.c.review_text,
+        '_mapped_rating': reviews.c.rating,
+        '_mapped_timestamp': reviews.c.timestamp
     })
 
     mapper(Genre, genres, properties={

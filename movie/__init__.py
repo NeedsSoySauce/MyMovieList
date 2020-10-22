@@ -52,8 +52,12 @@ def create_app(test_config=None):
                                         echo=database_echo
                                         )
 
-        if app.config['TESTING'] == 'True' or len(database_engine.table_names()) == 0:
-            print("REPOPULATING DATABASE")
+        is_testing_or_init = app.config['TESTING'] == 'True' or len(database_engine.table_names()) == 0
+
+        if is_testing_or_init:
+            print("-----------------------------------------------------------")
+            print("------------------ REPOPULATING DATABASE ------------------")
+            print("-----------------------------------------------------------")
 
             # For testing, or first-time use of the web application, reinitialise the database.
             clear_mappers()
@@ -61,20 +65,17 @@ def create_app(test_config=None):
             for table in reversed(metadata.sorted_tables):  # Remove any data from the tables.
                 database_engine.execute(table.delete())
 
-            # Generate mappings that map domain model classes to the database tables.
-            map_model_to_tables()
-
-            database_repository.populate(database_engine, data_path)
-
-        else:
-            # Solely generate mappings that map domain model classes to the database tables.
-            map_model_to_tables()
+        # Generate mappings that map domain model classes to the database tables.
+        map_model_to_tables()
 
         # Create the database session factory using sessionmaker (this has to be done once, in a global manner)
         session_factory = sessionmaker(autocommit=False, autoflush=True, bind=database_engine)
 
         # Create the SQLAlchemy DatabaseRepository instance for an sqlite3-based repository.
         repo = database_repository.SqlAlchemyRepository(session_factory)
+
+        if is_testing_or_init:
+            database_repository.populate(repo, data_path, 123)
     else:
         raise ValueError(f"Invalid repository '{repository}', should be 'memory' or 'database'")
 

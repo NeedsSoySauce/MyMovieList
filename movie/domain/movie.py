@@ -11,8 +11,8 @@ class Movie:
         self._release_date = release_date
         self._description: str = None
         self._director: Director = None
-        self._actors: List[Actor] = None
-        self._genres: List[Genre] = None
+        self._actors: List[Actor] = []
+        self._genres: List[Genre] = []
         self._runtime_minutes: int = None
         self._rating: float = None
         self._votes: int = None

@@ -65,7 +65,7 @@ directors = Table(
 )
 
 user_watched_movies = Table(
-    'user_movies', metadata,
+    'user_watched_movies', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
     Column('user_id', ForeignKey('users.id'), nullable=False),
     Column('movie_id', ForeignKey('movies.id'), nullable=False)
@@ -101,11 +101,8 @@ def map_model_to_tables():
         '_time_spent_watching_movies_minutes': users.c.time_spent_watching_movies_minutes,
         '_joined_on_utc': users.c.joined_on_utc,
         '_watched_movies': relationship(Movie, secondary=user_watched_movies),
-        '_reviews': relationship(Review)
-    })
-
-    mapper(WatchList, users, properties={
-        '_movies': relationship(Movie, secondary=user_watchlist_movies)
+        '_reviews': relationship(Review),
+        '_watchlist': relationship(Movie, secondary=user_watchlist_movies, collection_class=WatchList)
     })
 
     mapper(Movie, movies, properties={

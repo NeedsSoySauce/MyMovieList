@@ -1,5 +1,7 @@
 from typing import Union, List, Iterator
 
+from sqlalchemy.orm.collections import collection
+
 from .movie import Movie
 
 
@@ -7,6 +9,7 @@ class WatchList:
     def __init__(self) -> None:
         self._movies: List[Movie] = []
 
+    @collection.appender
     def add_movie(self, movie: Movie) -> None:
         """ Adds the given Movie to this WatchList. Does nothing if the given Movie is already in this Watchlist.  """
         if not isinstance(movie, Movie):
@@ -17,6 +20,7 @@ class WatchList:
 
         self._movies.append(movie)
 
+    @collection.remover
     def remove_movie(self, movie: Movie) -> None:
         """ Removes the given Movie from this WatchList. Does nothing if the given Movie isn't in this Watchlist.  """
         if not isinstance(movie, Movie):
@@ -46,6 +50,7 @@ class WatchList:
         except IndexError:
             return None
 
+    @collection.iterator
     def __iter__(self) -> Iterator[Movie]:
         return iter(self._movies)
 

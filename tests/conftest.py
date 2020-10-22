@@ -1,7 +1,10 @@
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import clear_mappers, sessionmaker
 
-from movie import create_app
+from movie import create_app, metadata, map_model_to_tables
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
+from movie.adapters import database_repository
 from movie.adapters.memory_repository import MemoryRepository, populate
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from movie.domain.actor import Actor
@@ -13,8 +16,11 @@ from movie.domain.review import Review
 from movie.domain.user import User
 from movie.domain.watchlist import WatchList
 
+TEST_DATA_PATH_MEMORY = './tests/data/movies.csv'
+TEST_DATA_PATH_DATABASE = './tests/data/movies.csv'
 
-TEST_DATA_PATH = './tests/data/movies.csv'
+TEST_DATABASE_URI_IN_MEMORY = 'sqlite://'
+TEST_DATABASE_URI_FILE = 'sqlite:///test.db'
 
 
 @pytest.fixture
@@ -125,7 +131,7 @@ def memory_repository():
 @pytest.fixture
 def populated_memory_repository(populated_movies, genres):
     repository = MemoryRepository()
-    populate(repository, TEST_DATA_PATH, 123)
+    populate(repository, TEST_DATA_PATH_MEMORY, 123)
     return repository
 
 
@@ -134,7 +140,8 @@ def client():
     my_app = create_app({
         'TESTING': True,
         'WTF_CSRF_ENABLED': False,
-        'TEST_DATA_PATH': TEST_DATA_PATH
+        'TEST_DATA_PATH': TEST_DATA_PATH_MEMORY,
+        'REPOSITORY': 'memory'
     })
 
     return my_app.test_client()
@@ -154,3 +161,66 @@ class AuthenticationManager:
 @pytest.fixture
 def auth(client):
     return AuthenticationManager(client)
+
+
+@pytest.fixture
+def database_engine():
+    engine = create_engine(TEST_DATABASE_URI_FILE)
+    clear_mappers()
+    metadata.create_all(engine)  # Conditionally create database tables.
+    for table in reversed(metadata.sorted_tables):  # Remove any data from the tables.
+        engine.execute(table.delete())
+    map_model_to_tables()
+    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
+    yield engine
+    metadata.drop_all(engine)
+    clear_mappers()
+
+
+@pytest.fixture
+def empty_session():
+    clear_mappers()
+    engine = create_engine(TEST_DATABASE_URI_IN_MEMORY)
+    metadata.create_all(engine)
+    for table in reversed(metadata.sorted_tables):
+        engine.execute(table.delete())
+    map_model_to_tables()
+    session_factory = sessionmaker(bind=engine)
+    yield session_factory()
+    metadata.drop_all(engine)
+    clear_mappers()
+
+
+@pytest.fixture
+def session():
+    clear_mappers()
+    engine = create_engine(TEST_DATABASE_URI_IN_MEMORY)
+    metadata.create_all(engine)
+    for table in reversed(metadata.sorted_tables):
+        engine.execute(table.delete())
+    map_model_to_tables()
+    session_factory = sessionmaker(bind=engine)
+    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
+    yield session_factory()
+    metadata.drop_all(engine)
+    clear_mappers()
+
+
+@pytest.fixture
+def session_factory():
+    clear_mappers()
+    engine = create_engine(TEST_DATABASE_URI_IN_MEMORY)
+    metadata.create_all(engine)
+    for table in reversed(metadata.sorted_tables):
+        engine.execute(table.delete())
+    map_model_to_tables()
+    session_factory = sessionmaker(bind=engine)
+    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
+    yield session_factory
+    metadata.drop_all(engine)
+    clear_mappers()
+
+
+# @pytest.fixture(autouse=True)
+# def reset():
+#     clear_mappers()

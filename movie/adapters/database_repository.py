@@ -1,20 +1,18 @@
-import csv
-import os
+from typing import List, Dict, Union, Optional
 
-from datetime import date
-from typing import List
-
-from sqlalchemy import desc, asc
-from sqlalchemy.engine import Engine
-from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
+from flask import _app_ctx_stack
+from sqlalchemy.orm import scoped_session
 from werkzeug.security import generate_password_hash
 
-from sqlalchemy.orm import scoped_session
-from flask import _app_ctx_stack
-
+from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
 from movie.adapters.repository import AbstractRepository
-
-tags = None
+from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
+from movie.domain.actor import Actor
+from movie.domain.director import Director
+from movie.domain.genre import Genre
+from movie.domain.movie import Movie
+from movie.domain.review import Review
+from movie.domain.user import User
 
 
 class SessionContextManager:
@@ -45,7 +43,7 @@ class SessionContextManager:
         self.__session = scoped_session(self.__session_factory, scopefunc=_app_ctx_stack.__ident_func__)
 
     def close_current_session(self):
-        if not self.__session is None:
+        if self.__session is not None:
             self.__session.close()
 
 
@@ -60,6 +58,172 @@ class SqlAlchemyRepository(AbstractRepository):
     def reset_session(self):
         self._session_cm.reset_session()
 
+    def add_movie(self, movie: Movie) -> None:
+        with self._session_cm as scm:
+            scm.session.add(movie)
+            scm.commit()
 
-def populate(engine: Engine, data_path: str):
-    pass
+    def add_movies(self, movies: List[Movie]) -> None:
+        with self._session_cm as scm:
+            scm.session.add_all(movies)
+            scm.commit()
+
+    def add_genre(self, genre: Genre) -> None:
+        with self._session_cm as scm:
+            scm.session.add(genre)
+            scm.commit()
+
+    def add_genres(self, genres: List[Genre]) -> None:
+        with self._session_cm as scm:
+            scm.session.add_all(genres)
+            scm.commit()
+
+    def get_genre(self, genre_name: str) -> Genre:
+        pass
+
+    def add_director(self, director: Director) -> None:
+        with self._session_cm as scm:
+            scm.session.add(director)
+            scm.commit()
+
+    def add_directors(self, directors: List[Director]) -> None:
+        with self._session_cm as scm:
+            scm.session.add_all(directors)
+            scm.commit()
+
+    def get_director(self, director_name: str) -> Director:
+        pass
+
+    def add_actor(self, actor: Actor) -> None:
+        with self._session_cm as scm:
+            scm.session.add(actor)
+            scm.commit()
+
+    def add_actors(self, actors: List[Actor]) -> None:
+        with self._session_cm as scm:
+            scm.session.add_all(actors)
+            scm.commit()
+
+    def get_actor(self, actor_name: str) -> Actor:
+        pass
+
+    def add_user(self, user: User) -> None:
+        with self._session_cm as scm:
+            scm.session.add(user)
+            scm.commit()
+
+    def add_users(self, users: List[User]) -> None:
+        with self._session_cm as scm:
+            scm.session.add_all(users)
+            scm.commit()
+
+    def get_user(self, username: str) -> User:
+        pass
+
+    def delete_user(self, user: User) -> None:
+        pass
+
+    def update_username(self, user: User, new_username: str) -> None:
+        pass
+
+    def add_review(self, review: Review, user: Union[User, None] = None) -> None:
+        with self._session_cm as scm:
+            scm.session.add(review)
+            scm.commit()
+
+    def add_reviews(self, reviews: List[Review]) -> None:
+        with self._session_cm as scm:
+            scm.session.add_all(reviews)
+            scm.commit()
+
+    def get_review_user(self, review: Review) -> Union[User, None]:
+        pass
+
+    def get_number_of_reviews_for_movie(self, movie: Movie) -> int:
+        pass
+
+    def get_number_of_review_pages_for_movie(self,
+                                             movie: Movie,
+                                             page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
+        pass
+
+    def get_reviews_for_movie(self,
+                              movie: Movie,
+                              page_number: int,
+                              page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Review]:
+        pass
+
+    def get_number_of_movies(self,
+                             query: str = "",
+                             genres: List[Genre] = [],
+                             directors: List[Director] = [],
+                             actors: List[Actor] = []) -> int:
+        pass
+
+    def get_number_of_movie_pages(self,
+                                  page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
+                                  query: str = "",
+                                  genres: List[Genre] = [],
+                                  directors: List[Director] = [],
+                                  actors: List[Actor] = []) -> int:
+        pass
+
+    def get_movies(self,
+                   page_number: int,
+                   page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
+                   query: str = "",
+                   genres: List[Genre] = [],
+                   directors: List[Director] = [],
+                   actors: List[Actor] = []) -> List[Movie]:
+        pass
+
+    def get_number_of_movies_for_user(self, user: User) -> int:
+        pass
+
+    def get_number_of_movie_pages_for_user(self,
+                                           user: User,
+                                           page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
+        pass
+
+    def get_movies_for_user(self,
+                            user: User,
+                            page_number: int,
+                            page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Movie]:
+        pass
+
+    def get_movie_by_id(self, movie_id: int) -> Movie:
+        pass
+
+    def get_genres(self) -> List[Genre]:
+        pass
+
+    def get_directors(self) -> List[Director]:
+        pass
+
+    def get_actors(self) -> List[Actor]:
+        pass
+
+    def get_movies_per_genre(self) -> Dict[Genre, int]:
+        pass
+
+
+def populate(repo: AbstractRepository, data_path: str, seed: Optional[int] = None):
+    """ Populates the given repository using data at the given path. """
+    reader = MovieFileCSVReader(data_path)
+    reader.read_csv_file()
+
+    sim = MovieWatchingSimulation(reader.dataset_of_movies, seed)
+    state = sim.simulate(num_users=50, min_num_movies=10, max_num_movies=20)
+
+    repo.add_genres(reader.dataset_of_genres)
+    repo.add_directors(reader.dataset_of_directors)
+    repo.add_actors(reader.dataset_of_actors)
+    repo.add_movies(reader.dataset_of_movies)
+    repo.add_users(state.users)
+    repo.add_reviews(state.reviews)
+
+    test_user = User('testuser', generate_password_hash('test123A'))
+    repo.add_user(test_user)
+
+    test_user2 = User('testuser2', generate_password_hash('test123A'))
+    repo.add_user(test_user2)

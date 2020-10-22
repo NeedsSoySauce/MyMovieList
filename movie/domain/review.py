@@ -2,9 +2,14 @@ from datetime import datetime
 
 from .movie import Movie
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .user import User
 
 class Review:
-    def __init__(self, movie: Movie, review_text: str, rating: int, timestamp: datetime = None) -> None:
+    def __init__(self, movie: Movie, review_text: str, rating: int, timestamp: datetime = None, user: 'User' = None) -> None:
+        self._user = user
         self._movie = movie
         self._review_text = review_text
         self._rating = rating

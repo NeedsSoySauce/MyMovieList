@@ -7,7 +7,7 @@ from .watchlist import WatchList
 
 
 class User:
-    def __init__(self, username: str, password: str) -> None:
+    def __init__(self, username: str, password: str, id_: int = None) -> None:
         self._username = username
         self._password = password
         self._watched_movies: List[Movie] = []

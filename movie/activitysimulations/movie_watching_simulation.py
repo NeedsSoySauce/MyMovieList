@@ -3,6 +3,7 @@ from random import randint, sample, choice, random, seed
 from typing import Optional
 
 from random_words.random_words import RandomWords
+from werkzeug.security import generate_password_hash
 
 from movie.domain.review import Review
 from movie.domain.user import User
@@ -67,7 +68,7 @@ class MovieWatchingSimulation(AbstractMovingWatchingSimulation):
 
         for i in range(num_users):
             username = _rand_string(1, 4)
-            password = _rand_string(1, 4)
+            password = generate_password_hash(_rand_string(1, 4))
             user = User(username, password)
 
             # Pick n distinct movies

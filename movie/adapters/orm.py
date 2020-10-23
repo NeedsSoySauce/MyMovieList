@@ -39,10 +39,10 @@ movies = Table(
 reviews = Table(
     'reviews', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('user_id', ForeignKey('users.id')),
-    Column('movie_id', ForeignKey('movies.id')),
-    Column('review_text', Text),
-    Column('rating', Integer),
+    Column('user_id', ForeignKey('users.id'), nullable=False),
+    Column('movie_id', ForeignKey('movies.id'), nullable=False),
+    Column('review_text', Text, nullable=False),
+    Column('rating', Integer, nullable=False),
     Column('timestamp', DateTime, nullable=False, default=datetime.utcnow)
 )
 

@@ -93,6 +93,9 @@ movie_genres = Table(
 )
 
 
+# TODO - map actor colleagues
+
+
 def map_model_to_tables():
     mapper(User, users, properties={
         '_id': users.c.id,

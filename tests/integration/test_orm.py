@@ -2,6 +2,7 @@ import pytest
 
 from datetime import datetime
 
+from movie.domain.actor import Actor
 from movie.domain.genre import Genre
 from movie.domain.movie import Movie
 from movie.domain.review import Review
@@ -39,6 +40,14 @@ def insert_genres(empty_session, values):
         empty_session.execute('INSERT INTO genres (genre_name) VALUES (:genre_name)',
                               {'genre_name': value})
     rows = empty_session.execute('SELECT id from genres').fetchall()
+    return [row[0] for row in rows]
+
+
+def insert_actors(empty_session, values):
+    for value in values:
+        empty_session.execute('INSERT INTO actors (actor_full_name) VALUES (:actor_full_name)',
+                              {'actor_full_name': value})
+    rows = empty_session.execute('SELECT id from actors').fetchall()
     return [row[0] for row in rows]
 
 
@@ -141,6 +150,25 @@ def test_saving_of_genres(empty_session, genre):
 
     rows = list(empty_session.execute('SELECT genre_name FROM genres'))
     assert rows == [("Action", )]
+
+
+def test_loading_of_actors(empty_session):
+    actors = ["Andrew", "Cindy"]
+    insert_actors(empty_session, actors)
+
+    expected = [
+        Actor("Andrew"),
+        Actor("Cindy")
+    ]
+    assert empty_session.query(Actor).all() == expected
+
+
+def test_saving_of_actors(empty_session, actor):
+    empty_session.add(actor)
+    empty_session.commit()
+
+    rows = list(empty_session.execute('SELECT actor_full_name FROM actors'))
+    assert rows == [("Firstname Lastname", )]
 
 # TODO - test actors
 

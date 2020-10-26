@@ -51,6 +51,12 @@ def insert_actors(empty_session, values):
     return [row[0] for row in rows]
 
 
+def insert_actor_colleagues(empty_session, values):
+    for value in values:
+        empty_session.execute('INSERT INTO actor_colleagues (actor_id, colleague_id) VALUES (:actor_id, :colleague_id)',
+                              {'actor_id': value[0], 'colleague_id': value[1]})
+
+
 def test_loading_of_users(empty_session):
     users = list()
     users.append(("Andrew", "1234"))
@@ -149,7 +155,7 @@ def test_saving_of_genres(empty_session, genre):
     empty_session.commit()
 
     rows = list(empty_session.execute('SELECT genre_name FROM genres'))
-    assert rows == [("Action", )]
+    assert rows == [("Action",)]
 
 
 def test_loading_of_actors(empty_session):
@@ -163,12 +169,34 @@ def test_loading_of_actors(empty_session):
     assert empty_session.query(Actor).all() == expected
 
 
+def test_loading_of_actors_with_colleagues(empty_session):
+    actors = ["Andrew", "Cindy"]
+    ids = insert_actors(empty_session, actors)
+
+    # Create a bidirectional relationship
+    actor_colleagues = [
+        (ids[0], ids[1]),
+        (ids[1], ids[0]),
+    ]
+
+    insert_actor_colleagues(empty_session, actor_colleagues)
+
+    expected = [
+        Actor("Andrew"),
+        Actor("Cindy")
+    ]
+    expected[0].add_actor_colleague(expected[1])
+    expected[1].add_actor_colleague(expected[0])
+
+    assert empty_session.query(Actor).all() == expected
+
+
 def test_saving_of_actors(empty_session, actor):
     empty_session.add(actor)
     empty_session.commit()
 
     rows = list(empty_session.execute('SELECT actor_full_name FROM actors'))
-    assert rows == [("Firstname Lastname", )]
+    assert rows == [("Firstname Lastname",)]
 
 # TODO - test actors
 

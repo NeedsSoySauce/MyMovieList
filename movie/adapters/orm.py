@@ -92,8 +92,11 @@ movie_genres = Table(
     Column('genre_id', ForeignKey('genres.id'), nullable=False)
 )
 
-
-# TODO - map actor colleagues
+actor_colleagues = Table(
+    'actor_colleagues', metadata,
+    Column('actor_id', ForeignKey('actors.id'), primary_key=True),
+    Column('colleague_id', ForeignKey('actors.id'), primary_key=True)
+)
 
 
 def map_model_to_tables():
@@ -137,7 +140,13 @@ def map_model_to_tables():
     })
 
     mapper(Actor, actors, properties={
-        '_person_full_name': actors.c.actor_full_name
+        '_person_full_name': actors.c.actor_full_name,
+        '_colleagues': relationship(Actor,
+                                    secondary=actor_colleagues,
+                                    primaryjoin=(actors.c.id == actor_colleagues.c.actor_id),
+                                    secondaryjoin=(actors.c.id == actor_colleagues.c.colleague_id),
+                                    backref="actors",
+                                    collection_class=set)
     })
 
     mapper(Director, directors, properties={

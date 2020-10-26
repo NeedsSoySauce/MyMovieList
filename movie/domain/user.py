@@ -15,7 +15,7 @@ class User:
         self._time_spent_watching_movies_minutes: int = 0
         self._watchlist = WatchList()
         self._joined_on_utc = datetime.utcnow()
-        self._id: int = hash(self)
+        self._id: int = id_ or hash(self)
 
     @property
     def _username(self):
@@ -79,7 +79,7 @@ class User:
         return self._joined_on_utc
 
     def __repr__(self) -> str:
-        return f'<{type(self).__name__} {self._username}>'
+        return f'<{type(self).__name__} {self._id}, {self._username}>'
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, User):

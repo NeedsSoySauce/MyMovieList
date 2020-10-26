@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import clear_mappers, sessionmaker
+from sqlalchemy.orm import clear_mappers, sessionmaker, Session
 
 from movie import create_app, metadata, map_model_to_tables
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
@@ -45,7 +45,7 @@ def actor():
 
 @pytest.fixture
 def movie():
-    return Movie("TestMovie", 2020, 0)
+    return Movie("TestMovie", 2020, 1)
 
 
 @pytest.fixture
@@ -74,8 +74,8 @@ def reader():
 
 
 @pytest.fixture
-def review(movie):
-    return Review(movie, "Text  with  some  spaces", 1)
+def review(movie, user):
+    return Review(movie, "Text  with  some  spaces", 1, user=user)
 
 
 @pytest.fixture
@@ -85,7 +85,7 @@ def reviews(movies):
 
 @pytest.fixture
 def user():
-    return User("username", "correcthorsebatterystaple")
+    return User("username", "correcthorsebatterystaple", id_=1)
 
 
 @pytest.fixture
@@ -178,7 +178,7 @@ def database_engine():
 
 
 @pytest.fixture
-def empty_session():
+def empty_session() -> Session:
     clear_mappers()
     engine = create_engine(TEST_DATABASE_URI_IN_MEMORY)
     metadata.create_all(engine)

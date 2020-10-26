@@ -198,12 +198,12 @@ def test_metascore_invalid_type(movie):
 
 
 def test_repr(movie):
-    assert repr(movie) == "<Movie TestMovie, 2020>"
+    assert repr(movie) == "<Movie 1, TestMovie, 2020>"
 
 
 def test_repr_with_no_name():
     movie = Movie("", 2020, 1)
-    assert repr(movie) == "<Movie None, 2020>"
+    assert repr(movie) == "<Movie 1, None, 2020>"
 
 
 def test_equality_when_equal(movie):

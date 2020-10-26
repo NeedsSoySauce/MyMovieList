@@ -6,7 +6,7 @@ from .director import Director
 
 
 class Movie:
-    def __init__(self, title: str, release_date: int, id_: int) -> None:
+    def __init__(self, title: str, release_date: int, id_: int = None) -> None:
         self._title = title
         self._release_date = release_date
         self._description: str = None
@@ -184,7 +184,7 @@ class Movie:
         return self._id
 
     def __repr__(self) -> str:
-        return f'<{type(self).__name__} {self._title}, {self._release_date}>'
+        return f'<{type(self).__name__} {self._id}, {self._title}, {self._release_date}>'
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Movie):

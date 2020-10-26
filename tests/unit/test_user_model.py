@@ -53,7 +53,7 @@ def test_constructor_invalid_password():
 
 
 def test_repr(user):
-    assert repr(user) == "<User username>"
+    assert repr(user) == "<User 1, username>"
 
 
 def test_repr_no_username():
@@ -61,7 +61,7 @@ def test_repr_no_username():
     password = "abc123"
     user = User(username, password)
 
-    assert repr(user) == "<User None>"
+    assert repr(user) == f"<User {user.id}, None>"
 
 
 def test_equality_when_equal(user):

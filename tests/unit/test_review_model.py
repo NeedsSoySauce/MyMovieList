@@ -117,7 +117,8 @@ def test_construction_invalid_timestamp_type(movie):
 
 
 def test_repr(review):
-    expected = f'<Review <Movie TestMovie, 2020>, Text  with  some  spaces, 1, {review.timestamp.isoformat()}>'
+    expected = f'<Review <Movie 1, TestMovie, 2020>, Text  with  some  spaces, 1, {review.timestamp.isoformat()}, ' \
+               f'<User 1, username>>'
     assert repr(review) == expected
 
 
@@ -126,16 +127,16 @@ def test_repr_no_review_text(movie):
     rating = 1
     review = Review(movie, review_text, rating)
 
-    expected = f'<Review <Movie TestMovie, 2020>, None, 1, {review.timestamp.isoformat()}>'
+    expected = f'<Review <Movie 1, TestMovie, 2020>, None, 1, {review.timestamp.isoformat()}, None>'
     assert repr(review) == expected
 
 
 def test_repr_no_rating(movie):
     review_text = "Test"
-    rating = 1.0
+    rating = 1.1
     review = Review(movie, review_text, rating)
 
-    expected = f'<Review <Movie TestMovie, 2020>, Test, None, {review.timestamp.isoformat()}>'
+    expected = f'<Review <Movie 1, TestMovie, 2020>, Test, None, {review.timestamp.isoformat()}, None>'
     assert repr(review) == expected
 
 

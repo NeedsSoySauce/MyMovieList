@@ -43,13 +43,13 @@ reviews = Table(
     Column('movie_id', ForeignKey('movies.id'), nullable=False),
     Column('review_text', Text, nullable=False),
     Column('rating', Integer, nullable=False),
-    Column('timestamp', DateTime, nullable=False, default=datetime.utcnow)
+    Column('timestamp', DateTime, nullable=False, server_default=func.now())
 )
 
 genres = Table(
     'genres', metadata,
     Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('name', String(255), unique=True, nullable=False)
+    Column('genre_name', String(255), unique=True, nullable=False)
 )
 
 actors = Table(
@@ -121,7 +121,8 @@ def map_model_to_tables():
     })
 
     mapper(Review, reviews, properties={
-        '_mapped_user': relationship(User),
+        '_id': reviews.c.id,
+        '_user': relationship(User),
         '_mapped_movie': relationship(Movie),
         '_mapped_review_text': reviews.c.review_text,
         '_mapped_rating': reviews.c.rating,
@@ -129,7 +130,7 @@ def map_model_to_tables():
     })
 
     mapper(Genre, genres, properties={
-        '_genre_name': genres.c.name
+        '_genre_name': genres.c.genre_name
     })
 
     mapper(Actor, actors, properties={

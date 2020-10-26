@@ -10,12 +10,13 @@ if TYPE_CHECKING:
 
 class Review:
     def __init__(self, movie: Movie, review_text: str, rating: int, timestamp: datetime = None,
-                 user: 'User' = None) -> None:
+                 user: 'User' = None, id_: int = None) -> None:
         self._user = user
         self._movie = movie
         self._review_text = review_text
         self._rating = rating
         self._timestamp = timestamp or datetime.utcnow()
+        self._id = id_
 
     @property
     def _movie(self):
@@ -76,6 +77,14 @@ class Review:
     def timestamp(self):
         return self._timestamp
 
+    @property
+    def user(self):
+        return self._user
+
+    @property
+    def id(self):
+        return self._id
+
     def __hash__(self):
         return hash(f'{self._movie}{self._review_text}{self._rating}{self._timestamp}')
 
@@ -86,7 +95,10 @@ class Review:
         return other._timestamp < self._timestamp
 
     def __repr__(self) -> str:
-        return f'<{type(self).__name__} {self._movie}, {self._review_text}, {self._rating}, {self._timestamp.isoformat()}>'
+        return (
+            f'<{type(self).__name__} {self._movie}, {self._review_text}, {self._rating}, {self._timestamp.isoformat()},'
+            f' {self._user}>'
+        )
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Review):

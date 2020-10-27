@@ -94,7 +94,7 @@ class MovieWatchingSimulation(AbstractMovingWatchingSimulation):
                 delta += random()  # Add a random number of milliseconds
                 timestamp = datetime.fromtimestamp(now - delta)
 
-                review = Review(movie, review_text, rating, timestamp)
+                review = Review(movie, review_text, rating, timestamp, user)
                 user.add_review(review)
                 reviews.append(review)
 

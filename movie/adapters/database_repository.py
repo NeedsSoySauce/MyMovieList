@@ -1,7 +1,7 @@
 from typing import List, Dict, Union, Optional
 
 from flask import _app_ctx_stack
-from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import scoped_session, Session
 from werkzeug.security import generate_password_hash
 
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
@@ -26,8 +26,9 @@ class SessionContextManager:
     def __exit__(self, *args):
         self.rollback()
 
+    # Doesn't return a session, but typing this as returning a session provides better IDE suggestions
     @property
-    def session(self):
+    def session(self) -> Session:
         return self.__session
 
     def commit(self):
@@ -79,7 +80,7 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_genre(self, genre_name: str) -> Genre:
-        pass
+        raise NotImplementedError
 
     def add_director(self, director: Director) -> None:
         with self._session_cm as scm:
@@ -92,7 +93,7 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_director(self, director_name: str) -> Director:
-        pass
+        raise NotImplementedError
 
     def add_actor(self, actor: Actor) -> None:
         with self._session_cm as scm:
@@ -105,7 +106,7 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_actor(self, actor_name: str) -> Actor:
-        pass
+        raise NotImplementedError
 
     def add_user(self, user: User) -> None:
         with self._session_cm as scm:
@@ -118,13 +119,13 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_user(self, username: str) -> User:
-        pass
+        raise NotImplementedError
 
     def delete_user(self, user: User) -> None:
-        pass
+        raise NotImplementedError
 
     def update_username(self, user: User, new_username: str) -> None:
-        pass
+        raise NotImplementedError
 
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         with self._session_cm as scm:
@@ -137,28 +138,28 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_review_user(self, review: Review) -> Union[User, None]:
-        pass
+        raise NotImplementedError
 
     def get_number_of_reviews_for_movie(self, movie: Movie) -> int:
-        pass
+        raise NotImplementedError
 
     def get_number_of_review_pages_for_movie(self,
                                              movie: Movie,
                                              page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
-        pass
+        raise NotImplementedError
 
     def get_reviews_for_movie(self,
                               movie: Movie,
                               page_number: int,
                               page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Review]:
-        pass
+        raise NotImplementedError
 
     def get_number_of_movies(self,
                              query: str = "",
                              genres: List[Genre] = [],
                              directors: List[Director] = [],
                              actors: List[Actor] = []) -> int:
-        pass
+        raise NotImplementedError
 
     def get_number_of_movie_pages(self,
                                   page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
@@ -166,7 +167,7 @@ class SqlAlchemyRepository(AbstractRepository):
                                   genres: List[Genre] = [],
                                   directors: List[Director] = [],
                                   actors: List[Actor] = []) -> int:
-        pass
+        raise NotImplementedError
 
     def get_movies(self,
                    page_number: int,
@@ -175,36 +176,36 @@ class SqlAlchemyRepository(AbstractRepository):
                    genres: List[Genre] = [],
                    directors: List[Director] = [],
                    actors: List[Actor] = []) -> List[Movie]:
-        pass
+        raise NotImplementedError
 
     def get_number_of_movies_for_user(self, user: User) -> int:
-        pass
+        raise NotImplementedError
 
     def get_number_of_movie_pages_for_user(self,
                                            user: User,
                                            page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
-        pass
+        raise NotImplementedError
 
     def get_movies_for_user(self,
                             user: User,
                             page_number: int,
                             page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Movie]:
-        pass
+        raise NotImplementedError
 
     def get_movie_by_id(self, movie_id: int) -> Movie:
-        pass
+        raise NotImplementedError
 
     def get_genres(self) -> List[Genre]:
-        pass
+        raise NotImplementedError
 
     def get_directors(self) -> List[Director]:
-        pass
+        raise NotImplementedError
 
     def get_actors(self) -> List[Actor]:
-        pass
+        raise NotImplementedError
 
     def get_movies_per_genre(self) -> Dict[Genre, int]:
-        pass
+        raise NotImplementedError
 
 
 def populate(repo: AbstractRepository, data_path: str, seed: Optional[int] = None):

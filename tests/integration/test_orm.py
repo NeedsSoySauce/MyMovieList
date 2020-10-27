@@ -131,6 +131,28 @@ def test_saving_of_movies(empty_session, movie):
     assert rows == [("TestMovie", 2020)]
 
 
+def test_saving_and_loading_of_movie_with_genres_and_actors(empty_session, movie, genres, actors):
+    empty_session.add_all(genres)
+    empty_session.add_all(actors)
+
+    for genre in genres:
+        movie.add_genre(genre)
+
+    for actor in actors:
+        movie.add_actor(actor)
+
+    empty_session.add(movie)
+    empty_session.commit()
+
+    expected = movie
+
+    result: Movie = empty_session.query(Movie).one()
+
+    assert result == expected
+    assert result.genres == expected.genres
+    assert result.actors == expected.actors
+
+
 def test_loading_of_reviews(empty_session):
     users = list()
     users.append(("Andrew", "1234"))
@@ -278,11 +300,3 @@ def test_saving_of_directors(empty_session, director):
 
     rows = list(empty_session.execute('SELECT director_full_name FROM directors'))
     assert rows == [(director.director_full_name,)]
-
-# TODO - test watched movies
-
-# TODO - test user watchlist movies
-
-# TODO - test movie actors
-
-# TODO - test movie actors

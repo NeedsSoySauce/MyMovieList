@@ -291,29 +291,7 @@ class MemoryRepository(AbstractRepository):
                    directors: List[Director] = [],
                    actors: List[Actor] = []) -> List[Movie]:
 
-        if not isinstance(page_number, int):
-            raise TypeError(f"'page_number' must be of type 'int' but was '{type(page_number).__name__}'")
-
-        if not isinstance(page_size, int):
-            raise TypeError(f"'page_size' must be of type 'int' but was '{type(page_size).__name__}'")
-
-        if not isinstance(query, str):
-            raise TypeError(f"'query' must be of type 'str' but was '{type(query).__name__}'")
-
-        if not isinstance(genres, list) or any(not isinstance(genre, Genre) for genre in genres):
-            raise TypeError(f"'genres' must be of type 'List[Genre]' but was '{type(genres).__name__}'")
-
-        if not isinstance(directors, list) or any(not isinstance(director, Director) for director in directors):
-            raise TypeError(f"'directors' must be of type 'List[Director]' but was '{type(directors).__name__}'")
-
-        if not isinstance(actors, list) or any(not isinstance(actors, Actor) for actors in actors):
-            raise TypeError(f"'actors' must be of type 'List[Actor]' but was '{type(genres).__name__}'")
-
-        if page_number < 0:
-            raise ValueError(f"'page_number' must be at least zero but was {page_number}")
-
-        if page_size < 1:
-            raise ValueError(f"'page_size' must be at least 1 but was {page_size}")
+        self._check_get_movies_args(page_number, page_size, query, genres, directors, actors)
 
         filtered = self._get_filtered_movies(query, genres, directors, actors)
 

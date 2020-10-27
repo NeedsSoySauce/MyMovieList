@@ -5,6 +5,7 @@ from sqlalchemy.orm import clear_mappers, sessionmaker, Session
 from movie import create_app, metadata, map_model_to_tables
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
 from movie.adapters import database_repository
+from movie.adapters.database_repository import SqlAlchemyRepository
 from movie.adapters.memory_repository import MemoryRepository, populate
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from movie.domain.actor import Actor
@@ -171,7 +172,6 @@ def database_engine():
     for table in reversed(metadata.sorted_tables):  # Remove any data from the tables.
         engine.execute(table.delete())
     map_model_to_tables()
-    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
     yield engine
     metadata.drop_all(engine)
     clear_mappers()
@@ -200,7 +200,6 @@ def session():
         engine.execute(table.delete())
     map_model_to_tables()
     session_factory = sessionmaker(bind=engine)
-    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
     yield session_factory()
     metadata.drop_all(engine)
     clear_mappers()
@@ -215,12 +214,21 @@ def session_factory():
         engine.execute(table.delete())
     map_model_to_tables()
     session_factory = sessionmaker(bind=engine)
-    database_repository.populate(engine, TEST_DATA_PATH_DATABASE)
     yield session_factory
     metadata.drop_all(engine)
     clear_mappers()
 
 
+@pytest.fixture(name="database_repository")
+def sql_alchemy_repository(session_factory):
+    return SqlAlchemyRepository(session_factory)
+
+
+@pytest.fixture(name="populated_database_repository")
+def populated_sql_alchemy_repository(session_factory):
+    repository = SqlAlchemyRepository(session_factory)
+    populate(repository, TEST_DATA_PATH_DATABASE, 123)
+    return repository
 # @pytest.fixture(autouse=True)
 # def reset():
 #     clear_mappers()

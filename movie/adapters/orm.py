@@ -66,26 +66,26 @@ directors = Table(
 
 user_watched_movies = Table(
     'user_watched_movies', metadata,
-    Column('user_id', ForeignKey('users.id'), nullable=False),
-    Column('movie_id', ForeignKey('movies.id'), nullable=False)
+    Column('user_id', ForeignKey('users.id'), primary_key=True),
+    Column('movie_id', ForeignKey('movies.id'), primary_key=True)
 )
 
 user_watchlist_movies = Table(
     'user_watchlist_movies', metadata,
-    Column('user_id', ForeignKey('users.id'), nullable=False),
-    Column('movie_id', ForeignKey('movies.id'), nullable=False)
+    Column('user_id', ForeignKey('users.id'), primary_key=True),
+    Column('movie_id', ForeignKey('movies.id'), primary_key=True)
 )
 
 movie_actors = Table(
     'movie_actors', metadata,
-    Column('movie_id', ForeignKey('movies.id'), nullable=False),
-    Column('actor_id', ForeignKey('actors.id'), nullable=False)
+    Column('movie_id', ForeignKey('movies.id'), primary_key=True),
+    Column('actor_id', ForeignKey('actors.id'), primary_key=True)
 )
 
 movie_genres = Table(
     'movie_genres', metadata,
-    Column('movie_id', ForeignKey('movies.id'), nullable=False),
-    Column('genre_id', ForeignKey('genres.id'), nullable=False)
+    Column('movie_id', ForeignKey('movies.id'), primary_key=True),
+    Column('genre_id', ForeignKey('genres.id'), primary_key=True)
 )
 
 actor_colleagues = Table(

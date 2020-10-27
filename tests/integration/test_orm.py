@@ -3,6 +3,7 @@ import pytest
 from datetime import datetime
 
 from movie.domain.actor import Actor
+from movie.domain.director import Director
 from movie.domain.genre import Genre
 from movie.domain.movie import Movie
 from movie.domain.review import Review
@@ -55,6 +56,16 @@ def insert_actor_colleagues(empty_session, values):
     for value in values:
         empty_session.execute('INSERT INTO actor_colleagues (actor_id, colleague_id) VALUES (:actor_id, :colleague_id)',
                               {'actor_id': value[0], 'colleague_id': value[1]})
+    rows = empty_session.execute('SELECT * from actor_colleagues').fetchall()
+    return [row[0] for row in rows]
+
+
+def insert_directors(empty_session, values):
+    for value in values:
+        empty_session.execute('INSERT INTO directors (director_full_name) VALUES (:director_full_name)',
+                              {'director_full_name': value})
+    rows = empty_session.execute('SELECT id from directors').fetchall()
+    return [row[0] for row in rows]
 
 
 def test_loading_of_users(empty_session):
@@ -188,7 +199,11 @@ def test_loading_of_actors_with_colleagues(empty_session):
     expected[0].add_actor_colleague(expected[1])
     expected[1].add_actor_colleague(expected[0])
 
-    assert empty_session.query(Actor).all() == expected
+    results = empty_session.query(Actor).all()
+    assert results == expected
+
+    for result, actor in zip(results, expected):
+        assert result.colleagues == actor.colleagues
 
 
 def test_saving_of_actors(empty_session, actor):
@@ -212,7 +227,7 @@ def test_saving_of_actors_with_colleagues(empty_session, actor, actors):
 
     rows = list(empty_session.execute(f'SELECT a.actor_full_name, c.actor_full_name '
                                       f'FROM actors a '
-                                      f'JOIN actor_colleagues b ' 
+                                      f'JOIN actor_colleagues b '
                                       f'ON a.id = b.actor_id '
                                       f'JOIN actors c '
                                       f'ON c.id = b.colleague_id '
@@ -224,7 +239,24 @@ def test_saving_of_actors_with_colleagues(empty_session, actor, actors):
                                       ))
     assert rows == expected
 
-# TODO - test directors
+
+def test_loading_of_directors(empty_session):
+    directors = ["Andrew", "Cindy"]
+    insert_directors(empty_session, directors)
+
+    expected = [
+        Director("Andrew"),
+        Director("Cindy")
+    ]
+    assert empty_session.query(Director).all() == expected
+
+
+def test_saving_of_directors(empty_session, director):
+    empty_session.add(director)
+    empty_session.commit()
+
+    rows = list(empty_session.execute('SELECT director_full_name FROM directors'))
+    assert rows == [(director.director_full_name,)]
 
 # TODO - test watched movies
 

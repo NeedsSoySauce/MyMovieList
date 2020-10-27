@@ -196,9 +196,33 @@ def test_saving_of_actors(empty_session, actor):
     empty_session.commit()
 
     rows = list(empty_session.execute('SELECT actor_full_name FROM actors'))
-    assert rows == [("Firstname Lastname",)]
+    assert rows == [(actor.actor_full_name,)]
 
-# TODO - test actors
+
+def test_saving_of_actors_with_colleagues(empty_session, actor, actors):
+    empty_session.add_all(actors)
+
+    for colleague in actors:
+        actor.add_actor_colleague(colleague)
+
+    empty_session.add(actor)
+    empty_session.commit()
+
+    expected = [(actor.actor_full_name, colleague.actor_full_name) for colleague in actors]
+
+    rows = list(empty_session.execute(f'SELECT a.actor_full_name, c.actor_full_name '
+                                      f'FROM actors a '
+                                      f'JOIN actor_colleagues b ' 
+                                      f'ON a.id = b.actor_id '
+                                      f'JOIN actors c '
+                                      f'ON c.id = b.colleague_id '
+                                      f'WHERE a.actor_full_name = :actor_full_name '
+                                      f'ORDER BY c.actor_full_name',
+                                      {
+                                          'actor_full_name': actor.actor_full_name
+                                      }
+                                      ))
+    assert rows == expected
 
 # TODO - test directors
 

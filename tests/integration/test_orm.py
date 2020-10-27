@@ -89,6 +89,27 @@ def test_saving_of_users(empty_session, user):
     assert rows == [("username", "correcthorsebatterystaple")]
 
 
+def test_saving_and_loading_of_user_with_movies(empty_session, user, movies):
+    empty_session.add_all(movies)
+
+    for movie in movies:
+        user.add_to_watchlist(movie)
+
+    user.watch_movie(movies[0])
+    user.watch_movie(movies[1])
+
+    empty_session.add(user)
+    empty_session.commit()
+
+    expected = user
+
+    result: User = empty_session.query(User).one()
+
+    assert result == expected
+    assert result.watched_movies == expected.watched_movies
+    assert list(result.watchlist) == list(expected.watchlist)
+
+
 def test_loading_of_movies(empty_session):
     movies = list()
     movies.append(("Andrew", 2020))

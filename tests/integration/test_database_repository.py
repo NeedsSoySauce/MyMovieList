@@ -329,15 +329,26 @@ def test_delete_user(database_repository: SqlAlchemyRepository, user):
         database_repository.get_user(user.username)
 
 
-def test_update_username(database_repository: SqlAlchemyRepository, user):
+def test_change_username(database_repository: SqlAlchemyRepository, user):
     database_repository.add_user(user)
 
     # Confirm user has been added
     assert database_repository.get_user(user.username) == user
 
-    database_repository.update_username(user, 'qwerty')
+    database_repository.change_username(user, 'qwerty')
 
     assert database_repository.get_user('qwerty') == user
+
+
+def test_change_password(database_repository: SqlAlchemyRepository, user):
+    database_repository.add_user(user)
+
+    # Confirm user has been added
+    assert database_repository.get_user(user.username) == user
+
+    database_repository.change_password(user, 'qwerty')
+
+    assert database_repository.get_user(user.username).password == 'qwerty'
 
 
 def test_get_movie_by_id(database_repository: SqlAlchemyRepository, movie):

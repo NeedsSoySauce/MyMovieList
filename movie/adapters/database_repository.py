@@ -147,9 +147,14 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.session.delete(user)
             scm.session.commit()
 
-    def update_username(self, user: User, new_username: str) -> None:
+    def change_username(self, user: User, new_username: str) -> None:
         with self._session_cm as scm:
             user.username = new_username
+            scm.session.commit()
+
+    def change_password(self, user: User, new_password: str) -> None:
+        with self._session_cm as scm:
+            user.password = new_password
             scm.session.commit()
 
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:

@@ -69,12 +69,12 @@ def change_username(repo: AbstractRepository, user: User, username: str) -> None
     if check_if_user_exists(repo, username):
         raise NameNotUniqueException
 
-    repo.update_username(user, username)
+    repo.change_username(user, username)
 
 
 def change_password(repo: AbstractRepository, user: User, password: str) -> None:
     """ Sets the given user's password to the given password. """
-    user.password = generate_password_hash(password)
+    repo.change_password(user, generate_password_hash(password))
 
 
 def delete_user(repo: AbstractRepository, user: User) -> None:

@@ -116,8 +116,13 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def update_username(self, user: User, new_username: str) -> None:
+    def change_username(self, user: User, new_username: str) -> None:
         """ Updates the given user's username in this repository. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def change_password(self, user: User, new_password: str) -> None:
+        """ Updates the given user's password in this repository. """
         raise NotImplementedError
 
     @abc.abstractmethod

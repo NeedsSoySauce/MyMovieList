@@ -161,11 +161,14 @@ class MemoryRepository(AbstractRepository):
         except KeyError:
             raise ValueError(f"No user with the name '{username}'")
 
-    def update_username(self, user: User, new_username: str) -> None:
+    def change_username(self, user: User, new_username: str) -> None:
         # Update the mapping from username to user id
         del self._user_id_map[user.username]
         self._user_id_map[new_username] = user.id
         user.username = new_username
+
+    def change_password(self, user: User, new_password: str) -> None:
+        user.password = new_password
 
     def delete_user(self, user: User) -> None:
         self._users.remove(user)

@@ -26,5 +26,10 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     REPOSITORY = environ.get('REPOSITORY')
+
+    # Flask-Caching configuration
     CACHE_TYPE = 'simple'
     CACHE_DEFAULT_TIMEOUT = 60
+
+    # Date file readers configuration
+    MAX_LINES_TO_LOAD = int(environ.get('MAX_LINES_TO_LOAD') or 0) or None

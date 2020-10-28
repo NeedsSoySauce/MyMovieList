@@ -128,7 +128,7 @@ class MovieFileCSVReader:
 
         return movie
 
-    def read_csv_file(self):
+    def read_csv_file(self, max_num_lines: int = None):
         unique_movies: Set[Movie] = set()
         unique_actors: Set[Actor] = set()
         unique_directors: Set[Director] = set()
@@ -149,6 +149,11 @@ class MovieFileCSVReader:
                     raise ValueError(f"'{self._file_name}' missing field '{field}'")
 
             for row in movie_file_reader:
+
+                # Only read up to max_num_lines lines
+                if max_num_lines and count >= max_num_lines:
+                    break
+
                 try:
                     movie = self._read_row(row, count)
                 except ValueError:

@@ -332,10 +332,14 @@ class AbstractRepository(abc.ABC):
         return f'<{type(self).__name__}>'
 
 
-def populate(repo: AbstractRepository, data_path: str, seed: Optional[int] = None, simulate_activity: bool = True):
+def populate(repo: AbstractRepository,
+             data_path: str,
+             seed: Optional[int] = None,
+             simulate_activity: bool = True,
+             max_num_lines: int = None):
     """ Populates the given repository using data at the given path. """
     reader = MovieFileCSVReader(data_path)
-    reader.read_csv_file()
+    reader.read_csv_file(max_num_lines=max_num_lines)
 
     repo.add_genres(reader.dataset_of_genres)
     repo.add_directors(reader.dataset_of_directors)

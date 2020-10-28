@@ -38,11 +38,12 @@ def create_app(test_config=None):
     repository = app.config['REPOSITORY']
 
     is_dev = app.config['FLASK_ENV'] == 'development'
+    max_num_lines = app.config['MAX_LINES_TO_LOAD']
 
     if repository == 'memory':
         # Create the MemoryRepository implementation for a memory-based repository.
         repo = memory_repository.MemoryRepository()
-        populate(repo, data_path, 123, simulate_activity=is_dev)
+        populate(repo, data_path, 123, simulate_activity=is_dev, max_num_lines=max_num_lines)
 
     elif repository == 'database':
         # Configure database.
@@ -78,7 +79,7 @@ def create_app(test_config=None):
             print("------------------ REPOPULATING DATABASE ------------------")
             print("-----------------------------------------------------------")
 
-            populate(repo, data_path, 123, simulate_activity=is_dev)
+            populate(repo, data_path, 123, simulate_activity=is_dev, max_num_lines=max_num_lines)
     else:
         raise ValueError(f"Invalid repository '{repository}', should be 'memory' or 'database'")
 

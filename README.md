@@ -5,6 +5,8 @@
 
 This assignment involved extending the previous assignment to persist changes using a database. SQLAlchemy's ORM was used with simple in-memory caching added using Flask-Caching. TDD practices were applied throughout development with unit and integration tests being implemented for the ORM and database repository respectively.
 
+The site has been deployed on Heroku with a PostgreSQL database and can be found at [mymovielist-is-taken.herokuapp.com](https://mymovielist-is-taken.herokuapp.com/).  To stay within the limits of Heroku's free tier (max 10,000 database rows) only a subset of the movies have been loaded there. Additionally the free tier goes to sleep after ~30 minutes if there hasn't been any activity, so initial page load can be slow.
+
 ## Setup
 
 These setup instructions assume you already have Python and [virtualenv](https://pypi.org/project/virtualenv/) installed. The following will clone this repository, setup and activate a virtual environment, and install dependencies.

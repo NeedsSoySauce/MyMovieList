@@ -202,7 +202,8 @@ class SqlAlchemyRepository(AbstractRepository):
             outerjoin(Genre). \
             outerjoin(movie_actors). \
             outerjoin(Actor). \
-            group_by(Movie._id)
+            group_by(Movie._id). \
+            order_by(Movie._mapped_title, Movie._mapped_release_date)
 
         _query = query.strip()
         if _query:
@@ -303,12 +304,6 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get_movies_per_genre(self) -> Dict[Genre, int]:
         with self._session_cm as scm:
-            # rows = scm.session.query(Movie, func.count(Movie._id)). \
-            #     join(movie_genres). \
-            #     join(Genre). \
-            #     group_by(Genre._genre_name). \
-            #     all()
-
             rows = scm.session.query(Genre, func.sum(
                 case(
                     [

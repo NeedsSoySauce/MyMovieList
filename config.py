@@ -26,3 +26,5 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     REPOSITORY = environ.get('REPOSITORY')
+    CACHE_TYPE = 'simple'
+    CACHE_DEFAULT_TIMEOUT = 60

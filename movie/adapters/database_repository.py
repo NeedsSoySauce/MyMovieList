@@ -2,11 +2,12 @@ from math import ceil
 from typing import List, Dict, Union, Optional
 
 from flask import _app_ctx_stack
-from sqlalchemy import any_, func, or_, case
-from sqlalchemy.orm import scoped_session, Session, Query, aliased
+from sqlalchemy import func, or_, case
+from sqlalchemy.orm import scoped_session, Session, Query
 from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.security import generate_password_hash
 
+from cache import cache
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
 from movie.adapters.orm import movie_genres, movie_actors, user_watched_movies, user_watchlist_movies
 from movie.adapters.repository import AbstractRepository
@@ -25,7 +26,6 @@ class SessionContextManager:
         self.__session: Session = scoped_session(self.__session_factory, scopefunc=_app_ctx_stack.__ident_func__)
 
     def __enter__(self):
-        # self.__session.commit()
         return self
 
     def __exit__(self, *args):
@@ -343,19 +343,28 @@ class SqlAlchemyRepository(AbstractRepository):
 
         return movie
 
+    # These methods are cached as otherwise things can get quite slow as they're called to populate the search form
+
+    @cache.memoize(timeout=30)
     def get_genres(self) -> List[Genre]:
         with self._session_cm as scm:
-            return scm.session.query(Genre).order_by(Genre._genre_name).all()
+            genres = scm.session.query(Genre).order_by(Genre._genre_name).all()
+            scm.session.expunge_all()
+            return genres
 
+    @cache.memoize(timeout=30)
     def get_directors(self) -> List[Director]:
-        # TODO - speed this up somehow.
         with self._session_cm as scm:
-            return scm.session.query(Director).order_by(Director._person_full_name).all()
+            directors = scm.session.query(Director).order_by(Director._person_full_name).all()
+            scm.session.expunge_all()
+            return directors
 
+    @cache.memoize(timeout=30)
     def get_actors(self) -> List[Actor]:
-        # TODO - speed this up somehow.
         with self._session_cm as scm:
-            return scm.session.query(Actor).order_by(Actor._person_full_name).all()
+            actors = scm.session.query(Actor).order_by(Actor._person_full_name).all()
+            scm.session.expunge_all()
+            return actors
 
     def get_movies_per_genre(self) -> Dict[Genre, int]:
         with self._session_cm as scm:

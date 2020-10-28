@@ -16,6 +16,7 @@ from movie.domain.person import Person
 from movie.domain.review import Review
 from movie.domain.user import User
 from movie.domain.watchlist import WatchList
+from cache import cache
 
 TEST_DATA_PATH_MEMORY = './tests/data/movies.csv'
 TEST_DATA_PATH_DATABASE = './tests/data/movies.csv'
@@ -145,6 +146,9 @@ def client():
         'REPOSITORY': 'memory'
     })
 
+    # Disable caching for tests
+    cache.init_app(my_app, config={'CACHE_TYPE': 'null'})
+
     return my_app.test_client()
 
 
@@ -229,6 +233,7 @@ def populated_sql_alchemy_repository(session_factory):
     repository = SqlAlchemyRepository(session_factory)
     populate(repository, TEST_DATA_PATH_DATABASE, 123)
     return repository
+
 # @pytest.fixture(autouse=True)
 # def reset():
 #     clear_mappers()

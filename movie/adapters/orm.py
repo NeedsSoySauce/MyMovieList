@@ -103,7 +103,7 @@ def map_model_to_tables():
         '_time_spent_watching_movies_minutes': users.c.time_spent_watching_movies_minutes,
         '_joined_on_utc': users.c.joined_on_utc,
         '_watched_movies': relationship(Movie, secondary=user_watched_movies),
-        '_reviews': relationship(Review),
+        '_reviews': relationship(Review, cascade='all, delete-orphan'),
         '_watchlist': relationship(Movie, secondary=user_watchlist_movies, collection_class=WatchList)
     })
 

@@ -48,8 +48,8 @@ def create_app(test_config=None):
 
         database_echo = app.config['SQLALCHEMY_ECHO']
         database_engine = create_engine(database_uri,
-                                        connect_args={"check_same_thread": False},
-                                        poolclass=NullPool,
+                                        # connect_args={"check_same_thread": False},
+                                        # poolclass=NullPool,
                                         echo=database_echo
                                         )
 

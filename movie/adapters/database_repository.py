@@ -4,6 +4,7 @@ from typing import List, Dict, Union, Optional
 from flask import _app_ctx_stack
 from sqlalchemy import any_, func, or_, case
 from sqlalchemy.orm import scoped_session, Session, Query, aliased
+from sqlalchemy.orm.exc import NoResultFound
 from werkzeug.security import generate_password_hash
 
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
@@ -84,7 +85,11 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_genre(self, genre_name: str) -> Genre:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            try:
+                return scm.session.query(Genre).filter(Genre._genre_name == genre_name).one()
+            except NoResultFound:
+                raise ValueError
 
     def add_director(self, director: Director) -> None:
         with self._session_cm as scm:
@@ -97,7 +102,11 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_director(self, director_name: str) -> Director:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            try:
+                return scm.session.query(Director).filter(Director._person_full_name == director_name).one()
+            except NoResultFound:
+                raise ValueError
 
     def add_actor(self, actor: Actor) -> None:
         with self._session_cm as scm:
@@ -110,7 +119,11 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_actor(self, actor_name: str) -> Actor:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            try:
+                return scm.session.query(Actor).filter(Actor._person_full_name == actor_name).one()
+            except NoResultFound:
+                raise ValueError
 
     def add_user(self, user: User) -> None:
         with self._session_cm as scm:
@@ -123,13 +136,21 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_user(self, username: str) -> User:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            try:
+                return scm.session.query(User).filter(User._mapped_username == username).one()
+            except NoResultFound:
+                raise ValueError
 
     def delete_user(self, user: User) -> None:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            scm.session.delete(user)
+            scm.session.commit()
 
     def update_username(self, user: User, new_username: str) -> None:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            user.username = new_username
+            scm.session.commit()
 
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         with self._session_cm as scm:
@@ -288,7 +309,11 @@ class SqlAlchemyRepository(AbstractRepository):
         return self._get_page(self._get_movies_for_user_query(user), page_number, page_size)
 
     def get_movie_by_id(self, movie_id: int) -> Movie:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            try:
+                return scm.session.query(Movie).filter(Movie._id == movie_id).one()
+            except NoResultFound:
+                raise ValueError
 
     def get_genres(self) -> List[Genre]:
         with self._session_cm as scm:

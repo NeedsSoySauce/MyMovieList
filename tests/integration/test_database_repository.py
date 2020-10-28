@@ -273,6 +273,84 @@ def test_get_genres(database_repository: SqlAlchemyRepository, genres):
     assert sorted(repo_genres) == repo_genres
 
 
+def test_get_genre(database_repository: SqlAlchemyRepository, genre):
+    database_repository.add_genre(genre)
+    result = database_repository.get_genre(genre.genre_name)
+    assert result == genre
+
+
+def test_get_genre_not_found(database_repository: SqlAlchemyRepository, genre):
+    with pytest.raises(ValueError):
+        database_repository.get_genre(genre.genre_name)
+
+
+def test_get_director(database_repository: SqlAlchemyRepository, director):
+    database_repository.add_director(director)
+    result = database_repository.get_director(director.director_full_name)
+    assert result == director
+
+
+def test_get_director_not_found(database_repository: SqlAlchemyRepository, director):
+    with pytest.raises(ValueError):
+        database_repository.get_director(director.director_full_name)
+
+
+def test_get_actor(database_repository: SqlAlchemyRepository, actor):
+    database_repository.add_actor(actor)
+    result = database_repository.get_actor(actor.actor_full_name)
+    assert result == actor
+
+
+def test_get_actor_not_found(database_repository: SqlAlchemyRepository, actor):
+    with pytest.raises(ValueError):
+        database_repository.get_actor(actor.actor_full_name)
+
+
+def test_get_user(database_repository: SqlAlchemyRepository, user):
+    database_repository.add_user(user)
+    result = database_repository.get_user(user.username)
+    assert result == user
+
+
+def test_get_user_not_found(database_repository: SqlAlchemyRepository, user):
+    with pytest.raises(ValueError):
+        database_repository.get_user(user.username)
+
+
+def test_delete_user(database_repository: SqlAlchemyRepository, user):
+    database_repository.add_user(user)
+
+    # Confirm user has been added
+    assert database_repository.get_user(user.username) == user
+
+    database_repository.delete_user(user)
+
+    with pytest.raises(ValueError):
+        database_repository.get_user(user.username)
+
+
+def test_update_username(database_repository: SqlAlchemyRepository, user):
+    database_repository.add_user(user)
+
+    # Confirm user has been added
+    assert database_repository.get_user(user.username) == user
+
+    database_repository.update_username(user, 'qwerty')
+
+    assert database_repository.get_user('qwerty') == user
+
+
+def test_get_movie_by_id(database_repository: SqlAlchemyRepository, movie):
+    database_repository.add_movie(movie)
+    result = database_repository.get_movie_by_id(movie.id)
+    assert result == movie
+
+
+def test_get_movie_by_id_not_found(database_repository: SqlAlchemyRepository, movie):
+    with pytest.raises(ValueError):
+        database_repository.get_movie_by_id(movie.id)
+
+
 def test_get_number_of_movie_pages(populated_database_repository: SqlAlchemyRepository):
     pages = populated_database_repository.get_number_of_movie_pages()
     assert pages == 1

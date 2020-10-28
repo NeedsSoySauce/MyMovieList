@@ -25,7 +25,7 @@ class SessionContextManager:
         self.__session: Session = scoped_session(self.__session_factory, scopefunc=_app_ctx_stack.__ident_func__)
 
     def __enter__(self):
-        self.__session.commit()
+        # self.__session.commit()
         return self
 
     def __exit__(self, *args):

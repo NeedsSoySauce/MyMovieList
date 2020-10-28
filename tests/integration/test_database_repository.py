@@ -491,15 +491,15 @@ def test_get_number_of_movies_for_user(database_repository: SqlAlchemyRepository
 
     user2 = User('abcd', '1234')
     database_repository.add_user(user2)
-    user2.watch_movie(movies[0])
-    user2.add_to_watchlist(movies[1])
-    user2.add_to_watchlist(movies[2])
+    database_repository.add_movie_to_watched(user2, movies[0])
+    database_repository.add_movie_to_watchlist(user2, movies[1])
+    database_repository.add_movie_to_watchlist(user2, movies[2])
 
     result = database_repository.get_number_of_movies_for_user(user)
     assert result == 2
 
-    user.add_to_watchlist(movies[3])
-    user.watch_movie(movies[4])
+    database_repository.add_movie_to_watchlist(user, movies[3])
+    database_repository.add_movie_to_watched(user, movies[4])
 
     result = database_repository.get_number_of_movies_for_user(user)
     assert result == 4
@@ -511,8 +511,8 @@ def test_get_number_of_movie_pages_for_user(database_repository: SqlAlchemyRepos
     result = database_repository.get_number_of_movie_pages_for_user(user)
     assert result == 0
 
-    user.add_to_watchlist(movies[0])
-    user.add_to_watchlist(movies[1])
+    database_repository.add_movie_to_watchlist(user, movies[0])
+    database_repository.add_movie_to_watched(user, movies[1])
 
     result = database_repository.get_number_of_movie_pages_for_user(user, page_size=1)
     assert result == 2
@@ -524,8 +524,8 @@ def test_get_movies_for_user(database_repository: SqlAlchemyRepository, user, mo
     result = database_repository.get_movies_for_user(user, 0)
     assert len(result) == 0
 
-    user.watch_movie(movies[0])
-    user.add_to_watchlist(movies[1])
+    database_repository.add_movie_to_watched(user, movies[0])
+    database_repository.add_movie_to_watchlist(user, movies[1])
 
     result = database_repository.get_movies_for_user(user, 0)
     assert len(result) == 2

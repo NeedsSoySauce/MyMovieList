@@ -11,7 +11,7 @@ from sqlalchemy.pool import NullPool
 from cache import cache
 from movie.adapters import database_repository, memory_repository
 from movie.adapters.orm import metadata, map_model_to_tables
-from movie.adapters.repository import AbstractRepository
+from movie.adapters.repository import AbstractRepository, populate
 
 
 def page_not_found(e):
@@ -37,10 +37,12 @@ def create_app(test_config=None):
     repo: Union[memory_repository.MemoryRepository, database_repository.SqlAlchemyRepository, None] = None
     repository = app.config['REPOSITORY']
 
+    is_dev = app.config['FLASK_ENV'] == 'development'
+
     if repository == 'memory':
         # Create the MemoryRepository implementation for a memory-based repository.
         repo = memory_repository.MemoryRepository()
-        memory_repository.populate(repo, data_path, 123)
+        populate(repo, data_path, 123, simulate_activity=is_dev)
 
     elif repository == 'database':
         # Configure database.
@@ -76,7 +78,7 @@ def create_app(test_config=None):
             print("------------------ REPOPULATING DATABASE ------------------")
             print("-----------------------------------------------------------")
 
-            database_repository.populate(repo, data_path, 123)
+            populate(repo, data_path, 123, simulate_activity=is_dev)
     else:
         raise ValueError(f"Invalid repository '{repository}', should be 'memory' or 'database'")
 

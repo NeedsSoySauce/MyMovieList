@@ -330,3 +330,27 @@ class AbstractRepository(abc.ABC):
 
     def __repr__(self):
         return f'<{type(self).__name__}>'
+
+
+def populate(repo: AbstractRepository, data_path: str, seed: Optional[int] = None, simulate_activity: bool = True):
+    """ Populates the given repository using data at the given path. """
+    reader = MovieFileCSVReader(data_path)
+    reader.read_csv_file()
+
+    repo.add_genres(reader.dataset_of_genres)
+    repo.add_directors(reader.dataset_of_directors)
+    repo.add_actors(reader.dataset_of_actors)
+    repo.add_movies(reader.dataset_of_movies)
+
+    if simulate_activity:
+        sim = MovieWatchingSimulation(reader.dataset_of_movies, seed)
+        state = sim.simulate(num_users=50, min_num_movies=10, max_num_movies=20)
+
+        repo.add_users(state.users)
+        repo.add_reviews(state.reviews)
+
+    test_user = User('testuser', generate_password_hash('test123A'))
+    repo.add_user(test_user)
+
+    test_user2 = User('testuser2', generate_password_hash('test123A'))
+    repo.add_user(test_user2)

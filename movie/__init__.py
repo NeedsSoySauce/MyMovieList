@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import clear_mappers, sessionmaker
 from sqlalchemy.pool import NullPool
 
+from cache import cache
 from movie.adapters import database_repository, memory_repository
 from movie.adapters.orm import metadata, map_model_to_tables
 from movie.adapters.repository import AbstractRepository
@@ -119,4 +120,5 @@ def create_app(test_config=None):
             def shutdown_session(exception=None):
                 repo.close_session()
 
+    cache.init_app(app)
     return app

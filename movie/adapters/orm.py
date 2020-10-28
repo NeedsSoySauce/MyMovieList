@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Table, MetaData, Column, Integer, String, DateTime, ForeignKey, Float, Text, func
+from sqlalchemy import Table, MetaData, Column, Integer, String, DateTime, ForeignKey, Float, Text, func, BigInteger
 from sqlalchemy.orm import mapper, relationship
 
 from movie.domain.actor import Actor
@@ -10,12 +10,18 @@ from movie.domain.movie import Movie
 from movie.domain.review import Review
 from movie.domain.user import User
 from movie.domain.watchlist import WatchList
+from sqlalchemy.dialects import postgresql, sqlite
+
+# From: https://stackoverflow.com/a/23175518/11628429
+BigIntegerType = BigInteger()
+BigIntegerType = BigIntegerType.with_variant(postgresql.BIGINT(), 'postgresql')
+BigIntegerType = BigIntegerType.with_variant(sqlite.INTEGER(), 'sqlite')
 
 metadata = MetaData()
 
 users = Table(
     'users', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('id', BigIntegerType, primary_key=True, autoincrement=True),
     Column('username', String(255), unique=True, nullable=False),
     Column('password', String(255), nullable=False),
     Column('time_spent_watching_movies_minutes', Integer, nullable=False, server_default="0"),
@@ -24,7 +30,7 @@ users = Table(
 
 movies = Table(
     'movies', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('id', BigIntegerType, primary_key=True, autoincrement=True),
     Column('title', String(255), nullable=False),
     Column('release_date', Integer, nullable=False),
     Column('description', String(255)),
@@ -38,8 +44,8 @@ movies = Table(
 
 reviews = Table(
     'reviews', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
-    Column('user_id', ForeignKey('users.id')), # This is nullable as reviews can be posted anonymously
+    Column('id', BigIntegerType, primary_key=True, autoincrement=True),
+    Column('user_id', ForeignKey('users.id')),  # This is nullable as reviews can be posted anonymously
     Column('movie_id', ForeignKey('movies.id'), nullable=False),
     Column('review_text', Text, nullable=False),
     Column('rating', Integer, nullable=False),
@@ -48,19 +54,19 @@ reviews = Table(
 
 genres = Table(
     'genres', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('id', BigIntegerType, primary_key=True, autoincrement=True),
     Column('genre_name', String(255), unique=True, nullable=False)
 )
 
 actors = Table(
     'actors', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('id', BigIntegerType, primary_key=True, autoincrement=True),
     Column('actor_full_name', String(255), unique=True, nullable=False)
 )
 
 directors = Table(
     'directors', metadata,
-    Column('id', Integer, primary_key=True, autoincrement=True),
+    Column('id', BigIntegerType, primary_key=True, autoincrement=True),
     Column('director_full_name', String(255), unique=True, nullable=False)
 )
 

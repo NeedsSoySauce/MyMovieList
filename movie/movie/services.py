@@ -52,7 +52,7 @@ def add_review(repo: AbstractRepository, movie: Movie, review_text: str, rating:
     Adds a review to this repository. If a user is specified it is treated as being the review's creator, otherwise the
     review is considered to be posted anonymously.
     """
-    review = Review(movie, review_text, rating)
+    review = Review(movie, review_text, rating, user=user)
     repo.add_review(review, user)
 
     if user:

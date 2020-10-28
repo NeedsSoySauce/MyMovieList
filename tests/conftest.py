@@ -147,7 +147,10 @@ def client():
     })
 
     # Disable caching for tests
-    cache.init_app(my_app, config={'CACHE_TYPE': 'null'})
+    cache.init_app(my_app, config={
+        'CACHE_TYPE': 'null',
+        'CACHE_NO_NULL_WARNING': True
+    })
 
     return my_app.test_client()
 

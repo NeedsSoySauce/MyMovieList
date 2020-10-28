@@ -33,7 +33,7 @@ movies = Table(
     Column('id', BigIntegerType, primary_key=True, autoincrement=True),
     Column('title', String(255), nullable=False),
     Column('release_date', Integer, nullable=False),
-    Column('description', String(255)),
+    Column('description', Text),
     Column('director_id', ForeignKey('directors.id')),
     Column('runtime_minutes', Integer),
     Column('rating', Float),

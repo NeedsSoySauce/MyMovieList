@@ -33,8 +33,11 @@ The *.env* file at the project's root contains configuration settings. They are 
 * `FLASK_APP`: Entry point of the application (should always be `wsgi.py`).
 * `FLASK_ENV`: The environment in which to run the application (either `development` or `production`).
 * `SECRET_KEY`: Secret key used to encrypt session data.
-* `TESTING`: Set to False for running the application. Overridden and set to True automatically when testing the application.
+* `TESTING`: Set to False for running the application. Overridden and set to True automatically when testing the application. Can be set to true to force the database repository to be repopulated on each run.
 * `WTF_CSRF_SECRET_KEY`: Secret key used by the WTForm library.
+* `SQLALCHEMY_DATABASE_URI`: URI for the database SQLAlchemy will use.
+* `SQLALCHEMY_ECHO`: Set to True to log debugging information from SQLAlchemy.
+* `REPOSITORY`: Specifies what repository to use. Either 'memory' or 'database'. 
 
 ## Execution
 

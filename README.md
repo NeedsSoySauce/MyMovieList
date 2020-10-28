@@ -1,6 +1,9 @@
+
+![image](https://user-images.githubusercontent.com/30617834/97424047-0921a500-1975-11eb-81d6-ccb01b80bb92.png)
+
 # COMPSCI 235 Assignment 3
 
-This assignments involved extending the first assignment into a web application using Python's Flask framework. 
+This assignment involved extending the previous assignment to persist changes using a database. SQLAlchemy's ORM was used with simple in-memory caching added using Flask-Caching. TDD practices were applied throughout development with unit and integration tests being implemented for the ORM and database repository respectively.
 
 ## Setup
 

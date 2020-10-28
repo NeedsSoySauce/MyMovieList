@@ -1,12 +1,13 @@
+from math import ceil
 from typing import List, Dict, Union, Optional
 
 from flask import _app_ctx_stack
-from sqlalchemy import any_, func, or_
-from sqlalchemy.orm import scoped_session, Session, Query
+from sqlalchemy import any_, func, or_, case
+from sqlalchemy.orm import scoped_session, Session, Query, aliased
 from werkzeug.security import generate_password_hash
 
 from movie.activitysimulations.movie_watching_simulation import MovieWatchingSimulation
-from movie.adapters.orm import movie_genres, movie_actors
+from movie.adapters.orm import movie_genres, movie_actors, user_watched_movies, user_watchlist_movies
 from movie.adapters.repository import AbstractRepository
 from movie.datafilereaders.movie_file_csv_reader import MovieFileCSVReader
 from movie.domain.actor import Actor
@@ -20,9 +21,10 @@ from movie.domain.user import User
 class SessionContextManager:
     def __init__(self, session_factory):
         self.__session_factory = session_factory
-        self.__session = scoped_session(self.__session_factory, scopefunc=_app_ctx_stack.__ident_func__)
+        self.__session: Session = scoped_session(self.__session_factory, scopefunc=_app_ctx_stack.__ident_func__)
 
     def __enter__(self):
+        self.__session.commit()
         return self
 
     def __exit__(self, *args):
@@ -140,21 +142,37 @@ class SqlAlchemyRepository(AbstractRepository):
             scm.commit()
 
     def get_review_user(self, review: Review) -> Union[User, None]:
-        raise NotImplementedError
+        return review.user
+
+    @staticmethod
+    def _get_page(query: Query, page_number: int, page_size: int) -> List:
+        offset = page_number * page_size
+        return query.limit(page_size).offset(offset).all()
+
+    @staticmethod
+    def _get_reviews_for_movie_query(session: Session, movie: Movie) -> Query:
+        # return session.query(Movie).join(Review).filter(Movie._id == movie.id)
+        return session.query(Review).join(Movie).filter(Movie._id == movie.id)
 
     def get_number_of_reviews_for_movie(self, movie: Movie) -> int:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            return self._get_reviews_for_movie_query(scm.session, movie).count()
 
     def get_number_of_review_pages_for_movie(self,
                                              movie: Movie,
                                              page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
-        raise NotImplementedError
+        return self._get_number_of_pages(self.get_number_of_reviews_for_movie(movie), page_size)
 
     def get_reviews_for_movie(self,
                               movie: Movie,
                               page_number: int,
                               page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Review]:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            return self._get_page(self._get_reviews_for_movie_query(scm.session, movie), page_number, page_size)
+
+    @staticmethod
+    def _get_number_of_pages(number_of_elements: int, page_size: int) -> int:
+        return ceil(number_of_elements / page_size)
 
     def get_number_of_movies(self,
                              query: str = "",
@@ -162,7 +180,7 @@ class SqlAlchemyRepository(AbstractRepository):
                              directors: List[Director] = [],
                              actors: List[Actor] = []) -> int:
         with self._session_cm as scm:
-            return scm.session.query(Movie).count()
+            return self._get_filtered_movies_query(scm.session, query, genres, directors, actors).count()
 
     def get_number_of_movie_pages(self,
                                   page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE,
@@ -170,14 +188,14 @@ class SqlAlchemyRepository(AbstractRepository):
                                   genres: List[Genre] = [],
                                   directors: List[Director] = [],
                                   actors: List[Actor] = []) -> int:
-        raise NotImplementedError
+        return self._get_number_of_pages(self.get_number_of_movies(query, genres, directors, actors), page_size)
 
     @staticmethod
-    def _get_filtered_movies(session: Session,
-                             query: str = "",
-                             genres: List[Genre] = [],
-                             directors: List[Director] = [],
-                             actors: List[Actor] = []) -> Query:
+    def _get_filtered_movies_query(session: Session,
+                                   query: str = "",
+                                   genres: List[Genre] = [],
+                                   directors: List[Director] = [],
+                                   actors: List[Actor] = []) -> Query:
         filtered: Query = session.query(Movie). \
             outerjoin(Director). \
             outerjoin(movie_genres). \
@@ -185,16 +203,6 @@ class SqlAlchemyRepository(AbstractRepository):
             outerjoin(movie_actors). \
             outerjoin(Actor). \
             group_by(Movie._id)
-
-        # title = movie.title.lower()
-        # director = movie.director.director_full_name.lower() if movie.director else ''
-        # description = movie.description.lower() if movie.description else ''
-        # genres = [genre.genre_name.lower() for genre in movie.genres] if movie.genres else []
-        # actors = [actor.actor_full_name.lower() for actor in movie.actors] if movie.actors else []
-        # movie_str = " ".join([title, director, description] + genres + actors)
-
-        # TODO - setup query search
-        # TODO - test if filtering with a query and genres, etc, works!
 
         _query = query.strip()
         if _query:
@@ -214,13 +222,15 @@ class SqlAlchemyRepository(AbstractRepository):
                 filter(Genre._genre_name.in_(genre_names)). \
                 having(func.count(Genre._genre_name.distinct()) == len(genre_names))
 
-        # if directors:
-        #     filtered = filter(lambda x: any(director == x.director for director in directors), filtered)
-        #
-        # if actors:
-        #     filtered = filter(lambda x: all(actor in x.actors for actor in actors), filtered)
+        if directors:
+            director_names = [director.director_full_name for director in directors]
+            filtered = filtered.filter(Director._person_full_name.in_(director_names))
 
-        print(filtered.statement.compile())
+        if actors:
+            actor_names = [actor.actor_full_name for actor in actors]
+            filtered = filtered. \
+                filter(Actor._person_full_name.in_(actor_names)). \
+                having(func.count(Actor._person_full_name.distinct()) == len(actor_names))
 
         return filtered
 
@@ -233,13 +243,9 @@ class SqlAlchemyRepository(AbstractRepository):
                    actors: List[Actor] = []) -> List[Movie]:
         self._check_get_movies_args(page_number, page_size, query, genres, directors, actors)
 
-        offset = page_number * page_size
-
         with self._session_cm as scm:
-            return self._get_filtered_movies(scm.session, query, genres, directors, actors). \
-                limit(page_size). \
-                offset(offset). \
-                all()
+            return self._get_page(self._get_filtered_movies_query(scm.session, query, genres, directors, actors),
+                                  page_number, page_size)
 
     def _get_all_movies(self) -> List[Movie]:
         """ For testing and debugging. Returns all the movies in this repository. """
@@ -247,19 +253,38 @@ class SqlAlchemyRepository(AbstractRepository):
         with self._session_cm as scm:
             return scm.session.query(Movie).all()
 
+    def _get_all_reviews(self) -> List[Review]:
+        """ For testing and debugging. Returns all the reviews in this repository. """
+
+        with self._session_cm as scm:
+            return scm.session.query(Review).all()
+
+    def _get_movies_for_user_query(self, user: User) -> Query:
+        with self._session_cm as scm:
+            session = scm.session
+
+            subquery = session.query(user_watched_movies).union(session.query(user_watchlist_movies)).subquery()
+
+            query = session.query(Movie). \
+                join(subquery). \
+                join(User). \
+                filter(User._id == user.id)
+
+            return query
+
     def get_number_of_movies_for_user(self, user: User) -> int:
-        raise NotImplementedError
+        return self._get_movies_for_user_query(user).count()
 
     def get_number_of_movie_pages_for_user(self,
                                            user: User,
                                            page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> int:
-        raise NotImplementedError
+        return self._get_number_of_pages(self.get_number_of_movies_for_user(user), page_size)
 
     def get_movies_for_user(self,
                             user: User,
                             page_number: int,
                             page_size: int = AbstractRepository.DEFAULT_PAGE_SIZE) -> List[Movie]:
-        raise NotImplementedError
+        return self._get_page(self._get_movies_for_user_query(user), page_number, page_size)
 
     def get_movie_by_id(self, movie_id: int) -> Movie:
         raise NotImplementedError
@@ -269,13 +294,34 @@ class SqlAlchemyRepository(AbstractRepository):
             return scm.session.query(Genre).all()
 
     def get_directors(self) -> List[Director]:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            return scm.session.query(Director).all()
 
     def get_actors(self) -> List[Actor]:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            return scm.session.query(Actor).all()
 
     def get_movies_per_genre(self) -> Dict[Genre, int]:
-        raise NotImplementedError
+        with self._session_cm as scm:
+            # rows = scm.session.query(Movie, func.count(Movie._id)). \
+            #     join(movie_genres). \
+            #     join(Genre). \
+            #     group_by(Genre._genre_name). \
+            #     all()
+
+            rows = scm.session.query(Genre, func.sum(
+                case(
+                    [
+                        (movie_genres.c.movie_id == None, 0)
+                    ],
+                    else_=1
+                )
+            )). \
+                outerjoin(movie_genres). \
+                group_by(Genre._genre_name). \
+                all()
+
+        return {row[0]: row[1] for row in rows}
 
 
 def populate(repo: AbstractRepository, data_path: str, seed: Optional[int] = None):

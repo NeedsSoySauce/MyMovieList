@@ -5,6 +5,7 @@ from movie.adapters.database_repository import SqlAlchemyRepository
 # Note: for these tests it's important that the first fixture (if it's being used) is database_repository so that
 # map_model_to_tables is called before any models are instantiated
 from movie.domain.movie import Movie
+from movie.domain.user import User
 
 
 def test_constructor(session_factory):
@@ -103,39 +104,36 @@ def test_get_movies_genres_filter(populated_database_repository: SqlAlchemyRepos
 
 
 def test_get_movies_directors_filter(populated_database_repository: SqlAlchemyRepository):
-    genres = [genre for genre in populated_database_repository.get_genres() if
-              genre.genre_name in ['Action', 'Adventure']]
-    repo_movies = populated_database_repository.get_movies(0, genres=genres)
+    directors = [director for director in populated_database_repository.get_directors() if
+                 director.director_full_name in ['James Gunn', 'Ridley Scott']]
+    repo_movies = populated_database_repository.get_movies(0, directors=directors)
     print()
-    print(genres)
+    print(directors)
     print(populated_database_repository._get_all_movies())
     print(repo_movies)
     print('-----------')
     for movie in repo_movies:
         print(movie)
-        print(movie.genres)
-    assert len(repo_movies) == 4
-    for movie in repo_movies:
-        assert all(genre in movie.genres for genre in genres)
-    pytest.fail()
+        print(movie.director)
+    assert len(repo_movies) == 2
+    assert all(movie.director in directors for movie in repo_movies)
 
 
 def test_get_movies_actors_filter(populated_database_repository: SqlAlchemyRepository):
-    genres = [genre for genre in populated_database_repository.get_genres() if
-              genre.genre_name in ['Action', 'Adventure']]
-    repo_movies = populated_database_repository.get_movies(0, genres=genres)
+    actors = [actor for actor in populated_database_repository.get_actors() if
+              actor.actor_full_name in ['TestActor1', 'TestActor2']]
+    repo_movies = populated_database_repository.get_movies(0, actors=actors)
     print()
-    print(genres)
+    print(actors)
     print(populated_database_repository._get_all_movies())
     print(repo_movies)
     print('-----------')
     for movie in repo_movies:
         print(movie)
-        print(movie.genres)
-    assert len(repo_movies) == 4
+        print(movie.actors)
+    assert len(repo_movies) == 3
     for movie in repo_movies:
-        assert all(genre in movie.genres for genre in genres)
-    pytest.fail()
+        assert all(actor in movie.actors for actor in actors)
 
 
 def test_get_movies_invalid_genres(populated_database_repository, genre):
@@ -181,25 +179,27 @@ def test_get_movies_query_by_director(database_repository: SqlAlchemyRepository,
     movie.director = director
     database_repository.add_movie(movie)
     database_repository.add_movie(Movie(movie.title, movie.release_date))
-    results = database_repository.get_movies(0, directors=[director])
+    query = director.director_full_name
+    results = database_repository.get_movies(0, query=query)
 
     print()
-    print(director)
+    print(query)
     print(results)
 
     assert len(results) == 1
     assert movie == results[0]
 
 
-def test_get_movies_query_by_actor(database_repository: SqlAlchemyRepository, movie, director):
-    database_repository.add_director(director)
-    movie.director = director
+def test_get_movies_query_by_actor(database_repository: SqlAlchemyRepository, movie, actor):
+    database_repository.add_actor(actor)
+    movie.add_actor(actor)
     database_repository.add_movie(movie)
     database_repository.add_movie(Movie(movie.title, movie.release_date))
-    results = database_repository.get_movies(0, directors=[director])
+    query = actor.actor_full_name
+    results = database_repository.get_movies(0, query=query)
 
     print()
-    print(director)
+    print(actor)
     print(results)
 
     assert len(results) == 1
@@ -237,37 +237,33 @@ def test_get_movies_combined_options(database_repository: SqlAlchemyRepository, 
     assert movie2 == results[0]
 
 
-def test_add_genre(genre, database_repository: SqlAlchemyRepository):
+def test_add_genre(database_repository: SqlAlchemyRepository, genre):
     database_repository.add_genre(genre)
 
-    assert genre in database_repository._genres
-    pytest.fail()
+    assert genre in database_repository.get_genres()
 
 
 def test_add_genre_duplicate(database_repository: SqlAlchemyRepository, genre):
     database_repository.add_genre(genre)
     database_repository.add_genre(genre)
 
-    assert len(database_repository._genres) == 1
-    assert genre in database_repository._genres
-    pytest.fail()
+    assert len(database_repository.get_genres()) == 1
+    assert genre in database_repository.get_genres()
 
 
 def test_add_genres(database_repository: SqlAlchemyRepository, genres):
     database_repository.add_genres(genres)
 
-    assert len(database_repository._genres) == len(genres)
-    assert all(genre in database_repository._genres for genre in genres)
-    pytest.fail()
+    assert len(database_repository.get_genres()) == len(genres)
+    assert all(genre in database_repository.get_genres() for genre in genres)
 
 
 def test_add_genres_duplicates(database_repository: SqlAlchemyRepository, genres):
     database_repository.add_genres(genres)
     database_repository.add_genres(genres)
 
-    assert len(database_repository._genres) == len(genres)
-    assert all(genre in database_repository._genres for genre in genres)
-    pytest.fail()
+    assert len(database_repository.get_genres()) == len(genres)
+    assert all(genre in database_repository.get_genres() for genre in genres)
 
 
 def test_get_genres(database_repository: SqlAlchemyRepository, genres):
@@ -275,26 +271,22 @@ def test_get_genres(database_repository: SqlAlchemyRepository, genres):
 
     assert all(genre in repo_genres for genre in repo_genres)
     assert sorted(repo_genres) == repo_genres
-    pytest.fail()
 
 
 def test_get_number_of_movie_pages(populated_database_repository: SqlAlchemyRepository):
     pages = populated_database_repository.get_number_of_movie_pages()
     assert pages == 1
-    pytest.fail()
 
 
 def test_get_number_of_movie_pages_empty(database_repository: SqlAlchemyRepository):
     pages = database_repository.get_number_of_movie_pages()
     assert pages == 0
-    pytest.fail()
 
 
 def test_add_review(database_repository: SqlAlchemyRepository, review):
     database_repository.add_review(review)
 
-    assert review in database_repository._reviews
-    pytest.fail()
+    assert review in database_repository._get_all_reviews()
 
 
 def test_add_review_with_user(database_repository, review, user):
@@ -305,29 +297,24 @@ def test_add_review_with_user(database_repository, review, user):
     assert result == user
 
     assert review in user.reviews
-    pytest.fail()
 
 
 def test_get_number_of_reviews_for_movie_empty(database_repository, movie):
     assert database_repository.get_number_of_reviews_for_movie(movie) == 0
-    pytest.fail()
 
 
 def test_get_number_of_reviews_for_movie(database_repository, review):
     database_repository.add_review(review)
     assert database_repository.get_number_of_reviews_for_movie(review.movie) == 1
-    pytest.fail()
 
 
 def test_get_number_of_reviews_for_movie_pages(database_repository, review):
     result = database_repository.get_number_of_review_pages_for_movie(review.movie)
     assert result == 0
-    pytest.fail()
 
     database_repository.add_review(review)
     result = database_repository.get_number_of_review_pages_for_movie(review.movie)
     assert result == 1
-    pytest.fail()
 
 
 def test_get_reviews_for_movie(database_repository: SqlAlchemyRepository, review):
@@ -335,7 +322,6 @@ def test_get_reviews_for_movie(database_repository: SqlAlchemyRepository, review
     result = database_repository.get_reviews_for_movie(review.movie, 0)
 
     assert result[0] == review
-    pytest.fail()
 
 
 def test_get_review_user(database_repository: SqlAlchemyRepository, user, review):
@@ -343,7 +329,6 @@ def test_get_review_user(database_repository: SqlAlchemyRepository, user, review
     database_repository.add_user(user)
     result = database_repository.get_review_user(review)
     assert result == user
-    pytest.fail()
 
 
 def test_get_number_of_movies_for_user_empty(database_repository: SqlAlchemyRepository, user):
@@ -351,7 +336,6 @@ def test_get_number_of_movies_for_user_empty(database_repository: SqlAlchemyRepo
 
     result = database_repository.get_number_of_movies_for_user(user)
     assert result == 0
-    pytest.fail()
 
 
 def test_get_number_of_movies_for_user(database_repository: SqlAlchemyRepository, user, movies):
@@ -361,7 +345,6 @@ def test_get_number_of_movies_for_user(database_repository: SqlAlchemyRepository
 
     result = database_repository.get_number_of_movies_for_user(user)
     assert result == 2
-    pytest.fail()
 
 
 def test_get_number_of_movies_for_user(database_repository: SqlAlchemyRepository, user, movies):
@@ -369,9 +352,20 @@ def test_get_number_of_movies_for_user(database_repository: SqlAlchemyRepository
     user.watch_movie(movies[0])
     user.add_to_watchlist(movies[1])
 
+    user2 = User('abcd', '1234')
+    database_repository.add_user(user2)
+    user2.watch_movie(movies[0])
+    user2.add_to_watchlist(movies[1])
+    user2.add_to_watchlist(movies[2])
+
     result = database_repository.get_number_of_movies_for_user(user)
     assert result == 2
-    pytest.fail()
+
+    user.add_to_watchlist(movies[3])
+    user.watch_movie(movies[4])
+
+    result = database_repository.get_number_of_movies_for_user(user)
+    assert result == 4
 
 
 def test_get_number_of_movie_pages_for_user(database_repository: SqlAlchemyRepository, user, movies):
@@ -383,9 +377,8 @@ def test_get_number_of_movie_pages_for_user(database_repository: SqlAlchemyRepos
     user.add_to_watchlist(movies[0])
     user.add_to_watchlist(movies[1])
 
-    result = database_repository.get_number_of_movie_pages_for_user(user, 1)
+    result = database_repository.get_number_of_movie_pages_for_user(user, page_size=1)
     assert result == 2
-    pytest.fail()
 
 
 def test_get_movies_for_user(database_repository: SqlAlchemyRepository, user, movies):
@@ -399,4 +392,38 @@ def test_get_movies_for_user(database_repository: SqlAlchemyRepository, user, mo
 
     result = database_repository.get_movies_for_user(user, 0)
     assert len(result) == 2
-    pytest.fail()
+
+
+def test_get_movies_per_genre(database_repository: SqlAlchemyRepository, genres):
+    movies = [
+        Movie('abc1', 2000),
+        Movie('abc2', 2000),
+        Movie('abc3', 2000),
+        Movie('abc4', 2000)
+    ]
+
+    movies[0].add_genre(genres[0])
+    movies[1].add_genre(genres[0])
+    movies[2].add_genre(genres[0])
+
+    movies[0].add_genre(genres[1])
+    movies[1].add_genre(genres[1])
+
+    movies[1].add_genre(genres[2])
+    movies[2].add_genre(genres[2])
+
+    database_repository.add_movies(movies)
+    database_repository.add_genres(genres[:4])
+
+    result = database_repository.get_movies_per_genre()
+    print()
+    print(result)
+
+    expected = {
+        genres[0]: 3,
+        genres[1]: 2,
+        genres[2]: 2,
+        genres[3]: 0,
+    }
+
+    assert result == expected

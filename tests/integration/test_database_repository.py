@@ -351,6 +351,54 @@ def test_change_password(database_repository: SqlAlchemyRepository, user):
     assert database_repository.get_user(user.username).password == 'qwerty'
 
 
+def test_add_to_watched(database_repository: SqlAlchemyRepository, user, movie):
+    database_repository.add_user(user)
+    database_repository.add_movie(movie)
+
+    database_repository.add_movie_to_watched(user, movie)
+
+    result = database_repository.get_user(user.username)
+    assert movie in result.watched_movies
+
+
+def test_remove_from_watched(database_repository: SqlAlchemyRepository, user, movie):
+    user.watch_movie(movie)
+    database_repository.add_user(user)
+    database_repository.add_movie(movie)
+
+    result = database_repository.get_user(user.username)
+    assert movie in result.watched_movies
+
+    database_repository.remove_from_watched(user, movie)
+
+    result = database_repository.get_user(user.username)
+    assert movie not in result.watched_movies
+
+
+def test_add_to_watchlist(database_repository: SqlAlchemyRepository, user, movie):
+    database_repository.add_user(user)
+    database_repository.add_movie(movie)
+
+    database_repository.add_movie_to_watchlist(user, movie)
+
+    result = database_repository.get_user(user.username)
+    assert movie in result.watchlist
+
+
+def test_remove_from_watchlist(database_repository: SqlAlchemyRepository, user, movie):
+    user.add_to_watchlist(movie)
+    database_repository.add_user(user)
+    database_repository.add_movie(movie)
+
+    result = database_repository.get_user(user.username)
+    assert movie in result.watchlist
+
+    database_repository.remove_from_watchlist(user, movie)
+
+    result = database_repository.get_user(user.username)
+    assert movie not in result.watchlist
+
+
 def test_get_movie_by_id(database_repository: SqlAlchemyRepository, movie):
     database_repository.add_movie(movie)
     result = database_repository.get_movie_by_id(movie.id)

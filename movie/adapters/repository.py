@@ -126,6 +126,26 @@ class AbstractRepository(abc.ABC):
         raise NotImplementedError
 
     @abc.abstractmethod
+    def add_movie_to_watched(self, user: User, movie: Movie) -> None:
+        """ Adds the given movie to the given user's list of watched movies. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def remove_from_watched(self, user: User, movie: Movie) -> None:
+        """ Removes the given movie from the given user's list of watched movies. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def add_movie_to_watchlist(self, user: User, movie: Movie) -> None:
+        """ Adds the given movie to the given user's watchlist. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def remove_from_watchlist(self, user: User, movie: Movie) -> None:
+        """ Removes the given movie from the given user's watchlist. """
+        raise NotImplementedError
+
+    @abc.abstractmethod
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         """
         Adds a review to this repository. If a user is specified it is treated as being the review's creator, otherwise

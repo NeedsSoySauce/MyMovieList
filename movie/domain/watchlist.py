@@ -56,3 +56,6 @@ class WatchList:
 
     def __contains__(self, item):
         return item in self._movies
+
+    def __repr__(self):
+        return repr(self._movies)

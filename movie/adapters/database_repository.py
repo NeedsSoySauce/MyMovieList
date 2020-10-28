@@ -157,6 +157,27 @@ class SqlAlchemyRepository(AbstractRepository):
             user.password = new_password
             scm.session.commit()
 
+    def add_movie_to_watched(self, user: User, movie: Movie) -> None:
+        with self._session_cm as scm:
+            user.add_to_watchlist(movie)
+            user.watch_movie(movie)
+            scm.session.commit()
+
+    def remove_from_watched(self, user: User, movie: Movie) -> None:
+        with self._session_cm as scm:
+            user.remove_from_watched_movies(movie)
+            scm.session.commit()
+
+    def add_movie_to_watchlist(self, user: User, movie: Movie) -> None:
+        with self._session_cm as scm:
+            user.add_to_watchlist(movie)
+            scm.session.commit()
+
+    def remove_from_watchlist(self, user: User, movie: Movie) -> None:
+        with self._session_cm as scm:
+            user.remove_from_watchlist(movie)
+            scm.session.commit()
+
     def add_review(self, review: Review, user: Union[User, None] = None) -> None:
         with self._session_cm as scm:
             scm.session.add(review)

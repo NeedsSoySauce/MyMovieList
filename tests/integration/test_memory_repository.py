@@ -279,3 +279,52 @@ def test_get_movies_for_user(user, movies, memory_repository: MemoryRepository):
 
     result = memory_repository.get_movies_for_user(user, 0)
     assert len(result) == 2
+
+
+def test_add_to_watched(memory_repository: MemoryRepository, user, movie):
+    memory_repository.add_user(user)
+    memory_repository.add_movie(movie)
+
+    memory_repository.add_movie_to_watched(user, movie)
+
+    result = memory_repository.get_user(user.username)
+    assert movie in result.watched_movies
+
+
+def test_remove_from_watched(memory_repository: MemoryRepository, user, movie):
+    user.watch_movie(movie)
+    memory_repository.add_user(user)
+    memory_repository.add_movie(movie)
+
+    result = memory_repository.get_user(user.username)
+    assert movie in result.watched_movies
+
+    memory_repository.remove_from_watched(user, movie)
+
+    result = memory_repository.get_user(user.username)
+    assert movie not in result.watched_movies
+
+
+def test_add_to_watchlist(memory_repository: MemoryRepository, user, movie):
+    memory_repository.add_user(user)
+    memory_repository.add_movie(movie)
+
+    memory_repository.add_movie_to_watchlist(user, movie)
+
+    result = memory_repository.get_user(user.username)
+    assert movie in result.watchlist
+
+
+def test_remove_from_watchlist(memory_repository: MemoryRepository, user, movie):
+    user.add_to_watchlist(movie)
+    memory_repository.add_user(user)
+    memory_repository.add_movie(movie)
+
+    result = memory_repository.get_user(user.username)
+    assert movie in result.watchlist
+
+    memory_repository.remove_from_watchlist(user, movie)
+
+    result = memory_repository.get_user(user.username)
+    assert movie not in result.watchlist
+

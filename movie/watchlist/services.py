@@ -21,21 +21,19 @@ def get_user_movies(repo: AbstractRepository,
 
 def add_movie_to_watchlist(repo: AbstractRepository, user: User, movie: Movie) -> None:
     """ Adds the given movie to the given user's watchlist. """
-    user.add_to_watchlist(movie)
+    repo.add_movie_to_watchlist(user, movie)
 
 
 def remove_movie_from_watchlist(repo: AbstractRepository, user: User, movie: Movie) -> None:
     """ Removes the given movie from the given user's watchlist. """
-    user.remove_from_watchlist(movie)
-
+    repo.remove_from_watchlist(user, movie)
 
 
 def add_movie_to_watched(repo: AbstractRepository, user: User, movie: Movie) -> None:
     """ Adds the given movie to the given user's list of watched movies. """
-    user.watch_movie(movie)
+    repo.add_movie_to_watched(user, movie)
 
 
 def remove_movie_from_watched(repo: AbstractRepository, user: User, movie: Movie) -> None:
     """ Removes the given movie from the given user's list of watched movies. """
-    user.remove_from_watched_movies(movie)
-
+    repo.remove_from_watched(user, movie)

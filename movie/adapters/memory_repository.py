@@ -170,6 +170,18 @@ class MemoryRepository(AbstractRepository):
     def change_password(self, user: User, new_password: str) -> None:
         user.password = new_password
 
+    def add_movie_to_watched(self, user: User, movie: Movie) -> None:
+        user.watch_movie(movie)
+
+    def remove_from_watched(self, user: User, movie: Movie) -> None:
+        user.remove_from_watched_movies(movie)
+
+    def add_movie_to_watchlist(self, user: User, movie: Movie) -> None:
+        user.add_to_watchlist(movie)
+
+    def remove_from_watchlist(self, user: User, movie: Movie) -> None:
+        user.remove_from_watchlist(movie)
+
     def delete_user(self, user: User) -> None:
         self._users.remove(user)
         del self._user_id_map[user.username]

@@ -336,20 +336,24 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get_movie_by_id(self, movie_id: int) -> Movie:
         with self._session_cm as scm:
-            try:
-                return scm.session.query(Movie).filter(Movie._id == movie_id).one()
-            except NoResultFound:
-                raise ValueError
+            movie = scm.session.query(Movie).get(movie_id)
+
+        if movie is None:
+            raise ValueError
+
+        return movie
 
     def get_genres(self) -> List[Genre]:
         with self._session_cm as scm:
             return scm.session.query(Genre).order_by(Genre._genre_name).all()
 
     def get_directors(self) -> List[Director]:
+        # TODO - speed this up somehow.
         with self._session_cm as scm:
             return scm.session.query(Director).order_by(Director._person_full_name).all()
 
     def get_actors(self) -> List[Actor]:
+        # TODO - speed this up somehow.
         with self._session_cm as scm:
             return scm.session.query(Actor).order_by(Actor._person_full_name).all()
 

@@ -214,8 +214,6 @@ def test_get_movies_invalid_query(populated_database_repository):
 def test_get_movies_combined_options(database_repository: SqlAlchemyRepository, genre):
     database_repository.add_genre(genre)
 
-    # TODO - test other filtering options
-
     movie1 = Movie('A', 2222)
     movie1.add_genre(genre)
 

@@ -377,7 +377,7 @@ class SqlAlchemyRepository(AbstractRepository):
                 )
             )). \
                 outerjoin(movie_genres). \
-                group_by(Genre._genre_name). \
+                group_by(Genre._id). \
                 all()
 
         return {row[0]: row[1] for row in rows}

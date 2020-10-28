@@ -132,6 +132,7 @@ def map_model_to_tables():
     })
 
     mapper(Genre, genres, properties={
+        '_id': genres.c.id,
         '_genre_name': genres.c.genre_name
     })
 

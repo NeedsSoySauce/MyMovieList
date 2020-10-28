@@ -28,3 +28,23 @@ class Config:
     REPOSITORY = environ.get('REPOSITORY')
     CACHE_TYPE = 'simple'
     CACHE_DEFAULT_TIMEOUT = 60
+
+class ProductionConfig(Config):
+    """ Set Flask configuration from system environment variables. """
+
+    # Flask configuration
+    FLASK_APP = environ.get('FLASK_APP')
+    FLASK_ENV = environ.get('FLASK_ENV')
+
+    SECRET_KEY = environ.get('SECRET_KEY')
+    TESTING = _get_bool('TESTING')
+
+    # Database configuration
+    SQLALCHEMY_DATABASE_URI = environ.get('SQLALCHEMY_DATABASE_URI')
+    SQLALCHEMY_ECHO = _get_bool('SQLALCHEMY_ECHO')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    REPOSITORY = environ.get('REPOSITORY')
+    CACHE_TYPE = 'simple'
+    CACHE_DEFAULT_TIMEOUT = 60
+

@@ -1,6 +1,7 @@
 class Genre:
-    def __init__(self, genre_name: str) -> None:
+    def __init__(self, genre_name: str, id_: int = None) -> None:
         self.genre_name = genre_name
+        self._id = id_ or hash(self)
 
     @property
     def genre_name(self) -> str:
@@ -12,6 +13,10 @@ class Genre:
             self._genre_name = None
         else:
             self._genre_name = genre_name.strip()
+
+    @property
+    def id(self):
+        return self._id
 
     def __repr__(self) -> str:
         return f"<{type(self).__name__} {self._genre_name}>"

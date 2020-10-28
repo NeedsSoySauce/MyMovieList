@@ -198,8 +198,7 @@ class SqlAlchemyRepository(AbstractRepository):
 
     @staticmethod
     def _get_reviews_for_movie_query(session: Session, movie: Movie) -> Query:
-        # return session.query(Movie).join(Review).filter(Movie._id == movie.id)
-        return session.query(Review).join(Movie).filter(Movie._id == movie.id)
+        return session.query(Review).join(Movie).filter(Movie._id == movie.id).order_by(Review._mapped_timestamp.desc())
 
     def get_number_of_reviews_for_movie(self, movie: Movie) -> int:
         with self._session_cm as scm:
@@ -316,7 +315,8 @@ class SqlAlchemyRepository(AbstractRepository):
             query = session.query(Movie). \
                 join(subquery). \
                 join(User). \
-                filter(User._id == user.id)
+                filter(User._id == user.id). \
+                order_by(Movie._mapped_title, Movie._mapped_release_date)
 
             return query
 

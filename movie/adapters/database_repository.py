@@ -317,15 +317,15 @@ class SqlAlchemyRepository(AbstractRepository):
 
     def get_genres(self) -> List[Genre]:
         with self._session_cm as scm:
-            return scm.session.query(Genre).all()
+            return scm.session.query(Genre).order_by(Genre._genre_name).all()
 
     def get_directors(self) -> List[Director]:
         with self._session_cm as scm:
-            return scm.session.query(Director).all()
+            return scm.session.query(Director).order_by(Director._person_full_name).all()
 
     def get_actors(self) -> List[Actor]:
         with self._session_cm as scm:
-            return scm.session.query(Actor).all()
+            return scm.session.query(Actor).order_by(Actor._person_full_name).all()
 
     def get_movies_per_genre(self) -> Dict[Genre, int]:
         with self._session_cm as scm:

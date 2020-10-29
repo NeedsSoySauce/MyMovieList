@@ -31,5 +31,16 @@ class Config:
     CACHE_TYPE = 'simple'
     CACHE_DEFAULT_TIMEOUT = 60
 
-    # Date file readers configuration
+    # Data file reader configuration
     MAX_LINES_TO_LOAD = int(environ.get('MAX_LINES_TO_LOAD') or 0) or None
+
+
+class HerokuProductionConfig(Config):
+    """Set Flask configuration from Heroku environment variables."""
+
+    # Database configuration
+    SQLALCHEMY_DATABASE_URI = environ.get('DATABASE_URL')
+
+    # Flask-Caching configuration
+    CACHE_TYPE = 'redis'
+    CACHE_REDIS_URL = environ.get('REDIS_URL')

@@ -26,6 +26,12 @@ def create_app(test_config=None):
 
     # Configure the app from configuration-file settings.
     app.config.from_object('config.Config')
+
+    is_dev = app.config['FLASK_ENV'] == 'development'
+
+    if not is_dev:
+        app.config.from_object('config.HerokuProductionConfig')
+
     data_path = os.path.join('movie', 'adapters', 'data', 'Data1000Movies.csv')
 
     if test_config is not None:
@@ -37,7 +43,6 @@ def create_app(test_config=None):
     repo: Union[memory_repository.MemoryRepository, database_repository.SqlAlchemyRepository, None] = None
     repository = app.config['REPOSITORY']
 
-    is_dev = app.config['FLASK_ENV'] == 'development'
     max_num_lines = app.config['MAX_LINES_TO_LOAD']
 
     if repository == 'memory':

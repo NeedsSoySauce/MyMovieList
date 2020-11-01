@@ -45,7 +45,7 @@ The *.env* file at the project's root contains configuration settings. They are 
 * `REPOSITORY`: Specifies what repository to use. Either 'memory' or 'database'. 
 * `MAX_LINES_TO_LOAD`: Integer. Specifies the maximum number of movies to populate the repository with. If not specified all available movies are loaded. 
 
-Additionally, if deploying to an environment like Heroku, the environment variables specified there will take precedence. Additionally, the 
+Additionally, if deploying to an environment like Heroku, the environment variables specified there will take precedence.
 
 ## Execution
 
